@@ -622,6 +622,13 @@ class App:
         self.je["Phone"].insert(0, "+60")
         self.je["Phone"].pack(side="left", fill="x", expand=True, ipady=6)
         
+        # Email field
+        ef = tk.Frame(f, bg=C["bg"])
+        ef.pack(fill="x", pady=8)
+        tk.Label(ef, text="Email", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        self.je["Email"] = tk.Entry(ef, font=("Segoe UI", 12), bd=1, relief="solid")
+        self.je["Email"].pack(side="left", fill="x", expand=True, ipady=6)
+        
         for l in ["Item", "Problem", "Quote (RM)", "Notes"]:
             self.je[l] = self.field(f, self.t(l.lower()))
         self.je["Due Date"] = self.date_field(f, self.t("due_date"))
@@ -636,10 +643,13 @@ class App:
             self.cust_entry.insert(0, c["name"])
             self.je["Phone"].delete(0, tk.END)
             self.je["Phone"].insert(0, c["phone"] or "+60")
+            self.je["Email"].delete(0, tk.END)
+            self.je["Email"].insert(0, c["email"] or "")
 
     def save_job(self):
         cust_name = self.cust_entry.get().strip()
         phone = self.je["Phone"].get().strip()
+        email = self.je["Email"].get().strip()
         item = self.je["Item"].get().strip()
         if not item:
             return messagebox.showerror("Error", "Enter item")
@@ -656,7 +666,7 @@ class App:
             if cust_name in self.cust_map:
                 cid = self.cust_map[cust_name]["id"]
             else:
-                cid = self.db.add_customer(cust_name, phone)
+                cid = self.db.add_customer(cust_name, phone, email)
         
         due = self.je["Due Date"].get() if isinstance(self.je["Due Date"], tk.StringVar) else self.je["Due Date"].get().strip()
         self.db.add_job(cid, item, self.je["Problem"].get().strip(), q, due, self.je["Notes"].get().strip())
