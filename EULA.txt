@@ -1,0 +1,52 @@
+KERJA MUDAH - END USER LICENSE AGREEMENT (EULA)
+===============================================
+
+IMPORTANT - READ CAREFULLY BEFORE USING THIS SOFTWARE
+
+This End User License Agreement ("Agreement") is a legal agreement between you ("User") and the developer ("Licensor") for the use of RepairShop Manager ("Software").
+
+By installing or using this Software, you agree to be bound by the terms of this Agreement.
+
+1. GRANT OF LICENSE
+   - This Software is licensed, not sold, to you for use on ONE (1) device only.
+   - You may not transfer, share, or give this Software to others.
+   - Each device requires its own license key.
+
+2. RESTRICTIONS
+   - You may NOT copy, distribute, or share this Software.
+   - You may NOT reverse engineer, decompile, or disassemble this Software.
+   - You may NOT remove or alter any proprietary notices or labels.
+   - You may NOT sell, rent, or lease this Software to others.
+   - You may NOT use this Software for commercial purposes outside your business.
+
+3. OWNERSHIP
+   - The Software is owned and copyrighted by the Licensor.
+   - This Agreement does not grant you any rights to trademarks or copyrights.
+
+4. DATA
+   - All data entered into this Software is stored locally on your device.
+   - The Licensor is NOT responsible for any data loss, corruption, or theft.
+   - You are responsible for backing up your own data.
+
+5. LIMITATION OF LIABILITY
+   - THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+   - THE LICENSOR SHALL NOT BE LIABLE FOR ANY DAMAGES ARISING FROM THE USE OF THIS SOFTWARE.
+   - IN NO EVENT SHALL THE LICENSOR'S LIABILITY EXCEED THE AMOUNT PAID FOR THE SOFTWARE.
+
+6. TERMINATION
+   - This Agreement is effective until terminated.
+   - The Licensor may terminate this Agreement if you fail to comply with its terms.
+   - Upon termination, you must destroy all copies of the Software.
+
+7. GOVERNING LAW
+   - This Agreement shall be governed by the laws of Malaysia.
+   - Any disputes shall be resolved in the courts of Malaysia.
+
+8. CONTACT
+   - For support or questions about this Agreement:
+   - WhatsApp: +60 1154043298
+   - Email: zhengianlai@gmail.com
+
+By installing this Software, you acknowledge that you have read and understood this Agreement and agree to be bound by its terms.
+
+Last Updated: August 2026

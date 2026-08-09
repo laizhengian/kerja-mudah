@@ -1,0 +1,1423 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+import os, sys, hashlib, webbrowser, urllib.parse, platform, uuid
+from datetime import datetime, timedelta
+
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+os.chdir(APP_DIR)
+from database import Database
+
+def get_hwid():
+    raw = f"{platform.node()}-{platform.processor()}-{uuid.getnode()}"
+    return hashlib.sha256(raw.encode()).hexdigest()[:16]
+
+def check_license(db):
+    hwid = db.get_setting("licensed_hwid")
+    key = db.get_setting("license_key")
+    if hwid and key:
+        expected = hashlib.sha256(hwid.encode()).hexdigest()[:20].upper()
+        if key.upper() == expected:
+            return True
+    return False
+
+def is_demo(db):
+    if check_license(db):
+        return False
+    install_date = db.get_setting("install_date")
+    if not install_date:
+        db.set_setting("install_date", datetime.now().isoformat())
+        install_date = datetime.now().isoformat()
+    try:
+        days = (datetime.now() - datetime.fromisoformat(install_date)).days
+    except:
+        days = 0
+    return days <= 7
+
+C = {
+    "bg": "#FFFFFF", "side": "#111111", "side_h": "#1E1E1E",
+    "card": "#F5F5F5", "card_h": "#EBEBEB", "bdr": "#E0E0E0",
+    "txt": "#111111", "txt2": "#555555", "txt3": "#999999",
+    "pri": "#111111", "pri_h": "#2A2A2A",
+    "ok": "#16A34A", "warn": "#D97706", "err": "#DC2626",
+    "white": "#FFFFFF",
+}
+
+T = {
+    "en": {
+        "app_title": "Kerja Mudah",
+        "home": "Home", "jobs": "Jobs", "customers": "Customers",
+        "appointments": "Appointments", "invoices": "Invoices",
+        "reports": "Reports", "search": "Search", "backup": "Backup", "settings": "Settings",
+        "dashboard": "Dashboard", "active_jobs": "Active Jobs", "today": "Today",
+        "outstanding": "Outstanding", "jobs_done": "Jobs Done",
+        "reminders": "Reminders", "quick_actions": "Quick Actions",
+        "new_job": "+ New Job", "new_customer": "+ Customer", "new_appointment": "+ Appointment",
+        "new_job_title": "New Job", "new_customer_title": "New Customer", "new_appointment_title": "New Appointment",
+        "customer": "Customer", "phone": "Phone", "item": "Item",
+        "problem": "Problem", "quote": "Quote (RM)", "notes": "Notes",
+        "due_date": "Due Date", "date": "Date", "time": "Time",
+        "purpose": "Purpose", "save": "Save", "cancel": "Cancel",
+        "create_invoice": "Create Invoice", "from_job": "+ From Job",
+        "unpaid": "Unpaid", "paid": "Paid", "mark_paid": "Mark Paid",
+        "send_whatsapp": "Send WhatsApp", "how_paid": "How did they pay?",
+        "cash": "Cash", "e_wallet": "E-Wallet", "card": "Card", "transfer": "Transfer",
+        "job_complete": "Job Complete!", "invoice_whatsapp": "Invoice + WhatsApp",
+        "just_invoice": "Just Invoice", "skip": "Skip",
+        "no_jobs": "No jobs yet", "no_customers": "No customers yet",
+        "no_appointments": "No appointments today", "no_invoices": "No invoices yet",
+        "no_results": "No results for", "type_search": "Type and press Search",
+        "results_for": "result(s) for", "export_csv": "Export to CSV",
+        "business_info": "Business Info", "name": "Name", "security": "Security",
+        "pin_active": "PIN: Active", "pin_not_set": "PIN: Not set",
+        "set_pin": "Set PIN", "change_pin": "Change PIN", "remove_pin": "Remove PIN",
+        "enter_pin": "Enter PIN", "login": "Login", "wrong_pin": "Wrong PIN",
+        "welcome": "Welcome", "setup_title": "Set up in 1 minute",
+        "business_name": "Business Name", "get_started": "Get Started",
+        "offline_msg": "Your data stays on this computer. No internet required.",
+        "error": "Error", "done": "Done", "warning": "Warning",
+        "today_appointments": "Today's Appointments",
+        "unpaid_invoices": "unpaid invoices",
+        "get_started": "Get Started",
+        "confirm_pin": "Confirm PIN",
+    },
+    "ms": {
+        "app_title": "Kerja Mudah",
+        "home": "Utama", "jobs": "Kerja", "customers": "Pelanggan",
+        "appointments": "Temujanji", "invoices": "Invois",
+        "reports": "Laporan", "search": "Carian", "backup": "Sandaran", "settings": "Tetapan",
+        "dashboard": "Papan Pemuka", "active_jobs": "Kerja Aktif", "today": "Hari Ini",
+        "outstanding": "Belum Dibayar", "jobs_done": "Kerja Selesai",
+        "reminders": "Peringatan", "quick_actions": "Tindakan Pantas",
+        "new_job": "+ Kerja Baru", "new_customer": "+ Pelanggan", "new_appointment": "+ Temujanji",
+        "new_job_title": "Kerja Baru", "new_customer_title": "Pelanggan Baru", "new_appointment_title": "Temujanji Baru",
+        "customer": "Pelanggan", "phone": "Telefon", "item": "Barang",
+        "problem": "Masalah", "quote": "Sebut Harga (RM)", "notes": "Nota",
+        "due_date": "Tarikh Akhir", "date": "Tarikh", "time": "Masa",
+        "purpose": "Tujuan", "save": "Simpan", "cancel": "Batal",
+        "create_invoice": "Cipta Invois", "from_job": "+ Dari Kerja",
+        "unpaid": "Belum Dibayar", "paid": "Dibayar", "mark_paid": "Tanda Dibayar",
+        "send_whatsapp": "Hantar WhatsApp", "how_paid": "Bayar guna apa?",
+        "cash": "Tunai", "e_wallet": "E-Wallet", "card": "Kad", "transfer": "Pemindahan",
+        "job_complete": "Kerja Selesai!", "invoice_whatsapp": "Invois + WhatsApp",
+        "just_invoice": "Invois Sahaja", "skip": "Langkau",
+        "no_jobs": "Tiada kerja lagi", "no_customers": "Tiada pelanggan lagi",
+        "no_appointments": "Tiada temujanji hari ini", "no_invoices": "Tiada invois lagi",
+        "no_results": "Tiada hasil untuk", "type_search": "Taip dan tekan Cari",
+        "results_for": "hasil untuk", "export_csv": "Eksport ke CSV",
+        "business_info": "Maklumat Perniagaan", "name": "Nama", "security": "Keselamatan",
+        "pin_active": "PIN: Aktif", "pin_not_set": "PIN: Belum ditetapkan",
+        "set_pin": "Tetapkan PIN", "change_pin": "Tukar PIN", "remove_pin": "Buang PIN",
+        "enter_pin": "Masukkan PIN", "login": "Log Masuk", "wrong_pin": "PIN salah",
+        "welcome": "Selamat Datang", "setup_title": "Persediaan dalam 1 minit",
+        "business_name": "Nama Perniagaan", "get_started": "Mula",
+        "offline_msg": "Data anda kekal di komputer ini. Internet tidak diperlukan.",
+        "error": "Ralat", "done": "Selesai", "warning": "Amaran",
+        "today_appointments": "Temujanji Hari Ini",
+        "unpaid_invoices": "invois belum dibayar",
+        "get_started": "Mula",
+        "confirm_pin": "Sahkan PIN",
+    },
+    "zh": {
+        "app_title": "Kerja Mudah",
+        "home": "主页", "jobs": "工作", "customers": "客户",
+        "appointments": "预约", "invoices": "发票",
+        "reports": "报告", "search": "搜索", "backup": "备份", "settings": "设置",
+        "dashboard": "仪表板", "active_jobs": "进行中", "today": "今天",
+        "outstanding": "未收款", "jobs_done": "已完成",
+        "reminders": "提醒", "quick_actions": "快捷操作",
+        "new_job": "+ 新工作", "new_customer": "+ 客户", "new_appointment": "+ 预约",
+        "new_job_title": "新工作", "new_customer_title": "新客户", "new_appointment_title": "新预约",
+        "customer": "客户", "phone": "电话", "item": "物品",
+        "problem": "问题", "quote": "报价 (RM)", "notes": "备注",
+        "due_date": "截止日期", "date": "日期", "time": "时间",
+        "purpose": "目的", "save": "保存", "cancel": "取消",
+        "create_invoice": "创建发票", "from_job": "+ 从工作",
+        "unpaid": "未付款", "paid": "已付款", "mark_paid": "标记已付",
+        "send_whatsapp": "发送WhatsApp", "how_paid": "如何付款？",
+        "cash": "现金", "e_wallet": "电子钱包", "card": "银行卡", "transfer": "转账",
+        "job_complete": "工作完成！", "invoice_whatsapp": "发票 + WhatsApp",
+        "just_invoice": "仅发票", "skip": "跳过",
+        "no_jobs": "暂无工作", "no_customers": "暂无客户",
+        "no_appointments": "今天没有预约", "no_invoices": "暂无发票",
+        "no_results": "未找到", "type_search": "输入后点击搜索",
+        "results_for": "个结果", "export_csv": "导出CSV",
+        "business_info": "商家信息", "name": "姓名", "security": "安全",
+        "pin_active": "PIN: 已启用", "pin_not_set": "PIN: 未设置",
+        "set_pin": "设置PIN", "change_pin": "修改PIN", "remove_pin": "删除PIN",
+        "enter_pin": "输入PIN", "login": "登录", "wrong_pin": "PIN错误",
+        "welcome": "欢迎", "setup_title": "1分钟完成设置",
+        "business_name": "商家名称", "get_started": "开始",
+        "offline_msg": "数据保存在本电脑，无需网络。",
+        "error": "错误", "done": "完成", "warning": "警告",
+        "today_appointments": "今日预约",
+        "unpaid_invoices": "张未付款发票",
+        "get_started": "开始",
+        "confirm_pin": "确认PIN",
+    },
+}
+
+def tr(lang, key):
+    return T.get(lang, T["en"]).get(key, T["en"].get(key, key))
+
+class App:
+    def __init__(self):
+        self.db = Database(os.path.join(APP_DIR, "data", "data.db"))
+        self.lang = self.db.get_setting("language", "en")
+        self.root = tk.Tk()
+        self.root.title(tr(self.lang, "app_title"))
+        self.root.geometry("1100x750")
+        self.root.minsize(900, 650)
+        self.root.configure(bg=C["bg"])
+        
+        if check_license(self.db):
+            # Licensed - go straight in
+            if not self.db.get_setting("setup_complete"):
+                self.wizard()
+            elif self.db.get_setting("pin_hash"):
+                self.pin_screen()
+            else:
+                self.layout()
+        else:
+            # Not licensed - show activation screen
+            self.activate_screen()
+
+    def h(self, p):
+        return hashlib.sha256(p.encode()).hexdigest()
+    
+    def t(self, key):
+        lang = self.lang.get() if isinstance(self.lang, tk.StringVar) else self.lang
+        return tr(lang, key)
+    
+    def is_demo(self):
+        return is_demo(self.db)
+    
+    def is_licensed(self):
+        return check_license(self.db)
+
+    def clr(self):
+        if hasattr(self, 'content') and self.content:
+            for w in self.content.winfo_children():
+                w.destroy()
+
+    def hdr(self, t, btn=None, cmd=None):
+        f = tk.Frame(self.content, bg=C["bg"], padx=28, pady=22)
+        f.pack(fill="x")
+        tk.Label(f, text=t, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 22, "bold")).pack(side="left")
+        if btn:
+            b = tk.Button(f, text=btn, command=cmd, bg=C["pri"], fg=C["white"], font=("Segoe UI", 11, "bold"), bd=0, padx=20, pady=10, cursor="hand2")
+            b.pack(side="right")
+            b.bind("<Enter>", lambda e: b.configure(bg=C["pri_h"]))
+            b.bind("<Leave>", lambda e: b.configure(bg=C["pri"]))
+
+    def row(self, parent, **kw):
+        f = tk.Frame(parent, bg=C["card"], bd=1, relief="solid", pady=14, padx=20)
+        f.pack(fill="x", pady=4, **kw)
+        return f
+
+    def btn(self, parent, txt, cmd, bg=None, fg=None):
+        b = tk.Button(parent, text=txt, command=cmd, bg=bg or C["pri"], fg=fg or C["white"], font=("Segoe UI", 11, "bold"), bd=0, padx=20, pady=10, cursor="hand2")
+        b.bind("<Enter>", lambda e: b.configure(bg=C["pri_h"] if bg == C["pri"] or not bg else bg))
+        b.bind("<Leave>", lambda e: b.configure(bg=bg or C["pri"]))
+        return b
+
+    def field(self, parent, label, default=""):
+        f = tk.Frame(parent, bg=C["bg"])
+        f.pack(fill="x", pady=8)
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        e = tk.Entry(f, font=("Segoe UI", 12), bd=1, relief="solid")
+        if default:
+            e.insert(0, default)
+        e.pack(side="left", fill="x", expand=True, ipady=6)
+        return e
+
+    def date_field(self, parent, label, default=None):
+        import calendar
+        f = tk.Frame(parent, bg=C["bg"])
+        f.pack(fill="x", pady=8)
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        
+        today = datetime.now() if not default else datetime.strptime(default, "%Y-%m-%d")
+        var = tk.StringVar(value=today.strftime("%Y-%m-%d"))
+        
+        frame = tk.Frame(f, bg=C["bg"])
+        frame.pack(side="left")
+        
+        # Entry showing current date
+        entry = tk.Entry(frame, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid", width=12)
+        entry.pack(side="left")
+        
+        # Calendar button
+        def show_cal():
+            win = tk.Toplevel(self.root)
+            win.title("Pick Date")
+            win.geometry("280x320")
+            win.configure(bg=C["bg"])
+            win.grab_set()
+            
+            try:
+                current = datetime.strptime(var.get(), "%Y-%m-%d")
+            except:
+                current = datetime.now()
+            
+            month_var = tk.StringVar(value=current.strftime("%B %Y"))
+            
+            def change_month(delta):
+                nonlocal current
+                current = current.replace(day=1) + timedelta(days=32*delta)
+                current = current.replace(day=1)
+                month_var.set(current.strftime("%B %Y"))
+                draw_calendar()
+            
+            def draw_calendar():
+                for w in cal_frame.winfo_children():
+                    w.destroy()
+                
+                # Month/Year header
+                hdr = tk.Frame(cal_frame, bg=C["bg"])
+                hdr.pack(fill="x", pady=5)
+                tk.Button(hdr, text="<", command=lambda: change_month(-1), bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), bd=0, padx=8, cursor="hand2").pack(side="left")
+                tk.Label(hdr, textvariable=month_var, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold")).pack(side="left", expand=True)
+                tk.Button(hdr, text=">", command=lambda: change_month(1), bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), bd=0, padx=8, cursor="hand2").pack(side="right")
+                
+                # Day headers
+                days_frame = tk.Frame(cal_frame, bg=C["bg"])
+                days_frame.pack(fill="x")
+                for d in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]:
+                    tk.Label(days_frame, text=d, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9, "bold"), width=4).pack(side="left")
+                
+                # Calendar days
+                cal = calendar.monthcalendar(current.year, current.month)
+                for week in cal:
+                    week_frame = tk.Frame(cal_frame, bg=C["bg"])
+                    week_frame.pack(fill="x")
+                    for day in week:
+                        if day == 0:
+                            tk.Label(week_frame, text="", bg=C["bg"], width=4).pack(side="left")
+                        else:
+                            day_str = f"{current.year}-{current.month:02d}-{day:02d}"
+                            is_today = day_str == datetime.now().strftime("%Y-%m-%d")
+                            is_selected = day_str == var.get()
+                            
+                            bg = C["pri"] if is_selected else (C["card"] if is_today else C["bg"])
+                            fg = C["white"] if is_selected else C["txt"]
+                            
+                            b = tk.Button(week_frame, text=str(day), bg=bg, fg=fg, font=("Segoe UI", 10, "bold" if is_today else ""), bd=0, width=4, cursor="hand2", command=lambda d=day_str, w=win: [var.set(d), w.destroy()])
+                            b.pack(side="left")
+                
+                # Today button
+                tk.Button(cal_frame, text="Today", command=lambda: [var.set(datetime.now().strftime("%Y-%m-%d")), win.destroy()], bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), bd=1, relief="solid", padx=15, pady=5, cursor="hand2").pack(pady=10)
+            
+            cal_frame = tk.Frame(win, bg=C["bg"])
+            cal_frame.pack(fill="both", expand=True, padx=10, pady=10)
+            draw_calendar()
+        
+        tk.Button(frame, text="Pick", command=show_cal, bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="left", padx=5)
+        
+        return var
+
+    def time_field(self, parent, label, default=None):
+        f = tk.Frame(parent, bg=C["bg"])
+        f.pack(fill="x", pady=8)
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        
+        now = datetime.now() if not default else datetime.strptime(default, "%H:%M")
+        hour_var = tk.StringVar(value=str(now.hour).zfill(2))
+        min_var = tk.StringVar(value=str(now.minute // 15 * 15).zfill(2))
+        
+        frame = tk.Frame(f, bg=C["bg"])
+        frame.pack(side="left")
+        
+        hours = [str(i).zfill(2) for i in range(24)]
+        h_menu = tk.OptionMenu(frame, hour_var, *hours)
+        h_menu.configure(font=("Segoe UI", 11), width=3, bg=C["white"])
+        h_menu.pack(side="left")
+        
+        tk.Label(frame, text=":", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(side="left", padx=4)
+        
+        mins = ["00", "15", "30", "45"]
+        m_menu = tk.OptionMenu(frame, min_var, *mins)
+        m_menu.configure(font=("Segoe UI", 11), width=3, bg=C["white"])
+        m_menu.pack(side="left")
+        
+        return hour_var, min_var
+
+    # ─── WIZARD ───
+    def wizard(self):
+        self.clr()
+        self.root.configure(bg=C["bg"])
+        c = tk.Frame(self.root, bg=C["bg"])
+        c.pack(expand=True, fill="both")
+        tk.Label(c, text=self.t("welcome"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 28, "bold")).pack(pady=8)
+        tk.Label(c, text=self.t("setup_title"), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 13)).pack(pady=8)
+        f = tk.Frame(c, bg=C["bg"]); f.pack()
+        self.se = {}
+        for l, d in [("Business Name", ""), ("Phone", "+60")]:
+            self.se[l] = self.field(f, self.t(l.lower().replace(" ","_")), d)
+        lf = tk.Frame(f, bg=C["bg"]); lf.pack(fill="x", pady=12)
+        tk.Label(lf, text="Language", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        self.lang = tk.StringVar(value="en")
+        for v, t in [("en","English"),("ms","Bahasa Malaysia"),("zh","Chinese")]:
+            tk.Radiobutton(lf, text=t, variable=self.lang, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=8)
+        self.btn(c, self.t("get_started"), self.save_wizard).pack(pady=30)
+        tk.Label(c, text=self.t("offline_msg"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack()
+
+    def save_wizard(self):
+        n = self.se["Business Name"].get().strip()
+        if not n:
+            return messagebox.showerror("Error", "Enter business name")
+        self.db.set_setting("business_name", n)
+        self.db.set_setting("business_phone", self.se["Phone"].get().strip())
+        self.db.set_setting("language", self.lang.get())
+        self.db.set_setting("setup_complete", "true")
+        self.layout()
+
+    # ─── PIN ───
+    def pin_screen(self):
+        self.clr()
+        self.root.configure(bg=C["bg"])
+        c = tk.Frame(self.root, bg=C["bg"]); c.pack(expand=True, fill="both")
+        n = self.db.get_setting("business_name", "Shop")
+        tk.Label(c, text=n, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 26, "bold")).pack(pady=8)
+        tk.Label(c, text=self.t("enter_pin"), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(pady=8)
+        self.pin_e = tk.Entry(c, font=("Segoe UI", 24), bd=1, relief="solid", width=8, justify="center", show="*")
+        self.pin_e.pack(ipady=8)
+        self.pin_e.focus()
+        self.pin_e.bind("<Return>", lambda e: self.chk_pin())
+        self.btn(c, self.t("login"), self.chk_pin).pack(pady=20)
+
+    def chk_pin(self):
+        if self.h(self.pin_e.get().strip()) == self.db.get_setting("pin_hash"):
+            self.layout()
+        else:
+            messagebox.showerror(self.t("error"), self.t("wrong_pin"))
+            self.pin_e.delete(0, tk.END)
+
+    # ─── LICENSE ACTIVATION ───
+    def activate_screen(self):
+        self.clr()
+        self.root.configure(bg=C["bg"])
+        c = tk.Frame(self.root, bg=C["bg"])
+        c.pack(expand=True, fill="both")
+        
+        hwid = get_hwid()
+        
+        tk.Label(c, text="License Activation Required", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 24, "bold")).pack(pady=8)
+        tk.Label(c, text="Enter your license key to activate", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(pady=5)
+        
+        # HWID display
+        hwid_frame = tk.Frame(c, bg=C["card"], bd=1, relief="solid", padx=15, pady=10)
+        hwid_frame.pack(pady=15, padx=40, fill="x")
+        tk.Label(hwid_frame, text="Your Hardware ID (send this to get a key):", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w")
+        
+        hwid_row = tk.Frame(hwid_frame, bg=C["card"])
+        hwid_row.pack(fill="x", pady=5)
+        tk.Label(hwid_row, text=hwid, bg=C["card"], fg=C["pri"], font=("Consolas", 16, "bold")).pack(side="left")
+        
+        def copy_hwid():
+            self.root.clipboard_clear()
+            self.root.clipboard_append(hwid)
+            messagebox.showinfo("Copied", "HWID copied to clipboard!")
+        
+        copy_btn = tk.Button(hwid_row, text="Copy", command=copy_hwid, bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=12, pady=4, cursor="hand2")
+        copy_btn.pack(side="right")
+        copy_btn.bind("<Enter>", lambda e: copy_btn.configure(bg=C["pri_h"]))
+        copy_btn.bind("<Leave>", lambda e: copy_btn.configure(bg=C["pri"]))
+        
+        # Key input
+        self.key_entry = tk.Entry(c, font=("Segoe UI", 14), bd=1, relief="solid", width=30, justify="center")
+        self.key_entry.pack(pady=15, ipady=8)
+        
+        bf = tk.Frame(c, bg=C["bg"])
+        bf.pack(pady=10)
+        
+        def activate():
+            key = self.key_entry.get().strip()
+            expected = hashlib.sha256(hwid.encode()).hexdigest()[:20].upper()
+            if key.upper() == expected:
+                self.db.set_setting("licensed_hwid", hwid)
+                self.db.set_setting("license_key", key)
+                for w in self.root.winfo_children():
+                    w.destroy()
+                messagebox.showinfo("Activated", "License activated! You can now use the full app.")
+                if not self.db.get_setting("setup_complete"):
+                    self.wizard()
+                else:
+                    self.layout()
+            else:
+                messagebox.showerror("Invalid Key", "This license key is not valid.")
+        
+        def try_demo():
+            for w in self.root.winfo_children():
+                w.destroy()
+            if not self.db.get_setting("setup_complete"):
+                self.wizard()
+            else:
+                self.layout()
+        
+        b = tk.Button(bf, text="Activate", command=activate, bg=C["pri"], fg=C["white"], font=("Segoe UI", 12, "bold"), bd=0, padx=30, pady=10, cursor="hand2")
+        b.pack(side="left", padx=5)
+        b.bind("<Enter>", lambda e: b.configure(bg=C["pri_h"]))
+        b.bind("<Leave>", lambda e: b.configure(bg=C["pri"]))
+        
+        b2 = tk.Button(bf, text="Try Demo (7 days)", command=try_demo, bg=C["card"], fg=C["txt"], font=("Segoe UI", 12), bd=1, relief="solid", padx=20, pady=10, cursor="hand2")
+        b2.pack(side="left", padx=5)
+        
+        tk.Label(c, text="Demo mode: limited to 10 jobs, 7 day trial", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(pady=10)
+        tk.Label(c, text="Contact seller to get your license key", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack()
+
+    # ─── LAYOUT ───
+    def layout(self):
+        for w in self.root.winfo_children():
+            w.destroy()
+        self.root.configure(bg=C["bg"])
+        self.root.title(self.t("app_title"))
+        self.side = tk.Frame(self.root, bg=C["side"], width=240)
+        self.side.pack(side="left", fill="y")
+        self.side.pack_propagate(False)
+        self.content = tk.Frame(self.root, bg=C["bg"])
+        self.content.pack(side="left", fill="both", expand=True)
+        
+        if self.is_demo():
+            days_left = 7
+            try:
+                install_date = self.db.get_setting("install_date")
+                if install_date:
+                    days_left = 7 - (datetime.now() - datetime.fromisoformat(install_date)).days
+            except:
+                pass
+            demo_bar = tk.Frame(self.root, bg="#FEF3C7", height=30)
+            demo_bar.place(relx=0.5, rely=0, anchor="n", relwidth=1)
+            demo_bar.pack_propagate(False)
+            tk.Label(demo_bar, text=f"DEMO MODE - {days_left} days remaining | Activate with license key", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10, "bold")).pack(expand=True)
+        
+        n = self.db.get_setting("business_name", "Shop")
+        tk.Label(self.side, text=n, bg=C["side"], fg=C["white"], font=("Segoe UI", 15, "bold"), pady=25, wraplength=220).pack(fill="x")
+        tk.Frame(self.side, bg="#2A2A2A", height=1).pack(fill="x", padx=20)
+        
+        for txt, cmd in [("Home", self.pg_home), ("Jobs", self.pg_jobs), ("Customers", self.pg_custs),
+                         ("Appointments", self.pg_cal), ("Invoices", self.pg_invs), ("Reports", self.pg_rpt), 
+                         ("Search", self.pg_search), ("Backup", self.pg_backup), ("Settings", self.pg_set)]:
+            b = tk.Button(self.side, text=f"  {self.t(txt.lower())}", command=cmd, bg=C["side"], fg="#AAAAAA", font=("Segoe UI", 12), bd=0, anchor="w", padx=25, pady=14, activebackground=C["side_h"], activeforeground=C["white"], cursor="hand2")
+            b.pack(fill="x")
+            b.bind("<Enter>", lambda e, b=b: b.configure(bg=C["side_h"], fg=C["white"]))
+            b.bind("<Leave>", lambda e, b=b: b.configure(bg=C["side"], fg="#AAAAAA"))
+        
+        self.pg_home()
+
+    # ─── HOME ───
+    def pg_home(self):
+        self.clr()
+        self.hdr(self.t("dashboard"))
+        
+        # Sync indicator
+        net_path = self.db.get_setting("network_path")
+        if net_path:
+            sf = tk.Frame(self.content, bg="#DBEAFE", padx=20, pady=6)
+            sf.pack(fill="x")
+            tk.Label(sf, text=f"Synced to: {net_path}", bg="#DBEAFE", fg="#1E40AF", font=("Segoe UI", 10)).pack(side="left")
+            tk.Button(sf, text="Sync Now", command=self.sync_now, bg="#DBEAFE", fg="#1E40AF", font=("Segoe UI", 9, "bold"), bd=0, cursor="hand2").pack(side="right")
+        
+        today = datetime.now().strftime("%Y-%m-%d")
+        jobs = self.db.get_jobs()
+        active = len([j for j in jobs if j["status"] != "done"])
+        appts = len(self.db.get_appointments(today))
+        unpaid = self.db.get_invoices(paid=False)
+        owed = sum(i["amount"] for i in unpaid)
+        
+        tf = tk.Frame(self.content, bg=C["bg"], padx=20)
+        tf.pack(fill="x")
+        done_count = len([j for j in jobs if j["status"] == "done"])
+        for i, (l, v, cmd) in enumerate([(self.t("active_jobs"), str(active), self.pg_jobs), (self.t("appointments"), str(appts), self.pg_cal), (self.t("outstanding"), f"RM {owed:.0f}", self.pg_invs), (self.t("jobs_done"), str(done_count), self.pg_jobs)]):
+            c = tk.Frame(tf, bg=C["card"], bd=1, relief="solid", cursor="hand2")
+            c.grid(row=0, column=i, padx=6, pady=6, sticky="nsew")
+            c.bind("<Button-1>", lambda e, c=cmd: c())
+            tk.Label(c, text=l, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15, pady=8).pack(fill="x")
+            tk.Label(c, text=v, bg=C["card"], fg=C["txt"], font=("Segoe UI", 22, "bold"), anchor="w", padx=15, pady=8).pack(fill="x")
+            if l == self.t("outstanding") and owed > 0:
+                tk.Label(c, text=f"{len(unpaid)} {self.t('unpaid_invoices')}", bg=C["card"], fg=C["err"], font=("Segoe UI", 9), anchor="w", padx=15, pady=6).pack(fill="x")
+            c.bind("<Enter>", lambda e, c=c: c.configure(bg=C["card_h"]))
+            c.bind("<Leave>", lambda e, c=c: c.configure(bg=C["card"]))
+        for i in range(4):
+            tf.columnconfigure(i, weight=1)
+        
+        rf = tk.Frame(self.content, bg=C["bg"], padx=20, pady=15)
+        rf.pack(fill="x")
+        rems = []
+        for j in jobs:
+            if j["status"] == "in-progress" and j["due_date"] and j["due_date"] <= today:
+                rems.append(f"{j['job_code']}: {j['item']} - ready")
+        for a in self.db.get_appointments(today):
+            rems.append(f"{a['time']} - {a['customer_name'] or 'Walk-in'}")
+        if rems:
+            tk.Label(rf, text=self.t("reminders"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=8)
+            for r in rems[:5]:
+                row = tk.Frame(rf, bg="#FEF3C7", bd=1, relief="solid", pady=8, padx=14)
+                row.pack(fill="x", pady=3)
+                tk.Label(row, text=r, bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 11), anchor="w").pack(fill="x")
+        
+        qf = tk.Frame(self.content, bg=C["bg"], padx=20, pady=10)
+        qf.pack(fill="x")
+        tk.Label(qf, text=self.t("quick_actions"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=8)
+        bf = tk.Frame(qf, bg=C["bg"]); bf.pack(fill="x")
+        for t, c in [(self.t("new_job"), self.pg_new_job), (self.t("new_customer"), self.pg_new_cust), (self.t("new_appointment"), self.pg_new_appt)]:
+            b = self.btn(bf, t, c); b.pack(side="left", padx=4)
+
+    # ─── JOBS ───
+    def pg_jobs(self):
+        self.clr()
+        self.hdr(self.t("jobs"), self.t("new_job"), self.pg_new_job)
+        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f.pack(fill="both", expand=True)
+        jobs = self.db.get_jobs()
+        if not jobs:
+            tk.Label(f, text=self.t("no_jobs"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            return
+        h = tk.Frame(f, bg=C["bg"]); h.pack(fill="x", pady=8)
+        for t, w in [("Code",14),("Item",22),("Customer",16),("Quote",10),("Status",11),("Due",11),("Action",8)]:
+            tk.Label(h, text=t, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=w, anchor="w").pack(side="left", padx=4)
+        sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
+        for j in jobs:
+            r = self.row(f)
+            tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=14, anchor="w").pack(side="left", padx=4)
+            tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), width=22, anchor="w").pack(side="left", padx=4)
+            tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=16, anchor="w").pack(side="left", padx=4)
+            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=10, anchor="w").pack(side="left", padx=4)
+            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 9, "bold"), padx=8, pady=2).pack(side="left", padx=4)
+            tk.Label(r, text=j["due_date"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=11, anchor="w").pack(side="left", padx=4)
+            if j["status"] != "done":
+                b = tk.Button(r, text="Done", command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=10, pady=2, cursor="hand2")
+                b.pack(side="right", padx=4)
+
+    def pg_new_job(self):
+        self.clr()
+        self.hdr(self.t("new_job_title"))
+        f = tk.Frame(self.content, bg=C["bg"], padx=25)
+        f.pack(fill="both", expand=True)
+        self.je = {}
+        
+        # Customer dropdown
+        cf = tk.Frame(f, bg=C["bg"])
+        cf.pack(fill="x", pady=8)
+        tk.Label(cf, text=self.t("customer"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        customers = self.db.get_customers()
+        cust_names = [c["name"] for c in customers] if customers else []
+        self.cust_map = {c["name"]: c for c in customers} if customers else {}
+        
+        self.je["Customer"] = tk.StringVar()
+        self.cust_entry = tk.Entry(cf, font=("Segoe UI", 12), bd=1, relief="solid")
+        self.cust_entry.pack(side="left", fill="x", expand=True, ipady=6)
+        
+        if cust_names:
+            tk.Label(cf, text="or pick:", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left", padx=(10,5))
+            self.cust_menu_var = tk.StringVar()
+            menu = tk.OptionMenu(cf, self.cust_menu_var, *cust_names, command=self._pick_cust)
+            menu.configure(font=("Segoe UI", 10), width=15)
+            menu.pack(side="left", ipady=4)
+        
+        # Phone field
+        pf = tk.Frame(f, bg=C["bg"])
+        pf.pack(fill="x", pady=8)
+        tk.Label(pf, text=self.t("phone"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        self.je["Phone"] = tk.Entry(pf, font=("Segoe UI", 12), bd=1, relief="solid")
+        self.je["Phone"].insert(0, "+60")
+        self.je["Phone"].pack(side="left", fill="x", expand=True, ipady=6)
+        
+        for l in ["Item", "Problem", "Quote (RM)", "Notes"]:
+            self.je[l] = self.field(f, self.t(l.lower()))
+        self.je["Due Date"] = self.date_field(f, self.t("due_date"))
+        bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
+        self.btn(bf, self.t("save"), self.save_job).pack(side="left")
+        tk.Button(bf, text=self.t("cancel"), command=self.pg_jobs, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
+
+    def _pick_cust(self, name):
+        if name in self.cust_map:
+            c = self.cust_map[name]
+            self.cust_entry.delete(0, tk.END)
+            self.cust_entry.insert(0, c["name"])
+            self.je["Phone"].delete(0, tk.END)
+            self.je["Phone"].insert(0, c["phone"] or "+60")
+
+    def save_job(self):
+        cust_name = self.cust_entry.get().strip()
+        phone = self.je["Phone"].get().strip()
+        item = self.je["Item"].get().strip()
+        if not item:
+            return messagebox.showerror("Error", "Enter item")
+        try:
+            q = float(self.je["Quote (RM)"].get().strip() or "0")
+        except:
+            return messagebox.showerror("Error", "Quote must be number")
+        
+        if self.is_demo() and len(self.db.get_jobs()) >= 10:
+            return messagebox.showerror("Demo Limit", "Demo mode is limited to 10 jobs.\nPlease activate with a license key.")
+        
+        cid = None
+        if cust_name:
+            if cust_name in self.cust_map:
+                cid = self.cust_map[cust_name]["id"]
+            else:
+                cid = self.db.add_customer(cust_name, phone)
+        
+        due = self.je["Due Date"].get() if isinstance(self.je["Due Date"], tk.StringVar) else self.je["Due Date"].get().strip()
+        self.db.add_job(cid, item, self.je["Problem"].get().strip(), q, due, self.je["Notes"].get().strip())
+        messagebox.showinfo("Done", "Job saved")
+        self.pg_jobs()
+
+    def mark_done(self, job):
+        self.db.update_job_status(job["id"], "done")
+        win = tk.Toplevel(self.root)
+        win.title("Job Complete")
+        win.geometry("360x300")
+        win.configure(bg=C["bg"])
+        win.grab_set()
+        
+        tk.Label(win, text="Job Complete!", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=8)
+        tk.Label(win, text=job["item"], bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack()
+        tk.Label(win, text=f"RM {job['quote']:.2f}", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(pady=5)
+        
+        def send_inv():
+            inv_id = self.db.add_invoice(job["id"], job["quote"])
+            inv_code = self.db.get_invoices()[-1]["invoice_code"]
+            
+            cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
+            phone = ""
+            if cust and cust["phone"]:
+                phone = cust["phone"].replace("+","").replace("-","").replace(" ","")
+                if not phone.startswith("60"):
+                    phone = "60" + phone
+            
+            win.destroy()
+            
+            if phone:
+                msg = f"{self.db.get_setting('business_name', 'Shop')}\nInvoice: {inv_code}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\nThank you for your business!"
+                url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
+                try:
+                    webbrowser.open(url)
+                except:
+                    pass
+                messagebox.showinfo("Done", f"Invoice created! WhatsApp opened for +{phone}")
+            else:
+                messagebox.showwarning("Warning", "Invoice created but no phone number. Add phone to customer first.")
+            self.pg_jobs()
+            messagebox.showinfo("Done", "Invoice created" + (" + WhatsApp opened" if phone else ""))
+            self.pg_jobs()
+        
+        def just_inv():
+            self.db.add_invoice(job["id"], job["quote"])
+            win.destroy()
+            messagebox.showinfo("Done", "Invoice created")
+            self.pg_jobs()
+        
+        self.btn(win, "Invoice + WhatsApp", send_inv).pack(fill="x", padx=25, pady=8)
+        self.btn(win, "Just Invoice", just_inv, bg=C["card"], fg=C["txt"]).pack(fill="x", padx=25, pady=4)
+        tk.Button(win, text="Skip", command=win.destroy, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10), bd=0, cursor="hand2").pack(pady=10)
+
+    # ─── CUSTOMERS ───
+    def pg_custs(self):
+        self.clr()
+        self.hdr(self.t("customers"), self.t("new_customer"), self.pg_new_cust)
+        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f.pack(fill="both", expand=True)
+        cs = self.db.get_customers()
+        if not cs:
+            tk.Label(f, text=self.t("no_customers"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            return
+        for c in cs:
+            r = self.row(f)
+            tk.Label(r, text=c["name"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left")
+            tk.Label(r, text=c["phone"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=20).pack(side="left")
+
+    def pg_new_cust(self):
+        self.clr()
+        self.hdr(self.t("new_customer_title"))
+        f = tk.Frame(self.content, bg=C["bg"], padx=25)
+        f.pack(fill="both", expand=True)
+        self.ce = {}
+        for l, d in [("Name",""), ("Phone","+60"), ("Email",""), ("Notes","")]:
+            self.ce[l] = self.field(f, self.t(l.lower()) if l.lower() in ["name","phone","notes"] else l, d)
+        bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
+        self.btn(bf, self.t("save"), self.save_cust).pack(side="left")
+        tk.Button(bf, text=self.t("cancel"), command=self.pg_custs, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
+
+    def save_cust(self):
+        n = self.ce["Name"].get().strip()
+        if not n:
+            return messagebox.showerror("Error", "Enter name")
+        self.db.add_customer(n, self.ce["Phone"].get().strip(), self.ce["Email"].get().strip(), None, self.ce["Notes"].get().strip())
+        messagebox.showinfo("Done", "Customer saved")
+        self.pg_custs()
+
+    # ─── CALENDAR ───
+    def pg_cal(self):
+        self.clr()
+        self.hdr(self.t("appointments"), self.t("new_appointment"), self.pg_new_appt)
+        today = datetime.now().strftime("%Y-%m-%d")
+        tk.Label(self.content, text=today, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12), padx=28).pack(anchor="w", pady=8)
+        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f.pack(fill="both", expand=True)
+        appts = self.db.get_appointments(today)
+        if not appts:
+            tk.Label(f, text=self.t("no_appointments"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            return
+        for a in appts:
+            r = self.row(f)
+            tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w").pack(side="left")
+            tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left", padx=15)
+            tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
+
+    def pg_new_appt(self):
+        self.clr()
+        self.hdr(self.t("new_appointment_title"))
+        f = tk.Frame(self.content, bg=C["bg"], padx=25)
+        f.pack(fill="both", expand=True)
+        self.ae = {}
+        self.ae["Customer"] = self.field(f, self.t("customer"))
+        self.ae["Date"] = self.date_field(f, self.t("date"))
+        self.ae["Time"] = self.time_field(f, self.t("time"))
+        self.ae["Purpose"] = self.field(f, self.t("purpose"))
+        self.ae["Notes"] = self.field(f, self.t("notes"))
+        bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
+        self.btn(bf, self.t("save"), self.save_appt).pack(side="left")
+        tk.Button(bf, text=self.t("cancel"), command=self.pg_cal, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
+
+    def save_appt(self):
+        c = self.ae["Customer"].get().strip()
+        d = self.ae["Date"].get() if isinstance(self.ae["Date"], tk.StringVar) else self.ae["Date"].get().strip()
+        h = self.ae["Time"][0].get()
+        m = self.ae["Time"][1].get()
+        t = f"{h}:{m}"
+        if not d:
+            return messagebox.showerror("Error", "Enter date")
+        cid = None
+        if c:
+            cs = self.db.get_customers(c)
+            cid = cs[0]["id"] if cs else self.db.add_customer(c)
+        self.db.add_appointment(cid, d, t, self.ae["Purpose"].get().strip(), self.ae["Notes"].get().strip())
+        messagebox.showinfo("Done", "Appointment saved")
+        self.pg_cal()
+
+    # ─── INVOICES ───
+    def pg_invs(self):
+        self.clr()
+        self.hdr(self.t("invoices"), self.t("from_job"), self.pg_new_inv)
+        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f.pack(fill="both", expand=True)
+        invs = self.db.get_invoices()
+        if not invs:
+            tk.Label(f, text=self.t("no_invoices"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            return
+        
+        unpaid = [i for i in invs if not i["paid"]]
+        paid = [i for i in invs if i["paid"]]
+        
+        if unpaid:
+            total_owed = sum(i["amount"] for i in unpaid)
+            hdr = tk.Frame(f, bg=C["bg"])
+            hdr.pack(fill="x", pady=5)
+            tk.Label(hdr, text=f"{self.t('unpaid')} ({len(unpaid)} invoices, RM {total_owed:.2f} total)", bg=C["bg"], fg=C["err"], font=("Segoe UI", 13, "bold")).pack(side="left")
+            
+            for i in unpaid:
+                r = self.row(f)
+                r.configure(bg="#FEF2F2")
+                left = tk.Frame(r, bg="#FEF2F2")
+                left.pack(side="left", fill="x", expand=True)
+                tk.Label(left, text=i["invoice_code"], bg="#FEF2F2", fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
+                tk.Label(left, text=i["customer_name"] or "Unknown", bg="#FEF2F2", fg=C["txt"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
+                tk.Label(left, text=f"RM {i['amount']:.2f}", bg="#FEF2F2", fg=C["err"], font=("Segoe UI", 12, "bold"), anchor="w", padx=15).pack(side="left")
+                
+                right = tk.Frame(r, bg="#FEF2F2")
+                right.pack(side="right")
+                tk.Button(right, text=self.t("send_whatsapp"), command=lambda inv=i: self.send_whatsapp(inv), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left", padx=3)
+                tk.Button(right, text=self.t("mark_paid"), command=lambda iid=i["id"]: self.mark_paid(iid), bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left")
+        
+        if paid:
+            tk.Label(f, text=f"{self.t('paid')} ({len(paid)})", bg=C["bg"], fg=C["ok"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=10)
+            for i in paid:
+                r = self.row(f)
+                tk.Label(r, text=i["invoice_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
+                tk.Label(r, text=i["customer_name"] or "Unknown", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
+                tk.Label(r, text=f"RM {i['amount']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=15).pack(side="left")
+                method = i["payment_method"] or ""
+                if method:
+                    method_bg = {"Cash": C["ok"], "E-Wallet": "#2563EB", "Card": "#7C3AED", "Transfer": C["warn"]}.get(method, C["txt3"])
+                    tk.Label(r, text=method, bg=method_bg, fg=C["white"], font=("Segoe UI", 9, "bold"), padx=8, pady=2).pack(side="right", padx=5)
+                tk.Label(r, text="PAID", bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), padx=10, pady=2).pack(side="right")
+
+    def send_whatsapp(self, inv):
+        job = self.db.get_jobs()
+        job_for_inv = None
+        for j in job:
+            if j["id"] == inv["job_id"]:
+                job_for_inv = j
+                break
+        
+        cust = None
+        if job_for_inv and job_for_inv["customer_id"]:
+            cust = self.db.get_customer(job_for_inv["customer_id"])
+        
+        phone = ""
+        if cust and cust["phone"]:
+            phone = cust["phone"].replace("+","").replace("-","").replace(" ","")
+            if not phone.startswith("60"):
+                phone = "60" + phone
+        
+        if not phone:
+            return messagebox.showwarning("No Phone", "No phone number found for this customer.")
+        
+        msg = f"{self.db.get_setting('business_name', 'Shop')}\n"
+        msg += f"Invoice: {inv['invoice_code']}\n"
+        if job_for_inv:
+            msg += f"Item: {job_for_inv['item']}\n"
+            msg += f"Repair: {job_for_inv['problem'] or 'N/A'}\n"
+        msg += f"Amount: RM {inv['amount']:.2f}\n"
+        msg += f"Status: UNPAID\n\n"
+        msg += f"Please make payment. Thank you!"
+        
+        url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
+        try:
+            webbrowser.open(url)
+        except:
+            pass
+        messagebox.showinfo("WhatsApp", f"Opening WhatsApp for +{phone}")
+
+    def mark_paid(self, iid):
+        win = tk.Toplevel(self.root)
+        win.title("Payment")
+        win.geometry("280x220")
+        win.configure(bg=C["bg"])
+        tk.Label(win, text=self.t("how_paid"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
+        for m in ["Cash", "E-Wallet", "Card", "Transfer"]:
+            b = self.btn(win, self.t(m.lower().replace("-","_")), lambda m=m: [self.db.mark_invoice_paid(iid, m), win.destroy(), self.pg_invs()])
+            b.pack(fill="x", padx=30, pady=3)
+
+    def pg_new_inv(self):
+        self.clr()
+        self.hdr(self.t("create_invoice"))
+        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f.pack(fill="both", expand=True)
+        jobs = self.db.get_jobs(status="done")
+        if not jobs:
+            tk.Label(f, text=self.t("no_jobs"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            return
+        for j in jobs:
+            r = self.row(f)
+            tk.Label(r, text=f"{j['job_code']} - {j['item']}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
+            tk.Label(r, text=f"RM {j['quote']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=15).pack(side="left")
+            tk.Button(r, text="Create", command=lambda j=j: [self.db.add_invoice(j["id"], j["quote"]), messagebox.showinfo("Done", "Invoice created"), self.pg_invs()], bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=15, pady=5, cursor="hand2").pack(side="right")
+
+    # ─── REPORTS ───
+    def pg_rpt(self):
+        self.clr()
+        self.hdr(self.t("reports"))
+        today = datetime.now().strftime("%Y-%m-%d")
+        week = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+        month = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+        jobs = self.db.get_jobs()
+        invs = self.db.get_invoices()
+        paid = [i for i in invs if i["paid"]]
+        unpaid = [i for i in invs if not i["paid"]]
+        
+        # Revenue = money collected (paid invoices)
+        today_rev = sum(i["amount"] for i in paid if i["created_at"][:10] == today)
+        week_rev = sum(i["amount"] for i in paid if i["created_at"][:10] >= week)
+        month_rev = sum(i["amount"] for i in paid if i["created_at"][:10] >= month)
+        
+        # Outstanding = money still owed (unpaid invoices)
+        outstanding = sum(i["amount"] for i in unpaid)
+        
+        # Total earned all time
+        total_earned = sum(i["amount"] for i in paid)
+        
+        sf = tk.Frame(self.content, bg=C["bg"], padx=20)
+        sf.pack(fill="x")
+        
+        cards = [
+            ("Revenue Today", f"RM {today_rev:.2f}", "Money collected today", C["ok"]),
+            ("Revenue This Week", f"RM {week_rev:.2f}", "Money collected this week", C["ok"]),
+            ("Revenue This Month", f"RM {month_rev:.2f}", "Money collected this month", C["ok"]),
+            ("Outstanding", f"RM {outstanding:.2f}", "Still owed by customers", C["err"] if outstanding > 0 else C["ok"]),
+        ]
+        
+        for i, (title, value, desc, color) in enumerate(cards):
+            c = tk.Frame(sf, bg=C["card"], bd=1, relief="solid", pady=12, padx=18)
+            c.grid(row=0, column=i, padx=6, pady=8, sticky="nsew")
+            tk.Label(c, text=title, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w")
+            tk.Label(c, text=value, bg=C["card"], fg=color, font=("Segoe UI", 18, "bold")).pack(anchor="w", pady=5)
+            tk.Label(c, text=desc, bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9)).pack(anchor="w", pady=2)
+        for i in range(4):
+            sf.columnconfigure(i, weight=1)
+        
+        # Summary section
+        st = tk.Frame(self.content, bg=C["bg"], padx=20, pady=15)
+        st.pack(fill="both", expand=True)
+        
+        tk.Label(st, text="Summary", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(anchor="w", pady=10)
+        
+        summary = [
+            ("Total Earned (All Time)", f"RM {total_earned:.2f}", C["ok"]),
+            ("Outstanding (Unpaid)", f"RM {outstanding:.2f}", C["err"] if outstanding > 0 else C["ok"]),
+            ("Total Jobs", str(len(jobs)), C["txt"]),
+            ("Completed Jobs", str(len([j for j in jobs if j["status"]=="done"])), C["ok"]),
+            ("Active Jobs", str(len([j for j in jobs if j["status"]!="done"])), C["warn"]),
+            ("Total Customers", str(len(self.db.get_customers())), C["txt"]),
+            ("Paid Invoices", str(len(paid)), C["ok"]),
+            ("Unpaid Invoices", str(len(unpaid)), C["err"] if unpaid else C["ok"]),
+        ]
+        
+        for label, value, color in summary:
+            r = self.row(st)
+            tk.Label(r, text=label, bg=C["card"], fg=C["txt"], font=("Segoe UI", 11), anchor="w").pack(side="left")
+            tk.Label(r, text=value, bg=C["card"], fg=color, font=("Segoe UI", 11, "bold"), anchor="e").pack(side="right")
+
+    # ─── SEARCH ───
+    def pg_search(self):
+        self.clr()
+        self.hdr(self.t("search"))
+        sf = tk.Frame(self.content, bg=C["bg"], padx=20, pady=10)
+        sf.pack(fill="x")
+        self.srch_e = tk.Entry(sf, font=("Segoe UI", 13), bd=1, relief="solid")
+        self.srch_e.pack(side="left", fill="x", expand=True, ipady=8, padx=(0,10))
+        self.btn(sf, self.t("search"), self.do_search).pack(side="left")
+        self.srch_r = tk.Frame(self.content, bg=C["bg"], padx=20)
+        self.srch_r.pack(fill="both", expand=True)
+        tk.Label(self.srch_r, text=self.t("type_search"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 12)).pack(pady=40)
+
+    def do_search(self):
+        q = self.srch_e.get().strip()
+        if not q:
+            return
+        for w in self.srch_r.winfo_children():
+            w.destroy()
+        jobs = self.db.get_jobs()
+        custs = self.db.get_customers()
+        invs = self.db.get_invoices()
+        
+        q_lower = q.lower()
+        
+        fj = [j for j in jobs if q_lower in (j["job_code"]+j["item"]+(j["problem"] or "")+(j["customer_name"] or "")).lower() or q == str(j["id"])]
+        fc = [c for c in custs if q_lower in (c["name"]+(c["phone"] or "")).lower() or q == str(c["id"])]
+        fi = [i for i in invs if q_lower in (i["invoice_code"]+(i["customer_name"] or "")).lower() or q == str(i["id"])]
+        
+        t = len(fj)+len(fc)+len(fi)
+        if t == 0:
+            tk.Label(self.srch_r, text=f"No results for '{q}'", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=40)
+            return
+        tk.Label(self.srch_r, text=f"{t} result(s) for '{q}'", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(anchor="w", pady=8)
+        if fj:
+            tk.Label(self.srch_r, text=f"Jobs ({len(fj)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
+            for j in fj:
+                r = self.row(self.srch_r)
+                tk.Label(r, text=f"{j['job_code']} - {j['item']}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
+                tk.Label(r, text=j["status"].upper(), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), padx=10).pack(side="left")
+                tk.Label(r, text=f"ID: {j['id']}", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
+        if fc:
+            tk.Label(self.srch_r, text=f"Customers ({len(fc)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
+            for c in fc:
+                r = self.row(self.srch_r)
+                tk.Label(r, text=c["name"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
+                tk.Label(r, text=c["phone"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), padx=10).pack(side="left")
+                tk.Label(r, text=f"ID: {c['id']}", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
+        if fi:
+            tk.Label(self.srch_r, text=f"Invoices ({len(fi)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
+            for i in fi:
+                r = self.row(self.srch_r)
+                tk.Label(r, text=f"{i['invoice_code']} - RM {i['amount']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
+                s = "PAID" if i["paid"] else "UNPAID"
+                co = C["ok"] if i["paid"] else C["err"]
+                tk.Label(r, text=s, bg=co, fg=C["white"], font=("Segoe UI", 9, "bold"), padx=8, pady=2).pack(side="right")
+
+    # ─── EXPORT ───
+    def pg_backup(self):
+        self.clr()
+        self.hdr(self.t("backup"))
+        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f.pack(fill="both", expand=True)
+        
+        # Full backup section
+        s1 = self.row(f)
+        tk.Label(s1, text="Full Backup (Recommended)", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s1, text="Saves all data: customers, jobs, invoices, appointments, settings", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        bf1 = tk.Frame(s1, bg=C["card"])
+        bf1.pack(fill="x", pady=5)
+        self.btn(bf1, "Backup Now", self.do_backup, bg=C["ok"]).pack(side="left", padx=5)
+        self.btn(bf1, "Restore Backup", self.do_restore, bg=C["warn"]).pack(side="left", padx=5)
+        
+        # CSV export section
+        s2 = self.row(f)
+        tk.Label(s2, text="Export to CSV (for Excel/accounting)", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        for l, fn, g in [("Customers","customers.csv",lambda:self.db.get_customers()),("Jobs","jobs.csv",lambda:self.db.get_jobs()),("Invoices","invoices.csv",lambda:self.db.get_invoices())]:
+            r = tk.Frame(s2, bg=C["card"])
+            r.pack(fill="x", pady=3)
+            tk.Label(r, text=l, bg=C["card"], fg=C["txt"], font=("Segoe UI", 11), anchor="w").pack(side="left")
+            tk.Button(r, text=f"Export {fn}", command=lambda fn=fn,g=g: self.do_export(fn,g), bg=C["pri"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=12, pady=4, cursor="hand2").pack(side="right")
+
+    def do_backup(self):
+        from tkinter import filedialog
+        db_path = os.path.join(APP_DIR, "data", "data.db")
+        if not os.path.exists(db_path):
+            return messagebox.showerror("Error", "No data to backup")
+        
+        default_name = f"repairshop_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
+        fp = filedialog.asksaveasfilename(defaultextension=".db", filetypes=[("Database","*.db")], initialfile=default_name)
+        if not fp:
+            return
+        
+        import shutil
+        try:
+            shutil.copy2(db_path, fp)
+            messagebox.showinfo("Backup Complete", f"Data backed up to:\n{fp}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Backup failed: {e}")
+
+    def do_restore(self):
+        from tkinter import filedialog
+        fp = filedialog.askopenfilename(filetypes=[("Database","*.db")])
+        if not fp:
+            return
+        
+        if not messagebox.askyesno("Confirm Restore", "This will replace ALL current data with the backup.\n\nAre you sure?"):
+            return
+        
+        import shutil
+        db_path = os.path.join(APP_DIR, "data", "data.db")
+        try:
+            shutil.copy2(fp, db_path)
+            self.db = Database(db_path)
+            messagebox.showinfo("Restore Complete", "Data restored! App will refresh.")
+            self.layout()
+        except Exception as e:
+            messagebox.showerror("Error", f"Restore failed: {e}")
+
+    def do_export(self, fn, g):
+        from tkinter import filedialog, csv
+        data = g()
+        if not data:
+            return messagebox.showinfo("Info", "Nothing to export")
+        fp = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV","*.csv")], initialfile=fn)
+        if not fp:
+            return
+        try:
+            with open(fp, "w", newline="", encoding="utf-8") as f:
+                w = csv.writer(f)
+                w.writerow(data[0].keys())
+                for row in data:
+                    w.writerow(list(row))
+            messagebox.showinfo("Done", f"Exported to {fp}")
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+    # ─── SETTINGS ───
+    def pg_set(self):
+        self.clr()
+        self.hdr(self.t("settings"))
+        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f.pack(fill="both", expand=True)
+        
+        s = self.row(f)
+        tk.Label(s, text=self.t("business_info"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        for l, v, cmd in [("Name", self.db.get_setting("business_name",""), self.edit_biz_name), ("Phone", self.db.get_setting("business_phone",""), self.edit_biz_phone)]:
+            r = tk.Frame(s, bg=C["card"])
+            r.pack(fill="x", pady=2)
+            tk.Label(r, text=f"{self.t(l.lower())}: {v}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
+            tk.Button(r, text="Edit", command=cmd, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+        
+        s2 = self.row(f)
+        tk.Label(s2, text=self.t("security"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        has = bool(self.db.get_setting("pin_hash"))
+        if has:
+            tk.Label(s2, text=self.t("pin_active"), bg=C["card"], fg=C["ok"], font=("Segoe UI", 11)).pack(anchor="w", pady=2)
+            self.btn(s2, self.t("change_pin"), self.pg_chg_pin).pack(anchor="w", pady=5)
+            self.btn(s2, self.t("remove_pin"), self.rm_pin, bg=C["err"]).pack(anchor="w", pady=3)
+        else:
+            tk.Label(s2, text=self.t("pin_not_set"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(anchor="w", pady=2)
+            self.btn(s2, self.t("set_pin"), self.pg_set_pin).pack(anchor="w", pady=5)
+        
+        # Language setting
+        s3 = self.row(f)
+        tk.Label(s3, text="Language", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        lf = tk.Frame(s3, bg=C["card"])
+        lf.pack(fill="x", pady=5)
+        self.lang_var = tk.StringVar(value=self.lang)
+        for v, t in [("en","English"),("ms","Bahasa Malaysia"),("zh","Chinese")]:
+            tk.Radiobutton(lf, text=t, variable=self.lang_var, value=v, bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
+        self.btn(s3, self.t("save"), self.change_lang, bg=C["ok"]).pack(anchor="w", pady=5)
+        
+        # Network sync setting
+        s4 = self.row(f)
+        tk.Label(s4, text="Network Sync", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s4, text="Share data with other computers on your network", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        
+        net_path = self.db.get_setting("network_path", "")
+        nf = tk.Frame(s4, bg=C["card"])
+        nf.pack(fill="x", pady=5)
+        tk.Label(nf, text="Shared Folder:", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11)).pack(side="left")
+        self.net_entry = tk.Entry(nf, font=("Segoe UI", 11), bd=1, relief="solid", width=35)
+        self.net_entry.insert(0, net_path)
+        self.net_entry.pack(side="left", padx=10)
+        self.btn(nf, "Save", self.save_network_path, bg=C["ok"]).pack(side="left")
+        
+        # Sync status
+        sync_frame = tk.Frame(s4, bg=C["card"])
+        sync_frame.pack(fill="x", pady=5)
+        if net_path:
+            tk.Label(sync_frame, text=f"Connected to: {net_path}", bg=C["card"], fg=C["ok"], font=("Segoe UI", 10)).pack(side="left")
+        else:
+            tk.Label(sync_frame, text="Not connected (local mode)", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
+        self.btn(sync_frame, "Sync Now", self.sync_now).pack(side="right")
+
+    def do_backup(self):
+        from tkinter import filedialog
+        db_path = os.path.join(APP_DIR, "data", "data.db")
+        if not os.path.exists(db_path):
+            return messagebox.showerror("Error", "No data to backup")
+        
+        default_name = f"repairshop_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
+        fp = filedialog.asksaveasfilename(defaultextension=".db", filetypes=[("Database","*.db")], initialfile=default_name)
+        if not fp:
+            return
+        
+        import shutil
+        try:
+            shutil.copy2(db_path, fp)
+            messagebox.showinfo("Backup Complete", f"Data backed up to:\n{fp}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Backup failed: {e}")
+
+    def do_restore(self):
+        from tkinter import filedialog
+        fp = filedialog.askopenfilename(filetypes=[("Database","*.db")])
+        if not fp:
+            return
+        
+        if not messagebox.askyesno("Confirm Restore", "This will replace ALL current data with the backup.\n\nAre you sure?"):
+            return
+        
+        import shutil
+        db_path = os.path.join(APP_DIR, "data", "data.db")
+        try:
+            shutil.copy2(fp, db_path)
+            self.db = Database(db_path)
+            messagebox.showinfo("Restore Complete", "Data restored! App will restart.")
+            self.layout()
+        except Exception as e:
+            messagebox.showerror("Error", f"Restore failed: {e}")
+
+    def save_network_path(self):
+        path = self.net_entry.get().strip()
+        self.db.set_setting("network_path", path)
+        if path:
+            # Test connection
+            if os.path.exists(path):
+                messagebox.showinfo("Connected", f"Connected to:\n{path}\n\nData will sync automatically.")
+            else:
+                messagebox.showwarning("Warning", f"Folder not found:\n{path}\n\nMake sure the shared folder is accessible.")
+        else:
+            messagebox.showinfo("Disconnected", "Network sync disabled. Using local data.")
+        self.pg_set()
+    
+    def sync_now(self):
+        import shutil
+        net_path = self.db.get_setting("network_path")
+        if not net_path:
+            return messagebox.showwarning("No Network", "Set a shared folder path in Settings first.")
+        
+        local_db = os.path.join(APP_DIR, "data", "data.db")
+        network_db = os.path.join(net_path, "data.db")
+        
+        # Ensure network folder has data subfolder
+        net_data = os.path.join(net_path)
+        if not os.path.exists(net_data):
+            os.makedirs(net_data, exist_ok=True)
+        
+        # Check which is newer
+        local_time = os.path.getmtime(local_db) if os.path.exists(local_db) else 0
+        net_time = os.path.getmtime(network_db) if os.path.exists(network_db) else 0
+        
+        if net_time > local_time:
+            # Network is newer - pull from network
+            shutil.copy2(network_db, local_db)
+            self.db = Database(local_db)
+            messagebox.showinfo("Sync Complete", "Pulled latest data from network.")
+            self.pg_set()
+        elif local_time > net_time:
+            # Local is newer - push to network
+            shutil.copy2(local_db, network_db)
+            messagebox.showinfo("Sync Complete", "Pushed data to network.")
+        else:
+            messagebox.showinfo("Sync Complete", "Data is already up to date.")
+    
+    def _auto_sync(self):
+        """Auto-sync on startup if network path is set"""
+        import shutil
+        net_path = self.db.get_setting("network_path")
+        if not net_path or not os.path.exists(net_path):
+            return
+        
+        local_db = os.path.join(APP_DIR, "data", "data.db")
+        network_db = os.path.join(net_path, "data.db")
+        
+        try:
+            if os.path.exists(network_db):
+                net_time = os.path.getmtime(network_db)
+                local_time = os.path.getmtime(local_db) if os.path.exists(local_db) else 0
+                if net_time > local_time:
+                    shutil.copy2(network_db, local_db)
+                    self.db = Database(local_db)
+        except:
+            pass  # Silently fail if network is unavailable
+    
+    def _auto_sync_on_exit(self):
+        """Auto-sync on exit if network path is set"""
+        import shutil
+        net_path = self.db.get_setting("network_path")
+        if not net_path or not os.path.exists(net_path):
+            return
+        
+        local_db = os.path.join(APP_DIR, "data", "data.db")
+        network_db = os.path.join(net_path, "data.db")
+        
+        try:
+            if os.path.exists(local_db):
+                shutil.copy2(local_db, network_db)
+        except:
+            pass
+
+    def edit_biz_name(self):
+        self._edit_biz_field("business_name", "Business Name")
+    
+    def edit_biz_phone(self):
+        self._edit_biz_field("business_phone", "Phone Number")
+    
+    def _edit_biz_field(self, field, label):
+        if self.db.get_setting("pin_hash"):
+            self._pending_biz_edit = field
+            self._pending_biz_label = label
+            self._verify_pin_for_edit()
+        else:
+            self._show_biz_edit_dialog(field, label)
+    
+    def _verify_pin_for_edit(self):
+        win = tk.Toplevel(self.root)
+        win.title("Verify PIN")
+        win.geometry("300x180")
+        win.configure(bg=C["bg"])
+        win.grab_set()
+        tk.Label(win, text="Enter PIN to edit", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
+        pin_e = tk.Entry(win, font=("Segoe UI", 14), bd=1, relief="solid", width=10, justify="center", show="*")
+        pin_e.pack(pady=5)
+        pin_e.focus()
+        
+        def verify():
+            if self.h(pin_e.get().strip()) == self.db.get_setting("pin_hash"):
+                win.destroy()
+                self._show_biz_edit_dialog(self._pending_biz_edit, self._pending_biz_label)
+            else:
+                messagebox.showerror("Error", "Wrong PIN")
+                pin_e.delete(0, tk.END)
+        
+        pin_e.bind("<Return>", lambda e: verify())
+        self.btn(win, "Verify", verify).pack(pady=10)
+    
+    def _show_biz_edit_dialog(self, field, label):
+        win = tk.Toplevel(self.root)
+        win.title(f"Edit {label}")
+        win.geometry("350x180")
+        win.configure(bg=C["bg"])
+        win.grab_set()
+        tk.Label(win, text=f"New {label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
+        e = tk.Entry(win, font=("Segoe UI", 14), bd=1, relief="solid", width=25)
+        e.insert(0, self.db.get_setting(field, ""))
+        e.pack(pady=5)
+        e.focus()
+        
+        def save():
+            val = e.get().strip()
+            if not val:
+                return messagebox.showerror("Error", "Cannot be empty")
+            self.db.set_setting(field, val)
+            win.destroy()
+            messagebox.showinfo("Done", f"{label} updated!")
+            self.pg_set()
+        
+        e.bind("<Return>", lambda e: save())
+        self.btn(win, "Save", save, bg=C["ok"]).pack(pady=10)
+
+    def pg_set_pin(self):
+        self.clr()
+        self.hdr(self.t("set_pin"))
+        f = tk.Frame(self.content, bg=C["bg"], padx=25)
+        f.pack(fill="both", expand=True)
+        self.sp1 = self.field(f, "PIN (4 digits)")
+        self.sp2 = self.field(f, self.t("confirm_pin") if "confirm_pin" in T["en"] else "Confirm PIN")
+        bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
+        self.btn(bf, self.t("save"), self.save_pin).pack(side="left")
+        tk.Button(bf, text=self.t("cancel"), command=self.pg_set, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
+
+    def save_pin(self):
+        p = self.sp1.get().strip()
+        c = self.sp2.get().strip()
+        if len(p) != 4 or not p.isdigit():
+            return messagebox.showerror("Error", "PIN must be 4 digits")
+        if p != c:
+            return messagebox.showerror("Error", "PINs don't match")
+        self.db.set_setting("pin_hash", self.h(p))
+        messagebox.showinfo("Done", "PIN set")
+        self.pg_set()
+
+    def pg_chg_pin(self):
+        self.clr()
+        self.hdr(self.t("change_pin"))
+        f = tk.Frame(self.content, bg=C["bg"], padx=25)
+        f.pack(fill="both", expand=True)
+        self.cp1 = self.field(f, "Current PIN")
+        self.cp2 = self.field(f, "New PIN")
+        self.cp3 = self.field(f, "Confirm New PIN")
+        bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
+        self.btn(bf, self.t("save"), self.save_chg_pin).pack(side="left")
+        tk.Button(bf, text=self.t("cancel"), command=self.pg_set, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
+
+    def save_chg_pin(self):
+        o = self.cp1.get().strip()
+        n = self.cp2.get().strip()
+        c = self.cp3.get().strip()
+        if self.h(o) != self.db.get_setting("pin_hash"):
+            return messagebox.showerror("Error", "Wrong current PIN")
+        if len(n) != 4 or not n.isdigit():
+            return messagebox.showerror("Error", "New PIN must be 4 digits")
+        if n != c:
+            return messagebox.showerror("Error", "PINs don't match")
+        self.db.set_setting("pin_hash", self.h(n))
+        messagebox.showinfo("Done", "PIN changed")
+        self.pg_set()
+
+    def rm_pin(self):
+        if messagebox.askyesno("Confirm", "Remove PIN?"):
+            self.db.set_setting("pin_hash", "")
+            messagebox.showinfo("Done", "PIN removed")
+            self.pg_set()
+    
+    def change_lang(self):
+        if getattr(self, '_changing_lang', False):
+            return
+        self._changing_lang = True
+        self.lang = self.lang_var.get()
+        self.db.set_setting("language", self.lang)
+        self.root.title(self.t("app_title"))
+        self.root.after(10, self._do_lang_change)
+    
+    def _do_lang_change(self):
+        self.layout()
+        self._changing_lang = False
+
+    def run(self):
+        self._auto_sync()
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close)
+        self.root.mainloop()
+    
+    def _on_close(self):
+        self._auto_sync_on_exit()
+        self.db.close()
+        self.root.destroy()
+
+if __name__ == "__main__":
+    App().run()
