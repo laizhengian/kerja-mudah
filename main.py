@@ -68,7 +68,7 @@ T = {
         "no_results": "No results for", "type_search": "Type and press Search",
         "results_for": "result(s) for", "export_csv": "Export to CSV",
         "business_info": "Business Info", "name": "Name", "security": "Security",
-        "pin_active": "PIN: Active", "pin_not_set": "PIN: Not set",
+        "pin_active": "PIN: Active", "pin_not_set": "PIN: Not Set",
         "set_pin": "Set PIN", "change_pin": "Change PIN", "remove_pin": "Remove PIN",
         "enter_pin": "Enter PIN", "login": "Login", "wrong_pin": "Wrong PIN",
         "welcome": "Welcome", "setup_title": "Set up in 1 minute",
@@ -76,7 +76,7 @@ T = {
         "offline_msg": "Your data stays on this computer. No internet required.",
         "error": "Error", "done": "Done", "warning": "Warning",
         "today_appointments": "Today's Appointments",
-        "unpaid_invoices": "unpaid invoices",
+        "unpaid_invoices": "Unpaid Invoices",
         "get_started": "Get Started",
         "confirm_pin": "Confirm PIN",
     },
@@ -546,7 +546,7 @@ class App:
         rems = []
         for j in jobs:
             if j["status"] == "in-progress" and j["due_date"] and j["due_date"] <= today:
-                rems.append(f"{j['job_code']}: {j['item']} - ready")
+                rems.append(f"{j['job_code']}: {j['item']} - Ready")
         for a in self.db.get_appointments(today):
             rems.append(f"{a['time']} - {a['customer_name'] or 'Walk-in'}")
         if rems:
@@ -609,7 +609,7 @@ class App:
         self.cust_entry.pack(side="left", fill="x", expand=True, ipady=6)
         
         if cust_names:
-            tk.Label(cf, text="or pick:", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left", padx=(10,5))
+            tk.Label(cf, text="Or pick:", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left", padx=(10,5))
             self.cust_menu_var = tk.StringVar()
             menu = tk.OptionMenu(cf, self.cust_menu_var, *cust_names, command=self._pick_cust)
             menu.configure(font=("Segoe UI", 10), width=15)
