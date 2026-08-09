@@ -667,7 +667,7 @@ class App:
         self.db.update_job_status(job["id"], "done")
         win = tk.Toplevel(self.root)
         win.title("Job Complete")
-        win.geometry("360x300")
+        win.geometry("360x380")
         win.configure(bg=C["bg"])
         win.grab_set()
         
@@ -681,10 +681,14 @@ class App:
             
             cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
             phone = ""
-            if cust and cust["phone"]:
-                phone = cust["phone"].replace("+","").replace("-","").replace(" ","")
-                if not phone.startswith("60"):
-                    phone = "60" + phone
+            email = ""
+            if cust:
+                if cust["phone"]:
+                    phone = cust["phone"].replace("+","").replace("-","").replace(" ","")
+                    if not phone.startswith("60"):
+                        phone = "60" + phone
+                if cust["email"]:
+                    email = cust["email"]
             
             win.destroy()
             
@@ -699,7 +703,33 @@ class App:
             else:
                 messagebox.showwarning("Warning", "Invoice created but no phone number. Add phone to customer first.")
             self.pg_jobs()
-            messagebox.showinfo("Done", "Invoice created" + (" + WhatsApp opened" if phone else ""))
+        
+        def send_email_inv():
+            inv_id = self.db.add_invoice(job["id"], job["quote"])
+            inv_code = self.db.get_invoices()[-1]["invoice_code"]
+            
+            cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
+            email = ""
+            if cust and cust["email"]:
+                email = cust["email"]
+            
+            win.destroy()
+            
+            if email:
+                biz_name = self.db.get_setting('business_name', 'Shop')
+                subject = f"Invoice {inv_code} from {biz_name}"
+                body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
+                body += f"Thank you for your business!\n\n"
+                body += f"Invoice: {inv_code}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
+                body += f"Thank you!\n{biz_name}"
+                mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
+                try:
+                    webbrowser.open(mailto)
+                except:
+                    pass
+                messagebox.showinfo("Done", f"Invoice created! Email opened for {email}")
+            else:
+                messagebox.showwarning("Warning", "Invoice created but no email. Add email to customer first.")
             self.pg_jobs()
         
         def just_inv():
@@ -708,8 +738,9 @@ class App:
             messagebox.showinfo("Done", "Invoice created")
             self.pg_jobs()
         
-        self.btn(win, "Invoice + WhatsApp", send_inv).pack(fill="x", padx=25, pady=8)
-        self.btn(win, "Just Invoice", just_inv, bg=C["card"], fg=C["txt"]).pack(fill="x", padx=25, pady=4)
+        self.btn(win, "Invoice + WhatsApp", send_inv).pack(fill="x", padx=25, pady=5)
+        self.btn(win, "Invoice + Email", send_email_inv, bg="#2563EB").pack(fill="x", padx=25, pady=5)
+        self.btn(win, "Just Invoice", just_inv, bg=C["card"], fg=C["txt"]).pack(fill="x", padx=25, pady=5)
         tk.Button(win, text="Skip", command=win.destroy, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10), bd=0, cursor="hand2").pack(pady=10)
 
     # ─── CUSTOMERS ───
@@ -726,6 +757,8 @@ class App:
             r = self.row(f)
             tk.Label(r, text=c["name"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left")
             tk.Label(r, text=c["phone"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=20).pack(side="left")
+            if c["email"]:
+                tk.Label(r, text=c["email"], bg=C["card"], fg=C["txt3"], font=("Segoe UI", 10), anchor="w", padx=15).pack(side="left")
 
     def pg_new_cust(self):
         self.clr()
@@ -827,6 +860,7 @@ class App:
                 
                 right = tk.Frame(r, bg="#FEF2F2")
                 right.pack(side="right")
+                tk.Button(right, text="Email", command=lambda inv=i: self.send_email(inv), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left", padx=3)
                 tk.Button(right, text=self.t("send_whatsapp"), command=lambda inv=i: self.send_whatsapp(inv), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left", padx=3)
                 tk.Button(right, text=self.t("mark_paid"), command=lambda iid=i["id"]: self.mark_paid(iid), bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left")
         
@@ -879,6 +913,46 @@ class App:
         except:
             pass
         messagebox.showinfo("WhatsApp", f"Opening WhatsApp for +{phone}")
+    
+    def send_email(self, inv):
+        job = self.db.get_jobs()
+        job_for_inv = None
+        for j in job:
+            if j["id"] == inv["job_id"]:
+                job_for_inv = j
+                break
+        
+        cust = None
+        if job_for_inv and job_for_inv["customer_id"]:
+            cust = self.db.get_customer(job_for_inv["customer_id"])
+        
+        email = ""
+        if cust and cust["email"]:
+            email = cust["email"]
+        
+        if not email:
+            return messagebox.showwarning("No Email", "No email found for this customer.\nAdd email to customer first.")
+        
+        biz_name = self.db.get_setting('business_name', 'Shop')
+        subject = f"Invoice {inv['invoice_code']} from {biz_name}"
+        
+        body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
+        body += f"Thank you for your business!\n\n"
+        body += f"Invoice: {inv['invoice_code']}\n"
+        if job_for_inv:
+            body += f"Item: {job_for_inv['item']}\n"
+            body += f"Repair: {job_for_inv['problem'] or 'N/A'}\n"
+        body += f"Amount: RM {inv['amount']:.2f}\n"
+        body += f"Status: UNPAID\n\n"
+        body += f"Please make payment at your earliest convenience.\n\n"
+        body += f"Thank you!\n{biz_name}"
+        
+        mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
+        try:
+            webbrowser.open(mailto)
+        except:
+            pass
+        messagebox.showinfo("Email", f"Opening email client for {email}")
 
     def mark_paid(self, iid):
         win = tk.Toplevel(self.root)
@@ -995,7 +1069,7 @@ class App:
         q_lower = q.lower()
         
         fj = [j for j in jobs if q_lower in (j["job_code"]+j["item"]+(j["problem"] or "")+(j["customer_name"] or "")).lower() or q == str(j["id"])]
-        fc = [c for c in custs if q_lower in (c["name"]+(c["phone"] or "")).lower() or q == str(c["id"])]
+        fc = [c for c in custs if q_lower in (c["name"]+(c["phone"] or "")+(c["email"] or "")).lower() or q == str(c["id"])]
         fi = [i for i in invs if q_lower in (i["invoice_code"]+(i["customer_name"] or "")).lower() or q == str(i["id"])]
         
         t = len(fj)+len(fc)+len(fi)
@@ -1016,6 +1090,8 @@ class App:
                 r = self.row(self.srch_r)
                 tk.Label(r, text=c["name"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
                 tk.Label(r, text=c["phone"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), padx=10).pack(side="left")
+                if c["email"]:
+                    tk.Label(r, text=c["email"], bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
                 tk.Label(r, text=f"ID: {c['id']}", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
         if fi:
             tk.Label(self.srch_r, text=f"Invoices ({len(fi)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
