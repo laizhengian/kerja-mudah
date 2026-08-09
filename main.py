@@ -351,7 +351,7 @@ class App:
         tk.Label(c, text=self.t("setup_title"), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 13)).pack(pady=8)
         f = tk.Frame(c, bg=C["bg"]); f.pack()
         self.se = {}
-        for l, d in [("Business Name", ""), ("Phone", "+60")]:
+        for l, d in [("Business Name", ""), ("Phone", "+60"), ("Email", "")]:
             self.se[l] = self.field(f, self.t(l.lower().replace(" ","_")), d)
         lf = tk.Frame(f, bg=C["bg"]); lf.pack(fill="x", pady=12)
         tk.Label(lf, text="Language", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
@@ -367,6 +367,7 @@ class App:
             return messagebox.showerror("Error", "Enter business name")
         self.db.set_setting("business_name", n)
         self.db.set_setting("business_phone", self.se["Phone"].get().strip())
+        self.db.set_setting("business_email", self.se["Email"].get().strip())
         self.db.set_setting("language", self.lang.get())
         self.db.set_setting("setup_complete", "true")
         self.layout()
@@ -703,7 +704,7 @@ class App:
             win.destroy()
             
             if phone:
-                msg = f"{self.db.get_setting('business_name', 'Shop')}\nInvoice: {inv_code}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\nThank you for your business!"
+                msg = f"{self.db.get_setting('business_name', 'Shop')}\nInvoice: {inv_code}\nDate: {datetime.now().strftime('%d/%m/%Y')}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\nThank you for your business!"
                 url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                 try:
                     webbrowser.open(url)
@@ -730,7 +731,7 @@ class App:
                 subject = f"Invoice {inv_code} from {biz_name}"
                 body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
                 body += f"Thank you for your business!\n\n"
-                body += f"Invoice: {inv_code}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
+                body += f"Invoice: {inv_code}\nDate: {datetime.now().strftime('%d/%m/%Y')}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
                 body += f"Thank you!\n{biz_name}"
                 mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                 try:
@@ -910,6 +911,7 @@ class App:
         
         msg = f"{self.db.get_setting('business_name', 'Shop')}\n"
         msg += f"Invoice: {inv['invoice_code']}\n"
+        msg += f"Date: {datetime.now().strftime('%d/%m/%Y')}\n"
         if job_for_inv:
             msg += f"Item: {job_for_inv['item']}\n"
             msg += f"Repair: {job_for_inv['problem'] or 'N/A'}\n"
@@ -949,6 +951,7 @@ class App:
         body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
         body += f"Thank you for your business!\n\n"
         body += f"Invoice: {inv['invoice_code']}\n"
+        body += f"Date: {datetime.now().strftime('%d/%m/%Y')}\n"
         if job_for_inv:
             body += f"Item: {job_for_inv['item']}\n"
             body += f"Repair: {job_for_inv['problem'] or 'N/A'}\n"
@@ -1201,7 +1204,7 @@ class App:
         
         s = self.row(f)
         tk.Label(s, text=self.t("business_info"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
-        for l, v, cmd in [("Name", self.db.get_setting("business_name",""), self.edit_biz_name), ("Phone", self.db.get_setting("business_phone",""), self.edit_biz_phone)]:
+        for l, v, cmd in [("Name", self.db.get_setting("business_name",""), self.edit_biz_name), ("Phone", self.db.get_setting("business_phone",""), self.edit_biz_phone), ("Email", self.db.get_setting("business_email",""), self.edit_biz_email)]:
             r = tk.Frame(s, bg=C["card"])
             r.pack(fill="x", pady=2)
             tk.Label(r, text=f"{self.t(l.lower())}: {v}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
@@ -1373,6 +1376,9 @@ class App:
     
     def edit_biz_phone(self):
         self._edit_biz_field("business_phone", "Phone Number")
+    
+    def edit_biz_email(self):
+        self._edit_biz_field("business_email", "Email")
     
     def _edit_biz_field(self, field, label):
         if self.db.get_setting("pin_hash"):
