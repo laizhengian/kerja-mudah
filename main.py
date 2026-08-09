@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import os, sys, hashlib, webbrowser, urllib.parse, platform, uuid
 from datetime import datetime, timedelta
+from fpdf import FPDF
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 os.chdir(APP_DIR)
@@ -703,6 +704,11 @@ class App:
             
             win.destroy()
             
+            use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
+            pdf_path = None
+            if use_pdf:
+                pdf_path = self.generate_invoice_pdf(inv_code, job, cust)
+            
             if phone:
                 msg = f"{self.db.get_setting('business_name', 'Shop')}\nInvoice: {inv_code}\nDate: {datetime.now().strftime('%d/%m/%Y')}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\nThank you for your business!"
                 url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
@@ -710,7 +716,10 @@ class App:
                     webbrowser.open(url)
                 except:
                     pass
-                messagebox.showinfo("Done", f"Invoice created! WhatsApp opened for +{phone}")
+                if use_pdf:
+                    messagebox.showinfo("Done", f"Invoice created! WhatsApp opened for +{phone}\nPDF saved to: {pdf_path}")
+                else:
+                    messagebox.showinfo("Done", f"Invoice created! WhatsApp opened for +{phone}")
             else:
                 messagebox.showwarning("Warning", "Invoice created but no phone number. Add phone to customer first.")
             self.pg_jobs()
@@ -726,19 +735,36 @@ class App:
             
             win.destroy()
             
+            use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
+            
             if email:
                 biz_name = self.db.get_setting('business_name', 'Shop')
                 subject = f"Invoice {inv_code} from {biz_name}"
-                body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
-                body += f"Thank you for your business!\n\n"
-                body += f"Invoice: {inv_code}\nDate: {datetime.now().strftime('%d/%m/%Y')}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
-                body += f"Thank you!\n{biz_name}"
-                mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
-                try:
-                    webbrowser.open(mailto)
-                except:
-                    pass
-                messagebox.showinfo("Done", f"Invoice created! Email opened for {email}")
+                
+                if use_pdf:
+                    pdf_path = self.generate_invoice_pdf(inv_code, job, cust)
+                    body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
+                    body += f"Please find attached invoice {inv_code}.\n\n"
+                    body += f"Amount: RM {job['quote']:.2f}\n\n"
+                    body += f"Thank you!\n{biz_name}"
+                    mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
+                    try:
+                        webbrowser.open(mailto)
+                        os.startfile(pdf_path)
+                    except:
+                        pass
+                    messagebox.showinfo("Done", f"Invoice created! Email opened for {email}\nPDF saved to: {pdf_path}")
+                else:
+                    body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
+                    body += f"Thank you for your business!\n\n"
+                    body += f"Invoice: {inv_code}\nDate: {datetime.now().strftime('%d/%m/%Y')}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
+                    body += f"Thank you!\n{biz_name}"
+                    mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
+                    try:
+                        webbrowser.open(mailto)
+                    except:
+                        pass
+                    messagebox.showinfo("Done", f"Invoice created! Email opened for {email}")
             else:
                 messagebox.showwarning("Warning", "Invoice created but no email. Add email to customer first.")
             self.pg_jobs()
@@ -909,6 +935,11 @@ class App:
         if not phone:
             return messagebox.showwarning("No Phone", "No phone number found for this customer.")
         
+        use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
+        
+        if use_pdf:
+            pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job_for_inv, cust)
+        
         msg = f"{self.db.get_setting('business_name', 'Shop')}\n"
         msg += f"Invoice: {inv['invoice_code']}\n"
         msg += f"Date: {datetime.now().strftime('%d/%m/%Y')}\n"
@@ -924,7 +955,11 @@ class App:
             webbrowser.open(url)
         except:
             pass
-        messagebox.showinfo("WhatsApp", f"Opening WhatsApp for +{phone}")
+        
+        if use_pdf:
+            messagebox.showinfo("WhatsApp", f"Opening WhatsApp for +{phone}\nPDF saved to: {pdf_path}")
+        else:
+            messagebox.showinfo("WhatsApp", f"Opening WhatsApp for +{phone}")
     
     def send_email(self, inv):
         job = self.db.get_jobs()
@@ -948,24 +983,120 @@ class App:
         biz_name = self.db.get_setting('business_name', 'Shop')
         subject = f"Invoice {inv['invoice_code']} from {biz_name}"
         
-        body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
-        body += f"Thank you for your business!\n\n"
-        body += f"Invoice: {inv['invoice_code']}\n"
-        body += f"Date: {datetime.now().strftime('%d/%m/%Y')}\n"
-        if job_for_inv:
-            body += f"Item: {job_for_inv['item']}\n"
-            body += f"Repair: {job_for_inv['problem'] or 'N/A'}\n"
-        body += f"Amount: RM {inv['amount']:.2f}\n"
-        body += f"Status: UNPAID\n\n"
-        body += f"Please make payment at your earliest convenience.\n\n"
-        body += f"Thank you!\n{biz_name}"
+        use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
         
-        mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
-        try:
-            webbrowser.open(mailto)
-        except:
-            pass
-        messagebox.showinfo("Email", f"Opening email client for {email}")
+        if use_pdf:
+            pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job_for_inv, cust)
+            body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
+            body += f"Please find attached invoice {inv['invoice_code']}.\n\n"
+            body += f"Amount: RM {inv['amount']:.2f}\n\n"
+            body += f"Thank you!\n{biz_name}"
+            # Open folder with PDF since mailto can't attach files
+            mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
+            try:
+                webbrowser.open(mailto)
+                os.startfile(pdf_path)
+            except:
+                pass
+            messagebox.showinfo("Email", f"Email opened for {email}\nPDF saved to: {pdf_path}")
+        else:
+            body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
+            body += f"Thank you for your business!\n\n"
+            body += f"Invoice: {inv['invoice_code']}\n"
+            body += f"Date: {datetime.now().strftime('%d/%m/%Y')}\n"
+            if job_for_inv:
+                body += f"Item: {job_for_inv['item']}\n"
+                body += f"Repair: {job_for_inv['problem'] or 'N/A'}\n"
+            body += f"Amount: RM {inv['amount']:.2f}\n"
+            body += f"Status: UNPAID\n\n"
+            body += f"Please make payment at your earliest convenience.\n\n"
+            body += f"Thank you!\n{biz_name}"
+            mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
+            try:
+                webbrowser.open(mailto)
+            except:
+                pass
+            messagebox.showinfo("Email", f"Opening email client for {email}")
+
+    def generate_invoice_pdf(self, inv_code, job, cust):
+        invoice_dir = os.path.join(APP_DIR, "data", "invoices")
+        os.makedirs(invoice_dir, exist_ok=True)
+        
+        pdf = FPDF()
+        pdf.add_page()
+        
+        # Header - Invoice title
+        pdf.set_font("Helvetica", "B", 22)
+        pdf.cell(0, 12, "INVOICE", new_x="LMARGIN", new_y="NEXT", align="R")
+        
+        # Invoice details
+        pdf.set_font("Helvetica", "", 10)
+        pdf.cell(0, 6, f"Invoice: {inv_code}", new_x="LMARGIN", new_y="NEXT", align="R")
+        pdf.cell(0, 6, f"Date: {datetime.now().strftime('%d/%m/%Y')}", new_x="LMARGIN", new_y="NEXT", align="R")
+        pdf.cell(0, 6, f"Status: UNPAID", new_x="LMARGIN", new_y="NEXT", align="R")
+        pdf.ln(8)
+        
+        # Business info
+        biz_name = self.db.get_setting("business_name", "Shop")
+        biz_phone = self.db.get_setting("business_phone", "")
+        biz_email = self.db.get_setting("business_email", "")
+        
+        pdf.set_font("Helvetica", "B", 14)
+        pdf.cell(0, 8, biz_name, new_x="LMARGIN", new_y="NEXT")
+        pdf.set_font("Helvetica", "", 10)
+        if biz_phone:
+            pdf.cell(0, 6, f"Phone: {biz_phone}", new_x="LMARGIN", new_y="NEXT")
+        if biz_email:
+            pdf.cell(0, 6, f"Email: {biz_email}", new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(8)
+        
+        # Customer info
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.cell(0, 7, "Bill To:", new_x="LMARGIN", new_y="NEXT")
+        pdf.set_font("Helvetica", "", 10)
+        if cust:
+            pdf.cell(0, 6, cust["name"], new_x="LMARGIN", new_y="NEXT")
+            if cust["phone"]:
+                pdf.cell(0, 6, f"Phone: {cust['phone']}", new_x="LMARGIN", new_y="NEXT")
+            if cust["email"]:
+                pdf.cell(0, 6, f"Email: {cust['email']}", new_x="LMARGIN", new_y="NEXT")
+        else:
+            pdf.cell(0, 6, "Walk-in Customer", new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(8)
+        
+        # Table header
+        pdf.set_fill_color(50, 50, 50)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.cell(80, 8, "  Item", fill=True)
+        pdf.cell(55, 8, "  Problem", fill=True)
+        pdf.cell(35, 8, "  Amount", new_x="LMARGIN", new_y="NEXT", fill=True)
+        
+        # Table row
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font("Helvetica", "", 10)
+        item = job["item"] if job else "N/A"
+        problem = (job["problem"] or "N/A") if job else "N/A"
+        amount = inv_code  # placeholder, will use actual amount
+        pdf.cell(80, 8, f"  {item}")
+        pdf.cell(55, 8, f"  {problem}")
+        pdf.cell(35, 8, f"  RM {job['quote']:.2f}" if job else "  RM 0.00", new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(5)
+        
+        # Total
+        pdf.set_font("Helvetica", "B", 12)
+        pdf.cell(135, 10, "Total:")
+        pdf.cell(35, 10, f"RM {job['quote']:.2f}" if job else "RM 0.00", new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(15)
+        
+        # Footer
+        pdf.set_font("Helvetica", "", 10)
+        pdf.cell(0, 6, "Thank you for your business!", new_x="LMARGIN", new_y="NEXT", align="C")
+        
+        filename = f"{inv_code}.pdf"
+        filepath = os.path.join(invoice_dir, filename)
+        pdf.output(filepath)
+        return filepath
 
     def mark_paid(self, iid):
         win = tk.Toplevel(self.root)
@@ -1231,6 +1362,17 @@ class App:
             tk.Radiobutton(lf, text=t, variable=self.lang_var, value=v, bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
         self.btn(s3, self.t("save"), self.change_lang, bg=C["ok"]).pack(anchor="w", pady=5)
         
+        # Invoice format setting
+        s_inv = self.row(f)
+        tk.Label(s_inv, text="Invoice Format", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s_inv, text="Choose how invoices are sent to customers", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        ifr = tk.Frame(s_inv, bg=C["card"])
+        ifr.pack(fill="x", pady=5)
+        self.inv_fmt_var = tk.StringVar(value=self.db.get_setting("invoice_format", "text"))
+        tk.Radiobutton(ifr, text="Text (plain message)", variable=self.inv_fmt_var, value="text", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
+        tk.Radiobutton(ifr, text="PDF (professional invoice)", variable=self.inv_fmt_var, value="pdf", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
+        self.btn(s_inv, self.t("save"), self.save_inv_fmt, bg=C["ok"]).pack(anchor="w", pady=5)
+        
         # Network sync setting
         s4 = self.row(f)
         tk.Label(s4, text="Network Sync", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
@@ -1487,6 +1629,12 @@ class App:
             self.db.set_setting("pin_hash", "")
             messagebox.showinfo("Done", "PIN removed")
             self.pg_set()
+    
+    def save_inv_fmt(self):
+        fmt = self.inv_fmt_var.get()
+        self.db.set_setting("invoice_format", fmt)
+        messagebox.showinfo("Done", f"Invoice format set to: {fmt.upper()}")
+        self.pg_set()
     
     def change_lang(self):
         if getattr(self, '_changing_lang', False):
