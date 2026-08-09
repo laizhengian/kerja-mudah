@@ -169,6 +169,10 @@ class App:
         self.root.geometry("1100x750")
         self.root.minsize(900, 650)
         self.root.configure(bg=C["bg"])
+        try:
+            self.root.iconbitmap(default="")
+        except:
+            pass
         
         if check_license(self.db):
             # Licensed - go straight in
@@ -498,7 +502,7 @@ class App:
         
         for txt, cmd in [("Home", self.pg_home), ("Jobs", self.pg_jobs), ("Customers", self.pg_custs),
                          ("Appointments", self.pg_cal), ("Invoices", self.pg_invs), ("Reports", self.pg_rpt), 
-                         ("Search", self.pg_search), ("Backup", self.pg_backup), ("Settings", self.pg_set)]:
+                         ("Backup", self.pg_backup), ("Settings", self.pg_set)]:
             b = tk.Button(self.side, text=f"  {self.t(txt.lower())}", command=cmd, bg=C["side"], fg="#AAAAAA", font=("Segoe UI", 12), bd=0, anchor="w", padx=25, pady=14, activebackground=C["side_h"], activeforeground=C["white"], cursor="hand2")
             b.pack(fill="x")
             b.bind("<Enter>", lambda e, b=b: b.configure(bg=C["side_h"], fg=C["white"]))
@@ -570,16 +574,35 @@ class App:
         self.hdr(self.t("jobs"), self.t("new_job"), self.pg_new_job)
         f = tk.Frame(self.content, bg=C["bg"], padx=20)
         f.pack(fill="both", expand=True)
+        
+        # Search bar
+        sf = tk.Frame(f, bg=C["bg"])
+        sf.pack(fill="x", pady=(0,10))
+        self.jobs_search_var = tk.StringVar()
+        self.jobs_search_var.trace("w", lambda *a: self._filter_jobs())
+        tk.Entry(sf, textvariable=self.jobs_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
+        tk.Label(sf, text="Type to filter...", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
+        
+        self.jobs_list_frame = tk.Frame(f, bg=C["bg"])
+        self.jobs_list_frame.pack(fill="both", expand=True)
+        self._filter_jobs()
+
+    def _filter_jobs(self):
+        for w in self.jobs_list_frame.winfo_children():
+            w.destroy()
         jobs = self.db.get_jobs()
+        q = self.jobs_search_var.get().strip().lower()
+        if q:
+            jobs = [j for j in jobs if q in (j["job_code"]+j["item"]+(j["problem"] or "")+(j["customer_name"] or "")).lower()]
         if not jobs:
-            tk.Label(f, text=self.t("no_jobs"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else "No results", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
-        h = tk.Frame(f, bg=C["bg"]); h.pack(fill="x", pady=8)
+        h = tk.Frame(self.jobs_list_frame, bg=C["bg"]); h.pack(fill="x", pady=8)
         for t, w in [("Code",14),("Item",22),("Customer",16),("Quote",10),("Status",11),("Due",11),("Action",8)]:
             tk.Label(h, text=t, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=w, anchor="w").pack(side="left", padx=4)
         sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
         for j in jobs:
-            r = self.row(f)
+            r = self.row(self.jobs_list_frame)
             tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=14, anchor="w").pack(side="left", padx=4)
             tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), width=22, anchor="w").pack(side="left", padx=4)
             tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=16, anchor="w").pack(side="left", padx=4)
@@ -786,12 +809,31 @@ class App:
         self.hdr(self.t("customers"), self.t("new_customer"), self.pg_new_cust)
         f = tk.Frame(self.content, bg=C["bg"], padx=20)
         f.pack(fill="both", expand=True)
+        
+        # Search bar
+        sf = tk.Frame(f, bg=C["bg"])
+        sf.pack(fill="x", pady=(0,10))
+        self.cust_search_var = tk.StringVar()
+        self.cust_search_var.trace("w", lambda *a: self._filter_custs())
+        tk.Entry(sf, textvariable=self.cust_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
+        tk.Label(sf, text="Type to filter...", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
+        
+        self.cust_list_frame = tk.Frame(f, bg=C["bg"])
+        self.cust_list_frame.pack(fill="both", expand=True)
+        self._filter_custs()
+
+    def _filter_custs(self):
+        for w in self.cust_list_frame.winfo_children():
+            w.destroy()
         cs = self.db.get_customers()
+        q = self.cust_search_var.get().strip().lower()
+        if q:
+            cs = [c for c in cs if q in (c["name"]+(c["phone"] or "")+(c["email"] or "")).lower()]
         if not cs:
-            tk.Label(f, text=self.t("no_customers"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            tk.Label(self.cust_list_frame, text=self.t("no_customers") if not q else "No results", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
         for c in cs:
-            r = self.row(f)
+            r = self.row(self.cust_list_frame)
             tk.Label(r, text=c["name"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left")
             tk.Label(r, text=c["phone"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=20).pack(side="left")
             if c["email"]:
@@ -872,9 +914,29 @@ class App:
         self.hdr(self.t("invoices"), self.t("from_job"), self.pg_new_inv)
         f = tk.Frame(self.content, bg=C["bg"], padx=20)
         f.pack(fill="both", expand=True)
+        
+        # Search bar
+        sf = tk.Frame(f, bg=C["bg"])
+        sf.pack(fill="x", pady=(0,10))
+        self.inv_search_var = tk.StringVar()
+        self.inv_search_var.trace("w", lambda *a: self._filter_invs())
+        tk.Entry(sf, textvariable=self.inv_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
+        tk.Label(sf, text="Type to filter...", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
+        
+        self.inv_list_frame = tk.Frame(f, bg=C["bg"])
+        self.inv_list_frame.pack(fill="both", expand=True)
+        self._filter_invs()
+
+    def _filter_invs(self):
+        for w in self.inv_list_frame.winfo_children():
+            w.destroy()
         invs = self.db.get_invoices()
+        q = self.inv_search_var.get().strip().lower()
+        if q:
+            invs = [i for i in invs if q in (i["invoice_code"]+(i["customer_name"] or "")).lower()]
+        
         if not invs:
-            tk.Label(f, text=self.t("no_invoices"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            tk.Label(self.inv_list_frame, text=self.t("no_invoices") if not q else "No results", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
         
         unpaid = [i for i in invs if not i["paid"]]
@@ -882,12 +944,12 @@ class App:
         
         if unpaid:
             total_owed = sum(i["amount"] for i in unpaid)
-            hdr = tk.Frame(f, bg=C["bg"])
+            hdr = tk.Frame(self.inv_list_frame, bg=C["bg"])
             hdr.pack(fill="x", pady=5)
             tk.Label(hdr, text=f"{self.t('unpaid')} ({len(unpaid)} invoices, RM {total_owed:.2f} total)", bg=C["bg"], fg=C["err"], font=("Segoe UI", 13, "bold")).pack(side="left")
             
             for i in unpaid:
-                r = self.row(f)
+                r = self.row(self.inv_list_frame)
                 r.configure(bg="#FEF2F2")
                 left = tk.Frame(r, bg="#FEF2F2")
                 left.pack(side="left", fill="x", expand=True)
@@ -902,9 +964,9 @@ class App:
                 tk.Button(right, text=self.t("mark_paid"), command=lambda iid=i["id"]: self.mark_paid(iid), bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left")
         
         if paid:
-            tk.Label(f, text=f"{self.t('paid')} ({len(paid)})", bg=C["bg"], fg=C["ok"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=10)
+            tk.Label(self.inv_list_frame, text=f"{self.t('paid')} ({len(paid)})", bg=C["bg"], fg=C["ok"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=10)
             for i in paid:
-                r = self.row(f)
+                r = self.row(self.inv_list_frame)
                 tk.Label(r, text=i["invoice_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
                 tk.Label(r, text=i["customer_name"] or "Unknown", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
                 tk.Label(r, text=f"RM {i['amount']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=15).pack(side="left")
