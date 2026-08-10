@@ -15,7 +15,8 @@ QUICK START
    - Choose your language (English/BM/Chinese)
 3. You're ready to go!
 
-Note: The app can be placed in any folder - it doesn't need to be on the Desktop.
+Note: The app can be placed in any folder - it doesn't need to be on
+the Desktop.
 
 HOW TO ACTIVATE
 ---------------
@@ -34,7 +35,7 @@ If you don't have a license key yet, you can try the demo:
 
 FEATURES
 --------
-- Track repair jobs (pending, in-progress, done)
+- Track repair/service jobs (pending, in-progress, done)
 - Customer database with email support
 - Appointment scheduling
 - Invoice generation (Text or PDF format)
@@ -49,15 +50,18 @@ FEATURES
 - Supports English, Bahasa Malaysia, and Chinese
 - Smart Pickup Reminders (see below)
 - Customer Return Tracker (see below)
+- Google Review Integration (see below)
 
 SMART PICKUP REMINDERS
 ----------------------
-Never forget to follow up with customers! When a service is ready for collection, the app tracks it and sends automatic WhatsApp reminders.
+Never forget to follow up with customers! When a service is ready for
+collection, the app tracks it and sends automatic WhatsApp reminders.
 
 How it works:
 1. Mark a job as "Done" when the service is complete
 2. The app tracks waiting pickups in the background
-3. If a customer hasn't collected after a set number of days, the app sends a reminder
+3. If a customer hasn't collected after a set number of days, the app
+   sends a reminder
 4. Reminder goes directly to their WhatsApp - professional and polite
 
 Benefits:
@@ -68,11 +72,13 @@ Benefits:
 
 GOOGLE REVIEW INTEGRATION
 --------------------------
-Automatically ask customers to leave a Google review when you send invoices!
+Automatically ask customers to leave a Google review when you send
+invoices!
 
 How it works:
 1. Add your Google review link during setup (or in Settings later)
-2. When you send an invoice via WhatsApp or email, the review link is included
+2. When you send an invoice via WhatsApp or email, the review link is
+   included
 3. Customers can click the link to leave a review
 4. More reviews = more customers = more revenue!
 
@@ -84,7 +90,8 @@ Benefits:
 
 CUSTOMER RETURN TRACKER
 -----------------------
-Find customers who haven't visited your shop in 60+ days and bring them back!
+Find customers who haven't visited your shop in 60+ days and bring
+them back!
 
 How it works:
 1. The app tracks every customer visit automatically
@@ -100,9 +107,9 @@ Benefits:
 
 CLEARER COMPLETION MESSAGES
 ----------------------------
-When a repair is finished, you now get professional notifications:
+When a service is finished, you now get professional notifications:
 
-"Repair Complete - Ready for Collection"
+"Service Complete - Ready for Collection"
 - Clear, professional message
 - Sent to customer via WhatsApp
 - Includes job details and amount due
@@ -127,6 +134,18 @@ You can also download PDFs directly:
 - In Invoices: Click "PDF" button on any unpaid invoice
 - In Jobs: Click "PDF" button on completed jobs
 
+WHY KERJA MUDAH IS BETTER
+--------------------------
+Competitor apps charge RM80-220 per MONTH. Kerja Mudah is a ONE-TIME
+payment of RM200. That saves you RM760-2,240 in the first year alone.
+
+Plus:
+- Works offline (competitors need internet)
+- No hidden fees (competitors charge extra for users, features)
+- No hardware required (competitors may need POS terminals)
+- Multi-language support (English, Malay, Chinese)
+- Google review integration (unique feature!)
+
 TIPS
 ----
 - Add customers first, then create jobs for them
@@ -134,9 +153,11 @@ TIPS
 - Use "Send WhatsApp" or "Email" to send unpaid invoices to customers
 - Check Reports for revenue tracking
 - Export data regularly for backup
-- Use the search bars in Jobs, Customers, and Invoices to find things quickly
+- Use the search bars in Jobs, Customers, and Invoices to find things
+  quickly
 - Check the Customer Return Tracker monthly to re-engage old customers
 - Use Smart Pickup Reminders to reduce uncollected devices
+- Add your Google review link in Settings to get more reviews
 
 BACKUP YOUR DATA
 ----------------
@@ -166,13 +187,23 @@ Q: Where are my PDF invoices stored?
 A: In the data/invoices folder next to the app
 
 Q: Can I move the app to another computer?
-A: Yes! Copy the entire folder. You'll need to reactivate with a new license key.
+A: Yes! Copy the entire folder. You'll need to reactivate with a new
+   license key.
 
 Q: How do the pickup reminders work?
-A: Go to the Pickup Reminders section. You'll see devices waiting for collection. Click "Send Reminder" to send a WhatsApp message to the customer.
+A: Go to the Pickup Reminders section. You'll see devices waiting for
+   collection. Click "Send Reminder" to send a WhatsApp message to
+   the customer.
 
 Q: How do I find customers who haven't returned?
-A: Go to the Customer Return Tracker. It shows customers who haven't visited in 60+ days. You can send them a WhatsApp message directly from there.
+A: Go to the Customer Return Tracker. It shows customers who haven't
+   visited in 60+ days. You can send them a WhatsApp message directly
+   from there.
+
+Q: How do I add my Google review link?
+A: Go to Settings > Google Review > Edit. Add your link (e.g.,
+   https://g.page/r/ABC123/review). It will be included in all future
+   invoices.
 
 CONTACT SUPPORT
 ---------------
