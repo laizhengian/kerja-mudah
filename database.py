@@ -269,5 +269,27 @@ class Database:
             "SELECT * FROM inventory WHERE quantity <= min_quantity ORDER BY quantity"
         ).fetchall()
         
+    def update_customer(self, cid, name, phone=None, email=None, address=None, notes=None):
+        self.conn.execute("UPDATE customers SET name=?, phone=?, email=?, address=?, notes=? WHERE id=?",
+                          (name, phone, email, address, notes, cid))
+        self.conn.commit()
+
+    def update_job(self, job_id, item=None, problem=None, quote=None, status=None, due_date=None, notes=None):
+        self.conn.execute("UPDATE jobs SET item=?, problem=?, quote=?, status=?, due_date=?, notes=? WHERE id=?",
+                          (item, problem, quote, status, due_date, notes, job_id))
+        self.conn.commit()
+
+    def update_appointment(self, apt_id, date=None, time=None, purpose=None, status=None, notes=None):
+        self.conn.execute("UPDATE appointments SET date=?, time=?, purpose=?, status=?, notes=? WHERE id=?",
+                          (date, time, purpose, status, notes, apt_id))
+        self.conn.commit()
+
+    def cleanup_old_invoices(self):
+        """Delete paid invoices older than 7 days"""
+        from datetime import timedelta
+        seven_days_ago = (datetime.now() - timedelta(days=7)).isoformat()
+        self.conn.execute("DELETE FROM invoices WHERE paid=1 AND created_at < ?", (seven_days_ago,))
+        self.conn.commit()
+
     def close(self):
         self.conn.close()
