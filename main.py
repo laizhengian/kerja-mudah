@@ -463,14 +463,17 @@ class App:
         self.side = tk.Frame(self.root, bg=C["side"], width=240)
         self.side.pack(side="left", fill="y")
         self.side.pack_propagate(False)
-        self.content_canvas = tk.Canvas(self.root, bg=C["bg"], highlightthickness=0)
-        self.content_scrollbar = tk.Scrollbar(self.root, orient="vertical", command=self.content_canvas.yview)
+        main_frame = tk.Frame(self.root, bg=C["bg"])
+        main_frame.pack(side="left", fill="both", expand=True)
+        self.content_canvas = tk.Canvas(main_frame, bg=C["bg"], highlightthickness=0)
+        self.content_scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=self.content_canvas.yview)
         self.content = tk.Frame(self.content_canvas, bg=C["bg"])
         self.content.bind("<Configure>", lambda e: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
-        self.content_canvas.create_window((0, 0), window=self.content, anchor="nw")
+        self.content_canvas.create_window((0, 0), window=self.content, anchor="nw", tags="inner")
         self.content_canvas.configure(yscrollcommand=self.content_scrollbar.set)
         self.content_scrollbar.pack(side="right", fill="y")
         self.content_canvas.pack(side="left", fill="both", expand=True)
+        self.content_canvas.bind("<Configure>", lambda e: self.content_canvas.itemconfig("inner", width=e.width))
         def _on_mousewheel(event):
             self.content_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
         self.content_canvas.bind_all("<MouseWheel>", _on_mousewheel)
@@ -501,12 +504,6 @@ class App:
     def pg_home(self):
         self.clr()
         self.hdr(self.t("dashboard"))
-        net_path = self.db.get_setting("network_path")
-        if net_path:
-            sf = tk.Frame(self.content, bg="#DBEAFE", padx=20, pady=6)
-            sf.pack(fill="x")
-            tk.Label(sf, text=f"Synced to: {net_path}", bg="#DBEAFE", fg="#1E40AF", font=("Segoe UI", 10)).pack(side="left")
-            tk.Button(sf, text="Sync Now", command=self.sync_now, bg="#DBEAFE", fg="#1E40AF", font=("Segoe UI", 9, "bold"), bd=0, cursor="hand2").pack(side="right")
         today = datetime.now().strftime("%Y-%m-%d")
         jobs = self.db.get_jobs()
         active = len([j for j in jobs if j["status"] != "done"])
@@ -1519,6 +1516,12 @@ class App:
         gr_display = gr_val if gr_val else "Not set"
         tk.Label(gr_frame, text=f"Review Link: {gr_display}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
         tk.Button(gr_frame, text="Edit", command=self.edit_google_review, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+        tk.Label(s_gr, text="How to get your Google review link:", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(10,2))
+        tk.Label(s_gr, text="1. Open Google Maps and search for your business", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="2. Click on your business name to open it", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="3. Click the 'Reviews' tab", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="4. Click 'Share' and copy the link", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="5. Paste the link in Settings > Google Review > Edit", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
         s2 = self.row(f)
         tk.Label(s2, text=self.t("security"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         has = bool(self.db.get_setting("pin_hash"))
@@ -1546,114 +1549,26 @@ class App:
         tk.Radiobutton(ifr, text="Text (plain message)", variable=self.inv_fmt_var, value="text", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
         tk.Radiobutton(ifr, text="PDF (professional invoice)", variable=self.inv_fmt_var, value="pdf", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
         self.btn(s_inv, self.t("save"), self.save_inv_fmt, bg=C["ok"]).pack(anchor="w", pady=5)
-        s4 = self.row(f)
-        tk.Label(s4, text="Network Sync", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
-        tk.Label(s4, text="Share data with other computers on your network", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
-        net_path = self.db.get_setting("network_path", "")
-        nf = tk.Frame(s4, bg=C["card"])
-        nf.pack(fill="x", pady=5)
-        tk.Label(nf, text="Shared Folder:", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11)).pack(side="left")
-        self.net_entry = tk.Entry(nf, font=("Segoe UI", 11), bd=1, relief="solid", width=35)
-        self.net_entry.insert(0, net_path)
-        self.net_entry.pack(side="left", padx=10)
-        self.btn(nf, "Save", self.save_network_path, bg=C["ok"]).pack(side="left")
-        sync_frame = tk.Frame(s4, bg=C["card"])
-        sync_frame.pack(fill="x", pady=5)
-        if net_path:
-            tk.Label(sync_frame, text=f"Connected to: {net_path}", bg=C["card"], fg=C["ok"], font=("Segoe UI", 10)).pack(side="left")
-        else:
-            tk.Label(sync_frame, text="Not connected (local mode)", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
-        self.btn(sync_frame, "Sync Now", self.sync_now).pack(side="right")
         s5 = self.row(f)
         tk.Label(s5, text="Startup", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         tk.Label(s5, text="Open app automatically when Windows starts", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         self.btn(s5, "Toggle Open on Startup", self.toggle_startup, bg=C["warn"]).pack(anchor="w", pady=5)
 
     def toggle_startup(self):
-        import winreg
-        key_path = r"Software\Microsoft\Windows\CurrentVersion\Run"
-        app_name = "KerjaMudah"
-        exe_path = sys.executable if getattr(sys, 'frozen', False) else f'"{sys.executable}" "{os.path.abspath(__file__)}"'
+        startup_folder = os.path.join(os.environ["APPDATA"], "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
+        shortcut_path = os.path.join(startup_folder, "Kerja Mudah.bat")
         try:
-            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_SET_VALUE)
-            try:
-                winreg.QueryValueEx(key, app_name)
-                winreg.DeleteValue(key, app_name)
+            if os.path.exists(shortcut_path):
+                os.remove(shortcut_path)
                 messagebox.showinfo("Done", "App will no longer open on startup")
-            except FileNotFoundError:
-                winreg.SetValueEx(key, app_name, 0, winreg.REG_SZ, exe_path)
+            else:
+                exe_path = sys.executable if getattr(sys, 'frozen', False) else sys.executable
+                bat_content = f'@echo off\nstart "" "{exe_path}"'
+                with open(shortcut_path, "w") as f:
+                    f.write(bat_content)
                 messagebox.showinfo("Done", "App will now open on startup")
-            winreg.CloseKey(key)
         except Exception as e:
             messagebox.showerror("Error", f"Could not update startup: {e}")
-
-    def save_network_path(self):
-        path = self.net_entry.get().strip()
-        self.db.set_setting("network_path", path)
-        if path:
-            if os.path.exists(path):
-                messagebox.showinfo("Connected", f"Connected to:\n{path}\n\nData will sync automatically.")
-            else:
-                messagebox.showwarning("Warning", f"Folder not found:\n{path}\n\nMake sure the shared folder is accessible.")
-        else:
-            messagebox.showinfo("Disconnected", "Network sync disabled. Using local data.")
-        self.pg_set()
-
-    def sync_now(self):
-        import shutil
-        net_path = self.db.get_setting("network_path")
-        if not net_path:
-            return messagebox.showwarning("No Network", "Set a shared folder path in Settings first.")
-        local_db = os.path.join(APP_DIR, "data", "data.db")
-        network_db = os.path.join(net_path, "data.db")
-        net_data = os.path.join(net_path)
-        if not os.path.exists(net_data):
-            os.makedirs(net_data, exist_ok=True)
-        local_time = os.path.getmtime(local_db) if os.path.exists(local_db) else 0
-        net_time = os.path.getmtime(network_db) if os.path.exists(network_db) else 0
-        if net_time > local_time:
-            shutil.copy2(network_db, local_db)
-            self.db.close()
-            self.db = Database(local_db)
-            messagebox.showinfo("Sync Complete", "Pulled latest data from network.")
-            self.pg_set()
-        elif local_time > net_time:
-            shutil.copy2(local_db, network_db)
-            messagebox.showinfo("Sync Complete", "Pushed data to network.")
-            self.pg_set()
-        else:
-            messagebox.showinfo("Sync Complete", "Data is already up to date.")
-
-    def _auto_sync(self):
-        import shutil
-        net_path = self.db.get_setting("network_path")
-        if not net_path or not os.path.exists(net_path):
-            return
-        local_db = os.path.join(APP_DIR, "data", "data.db")
-        network_db = os.path.join(net_path, "data.db")
-        try:
-            if os.path.exists(network_db):
-                net_time = os.path.getmtime(network_db)
-                local_time = os.path.getmtime(local_db) if os.path.exists(local_db) else 0
-                if net_time > local_time:
-                    shutil.copy2(network_db, local_db)
-                    self.db.close()
-                    self.db = Database(local_db)
-        except:
-            pass
-
-    def _auto_sync_on_exit(self):
-        import shutil
-        net_path = self.db.get_setting("network_path")
-        if not net_path or not os.path.exists(net_path):
-            return
-        local_db = os.path.join(APP_DIR, "data", "data.db")
-        network_db = os.path.join(net_path, "data.db")
-        try:
-            if os.path.exists(local_db):
-                shutil.copy2(local_db, network_db)
-        except:
-            pass
 
     def edit_biz_name(self):
         self._edit_biz_field("business_name", "Business Name")
@@ -1792,12 +1707,10 @@ class App:
         self._changing_lang = False
 
     def run(self):
-        self._auto_sync()
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
         self.root.mainloop()
 
     def _on_close(self):
-        self._auto_sync_on_exit()
         self.db.close()
         self.root.destroy()
 
