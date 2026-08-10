@@ -30,7 +30,7 @@ def is_demo(db):
         install_date = datetime.now().isoformat()
     try:
         days = (datetime.now() - datetime.fromisoformat(install_date)).days
-    except:
+    except (ValueError, TypeError):
         days = 0
     return days <= 7
 
@@ -175,7 +175,6 @@ def tr(lang, key):
 class App:
     def __init__(self):
         self.db = Database(os.path.join(APP_DIR, "data", "data.db"))
-        self.db.cleanup_old_invoices()
         self.lang = self.db.get_setting("language", "en")
         self.root = tk.Tk()
         self.root.title(tr(self.lang, "app_title"))
@@ -184,8 +183,11 @@ class App:
         self.root.configure(bg=C["bg"])
         try:
             self.root.iconbitmap(default="")
-        except:
+        except (tk.TclError, OSError):
             pass
+        deleted = self.db.cleanup_old_invoices()
+        if deleted > 0:
+            self.root.after(100, lambda: messagebox.showinfo("Cleanup", f"Deleted {deleted} old paid invoice(s) older than 7 days."))
         if check_license(self.db):
             if not self.db.get_setting("setup_complete"):
                 self.wizard()
@@ -202,19 +204,18 @@ class App:
         try:
             dt = datetime.strptime(date_str[:10], "%Y-%m-%d")
             return dt.strftime("%d %B %Y")
-        except:
+        except (ValueError, TypeError):
             try:
                 dt = datetime.strptime(date_str, "%d/%m/%Y")
                 return dt.strftime("%d %B %Y")
-            except:
+            except (ValueError, TypeError):
                 return date_str
 
     def h(self, p):
         return hashlib.sha256(p.encode()).hexdigest()
 
     def t(self, key):
-        lang = self.lang.get() if isinstance(self.lang, tk.StringVar) else self.lang
-        return tr(lang, key)
+        return tr(self.lang, key)
 
     def is_demo(self):
         return is_demo(self.db)
@@ -279,7 +280,7 @@ class App:
             win.grab_set()
             try:
                 current = datetime.strptime(var.get(), "%Y-%m-%d")
-            except:
+            except (ValueError, TypeError):
                 current = datetime.now()
             month_var = tk.StringVar(value=current.strftime("%B %Y"))
             def change_month(delta):
@@ -360,9 +361,9 @@ class App:
         tk.Label(gf, text=self.t("google_review_hint"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(side="left", padx=8)
         lf = tk.Frame(f, bg=C["bg"]); lf.pack(fill="x", pady=12)
         tk.Label(lf, text="Language", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
-        self.lang = tk.StringVar(value="en")
+        self.lang_var = tk.StringVar(value="en")
         for v, t in [("en","English"),("ms","Bahasa Malaysia"),("zh","Chinese")]:
-            tk.Radiobutton(lf, text=t, variable=self.lang, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=8)
+            tk.Radiobutton(lf, text=t, variable=self.lang_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=8)
         self.btn(c, self.t("get_started"), self.save_wizard).pack(pady=30)
         tk.Label(c, text=self.t("offline_msg"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack()
 
@@ -374,7 +375,7 @@ class App:
         self.db.set_setting("business_phone", self.se["Phone"].get().strip())
         self.db.set_setting("business_email", self.se["Email"].get().strip())
         self.db.set_setting("google_review", self.se["Google Review"].get().strip())
-        self.db.set_setting("language", self.lang.get())
+        self.db.set_setting("language", self.lang_var.get())
         self.db.set_setting("setup_complete", "true")
         self.layout()
 
@@ -483,7 +484,7 @@ class App:
                 install_date = self.db.get_setting("install_date")
                 if install_date:
                     days_left = 7 - (datetime.now() - datetime.fromisoformat(install_date)).days
-            except:
+            except (ValueError, TypeError):
                 pass
             demo_bar = tk.Frame(self.root, bg="#FEF3C7", height=30)
             demo_bar.place(relx=0.5, rely=0, anchor="n", relwidth=1)
@@ -576,7 +577,7 @@ class App:
                     url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                     try:
                         webbrowser.open(url)
-                    except:
+                    except (webbrowser.Error, OSError):
                         pass
                     messagebox.showinfo("Reminder Sent", f"WhatsApp opened for +{phone}")
                 tk.Button(row, text="Send Reminder", command=send_pickup_reminder, bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
@@ -644,7 +645,7 @@ class App:
         messagebox.showinfo("PDF Saved", f"Invoice PDF saved to:\n{pdf_path}")
         try:
             os.startfile(os.path.dirname(pdf_path))
-        except:
+        except (OSError, AttributeError):
             pass
 
     def pg_new_job(self):
@@ -705,7 +706,7 @@ class App:
             return messagebox.showerror("Error", "Enter item")
         try:
             q = float(self.je["Quote (RM)"].get().strip() or "0")
-        except:
+        except ValueError:
             return messagebox.showerror("Error", "Quote must be number")
         if self.is_demo() and len(self.db.get_jobs()) >= 10:
             return messagebox.showerror("Demo Limit", "Demo mode is limited to 10 jobs.\nPlease activate with a license key.")
@@ -745,7 +746,7 @@ class App:
         def save():
             try:
                 q = float(quote_e.get().strip() or "0")
-            except:
+            except ValueError:
                 return messagebox.showerror("Error", "Quote must be number")
             due = due_var.get() if isinstance(due_var, tk.StringVar) else due_var.get().strip()
             self.db.update_job(j["id"], item_e.get().strip(), problem_e.get().strip(), q, status_var.get(), due, notes_e.get().strip())
@@ -814,7 +815,7 @@ class App:
                 url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                 try:
                     webbrowser.open(url)
-                except:
+                except (webbrowser.Error, OSError):
                     pass
                 if use_pdf:
                     messagebox.showinfo("Done", f"Invoice created! WhatsApp opened for +{phone}\nPDF saved to: {pdf_path}")
@@ -848,7 +849,7 @@ class App:
                     try:
                         webbrowser.open(mailto)
                         os.startfile(pdf_path)
-                    except:
+                    except (webbrowser.Error, OSError):
                         pass
                     messagebox.showinfo("Done", f"Invoice created! Email opened for {email}\nPDF saved to: {pdf_path}")
                 else:
@@ -863,7 +864,7 @@ class App:
                     mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                     try:
                         webbrowser.open(mailto)
-                    except:
+                    except (webbrowser.Error, OSError):
                         pass
                     messagebox.showinfo("Done", f"Invoice created! Email opened for {email}")
             else:
@@ -1153,7 +1154,7 @@ class App:
         messagebox.showinfo("PDF Saved", f"Invoice PDF saved to:\n{pdf_path}")
         try:
             os.startfile(os.path.dirname(pdf_path))
-        except:
+        except (OSError, AttributeError):
             pass
 
     def send_whatsapp(self, inv):
@@ -1192,8 +1193,8 @@ class App:
         msg += f"Thank you!\n{self.db.get_setting('business_name', 'Shop')}"
         url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
         try:
-            webbrowser.open(url)
-        except:
+            os.startfile(os.path.dirname(pdf_path))
+        except (OSError, AttributeError):
             pass
         if use_pdf:
             messagebox.showinfo("WhatsApp", f"Opening WhatsApp for +{phone}\nPDF saved to: {pdf_path}")
@@ -1232,7 +1233,7 @@ class App:
             try:
                 webbrowser.open(mailto)
                 os.startfile(pdf_path)
-            except:
+            except (webbrowser.Error, OSError):
                 pass
             messagebox.showinfo("Email", f"Email opened for {email}\nPDF saved to: {pdf_path}")
         else:
@@ -1254,80 +1255,84 @@ class App:
             mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
             try:
                 webbrowser.open(mailto)
-            except:
+            except (webbrowser.Error, OSError):
                 pass
             messagebox.showinfo("Email", f"Opening email client for {email}")
 
     def generate_invoice_pdf(self, inv_code, job, cust):
-        invoice_dir = os.path.join(APP_DIR, "data", "invoices")
-        os.makedirs(invoice_dir, exist_ok=True)
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Helvetica", "B", 22)
-        pdf.cell(0, 12, "INVOICE", new_x="LMARGIN", new_y="NEXT", align="R")
-        pdf.set_font("Helvetica", "", 10)
-        pdf.cell(0, 6, f"Invoice: {inv_code}", new_x="LMARGIN", new_y="NEXT", align="R")
-        pdf.cell(0, 6, f"Date: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}", new_x="LMARGIN", new_y="NEXT", align="R")
-        pdf.cell(0, 6, f"Status: UNPAID", new_x="LMARGIN", new_y="NEXT", align="R")
-        pdf.ln(8)
-        biz_name = self.db.get_setting("business_name", "Shop")
-        biz_phone = self.db.get_setting("business_phone", "")
-        biz_email = self.db.get_setting("business_email", "")
-        pdf.set_font("Helvetica", "B", 14)
-        pdf.cell(0, 8, biz_name, new_x="LMARGIN", new_y="NEXT")
-        pdf.set_font("Helvetica", "", 10)
-        if biz_phone:
-            pdf.cell(0, 6, f"Phone: {biz_phone}", new_x="LMARGIN", new_y="NEXT")
-        if biz_email:
-            pdf.cell(0, 6, f"Email: {biz_email}", new_x="LMARGIN", new_y="NEXT")
-        pdf.ln(8)
-        pdf.set_font("Helvetica", "B", 10)
-        pdf.cell(0, 7, "Bill To:", new_x="LMARGIN", new_y="NEXT")
-        pdf.set_font("Helvetica", "", 10)
-        if cust:
-            pdf.cell(0, 6, cust["name"], new_x="LMARGIN", new_y="NEXT")
-            if cust["phone"]:
-                pdf.cell(0, 6, f"Phone: {cust['phone']}", new_x="LMARGIN", new_y="NEXT")
-            if cust["email"]:
-                pdf.cell(0, 6, f"Email: {cust['email']}", new_x="LMARGIN", new_y="NEXT")
-        else:
-            pdf.cell(0, 6, "Walk-in Customer", new_x="LMARGIN", new_y="NEXT")
-        pdf.ln(8)
-        pdf.set_fill_color(50, 50, 50)
-        pdf.set_text_color(255, 255, 255)
-        pdf.set_font("Helvetica", "B", 10)
-        pdf.cell(80, 8, "  Item", fill=True)
-        pdf.cell(55, 8, "  Service", fill=True)
-        pdf.cell(35, 8, "  Amount", new_x="LMARGIN", new_y="NEXT", fill=True)
-        pdf.set_text_color(0, 0, 0)
-        pdf.set_font("Helvetica", "", 10)
-        item = job["item"] if job else "N/A"
-        problem = (job["problem"] or "N/A") if job else "N/A"
-        pdf.cell(80, 8, f"  {item}")
-        pdf.cell(55, 8, f"  {problem}")
-        pdf.cell(35, 8, f"  RM {job['quote']:.2f}" if job else "  RM 0.00", new_x="LMARGIN", new_y="NEXT")
-        pdf.ln(5)
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.cell(135, 10, "Total:")
-        pdf.cell(35, 10, f"RM {job['quote']:.2f}" if job else "RM 0.00", new_x="LMARGIN", new_y="NEXT")
-        pdf.ln(10)
-        google_review = self.db.get_setting("google_review", "")
-        if google_review:
-            review_link = google_review.rstrip("/") + "/write-review"
+        try:
+            invoice_dir = os.path.join(APP_DIR, "data", "invoices")
+            os.makedirs(invoice_dir, exist_ok=True)
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Helvetica", "B", 22)
+            pdf.cell(0, 12, "INVOICE", new_x="LMARGIN", new_y="NEXT", align="R")
             pdf.set_font("Helvetica", "", 10)
-            pdf.cell(0, 6, "We'd love your feedback!", new_x="LMARGIN", new_y="NEXT", align="C")
+            pdf.cell(0, 6, f"Invoice: {inv_code}", new_x="LMARGIN", new_y="NEXT", align="R")
+            pdf.cell(0, 6, f"Date: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}", new_x="LMARGIN", new_y="NEXT", align="R")
+            pdf.cell(0, 6, f"Status: UNPAID", new_x="LMARGIN", new_y="NEXT", align="R")
+            pdf.ln(8)
+            biz_name = self.db.get_setting("business_name", "Shop")
+            biz_phone = self.db.get_setting("business_phone", "")
+            biz_email = self.db.get_setting("business_email", "")
+            pdf.set_font("Helvetica", "B", 14)
+            pdf.cell(0, 8, biz_name, new_x="LMARGIN", new_y="NEXT")
+            pdf.set_font("Helvetica", "", 10)
+            if biz_phone:
+                pdf.cell(0, 6, f"Phone: {biz_phone}", new_x="LMARGIN", new_y="NEXT")
+            if biz_email:
+                pdf.cell(0, 6, f"Email: {biz_email}", new_x="LMARGIN", new_y="NEXT")
+            pdf.ln(8)
             pdf.set_font("Helvetica", "B", 10)
-            pdf.cell(0, 6, "Leave us a Google review:", new_x="LMARGIN", new_y="NEXT", align="C")
-            pdf.set_text_color(0, 102, 204)
-            pdf.cell(0, 6, review_link, new_x="LMARGIN", new_y="NEXT", align="C", link=review_link)
+            pdf.cell(0, 7, "Bill To:", new_x="LMARGIN", new_y="NEXT")
+            pdf.set_font("Helvetica", "", 10)
+            if cust:
+                pdf.cell(0, 6, cust["name"], new_x="LMARGIN", new_y="NEXT")
+                if cust["phone"]:
+                    pdf.cell(0, 6, f"Phone: {cust['phone']}", new_x="LMARGIN", new_y="NEXT")
+                if cust["email"]:
+                    pdf.cell(0, 6, f"Email: {cust['email']}", new_x="LMARGIN", new_y="NEXT")
+            else:
+                pdf.cell(0, 6, "Walk-in Customer", new_x="LMARGIN", new_y="NEXT")
+            pdf.ln(8)
+            pdf.set_fill_color(50, 50, 50)
+            pdf.set_text_color(255, 255, 255)
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.cell(80, 8, "  Item", fill=True)
+            pdf.cell(55, 8, "  Service", fill=True)
+            pdf.cell(35, 8, "  Amount", new_x="LMARGIN", new_y="NEXT", fill=True)
             pdf.set_text_color(0, 0, 0)
+            pdf.set_font("Helvetica", "", 10)
+            item = job["item"] if job else "N/A"
+            problem = (job["problem"] or "N/A") if job else "N/A"
+            pdf.cell(80, 8, f"  {item}")
+            pdf.cell(55, 8, f"  {problem}")
+            pdf.cell(35, 8, f"  RM {job['quote']:.2f}" if job else "  RM 0.00", new_x="LMARGIN", new_y="NEXT")
             pdf.ln(5)
-        pdf.set_font("Helvetica", "", 10)
-        pdf.cell(0, 6, "Thank you for your business!", new_x="LMARGIN", new_y="NEXT", align="C")
-        filename = f"{inv_code}.pdf"
-        filepath = os.path.join(invoice_dir, filename)
-        pdf.output(filepath)
-        return filepath
+            pdf.set_font("Helvetica", "B", 12)
+            pdf.cell(135, 10, "Total:")
+            pdf.cell(35, 10, f"RM {job['quote']:.2f}" if job else "RM 0.00", new_x="LMARGIN", new_y="NEXT")
+            pdf.ln(10)
+            google_review = self.db.get_setting("google_review", "")
+            if google_review:
+                review_link = google_review.rstrip("/") + "/write-review"
+                pdf.set_font("Helvetica", "", 10)
+                pdf.cell(0, 6, "We'd love your feedback!", new_x="LMARGIN", new_y="NEXT", align="C")
+                pdf.set_font("Helvetica", "B", 10)
+                pdf.cell(0, 6, "Leave us a Google review:", new_x="LMARGIN", new_y="NEXT", align="C")
+                pdf.set_text_color(0, 102, 204)
+                pdf.cell(0, 6, review_link, new_x="LMARGIN", new_y="NEXT", align="C", link=review_link)
+                pdf.set_text_color(0, 0, 0)
+                pdf.ln(5)
+            pdf.set_font("Helvetica", "", 10)
+            pdf.cell(0, 6, "Thank you for your business!", new_x="LMARGIN", new_y="NEXT", align="C")
+            filename = f"{inv_code}.pdf"
+            filepath = os.path.join(invoice_dir, filename)
+            pdf.output(filepath)
+            return filepath
+        except Exception as e:
+            messagebox.showerror("PDF Error", f"Failed to generate PDF:\n{str(e)}")
+            return None
 
     def mark_paid(self, iid):
         win = tk.Toplevel(self.root)
@@ -1483,7 +1488,7 @@ class App:
         db_path = os.path.join(APP_DIR, "data", "data.db")
         if not os.path.exists(db_path):
             return messagebox.showerror("Error", "No data to backup")
-        default_name = f"repairshop_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
+        default_name = f"kerjamudah_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
         fp = filedialog.asksaveasfilename(defaultextension=".db", filetypes=[("Database","*.db")], initialfile=default_name)
         if not fp:
             return

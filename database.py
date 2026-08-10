@@ -305,11 +305,12 @@ class Database:
         self.conn.commit()
 
     def cleanup_old_invoices(self):
-        """Delete paid invoices older than 7 days"""
+        """Delete paid invoices older than 7 days. Returns count of deleted invoices."""
         from datetime import timedelta
         seven_days_ago = (datetime.now() - timedelta(days=7)).isoformat()
-        self.conn.execute("DELETE FROM invoices WHERE paid=1 AND created_at < ?", (seven_days_ago,))
+        cursor = self.conn.execute("DELETE FROM invoices WHERE paid=1 AND created_at < ?", (seven_days_ago,))
         self.conn.commit()
+        return cursor.rowcount
 
     def close(self):
         self.conn.close()

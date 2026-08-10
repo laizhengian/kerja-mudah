@@ -99,7 +99,7 @@ Invoices Table
   payment_method TEXT      Cash / E-Wallet / Card / Transfer
   created_at     TIMESTAMP Creation time
 
-  Note: Paid invoices older than 7 days are automatically deleted.
+  Note: Paid invoices older than 7 days can be cleaned up from Settings.
 
 Appointments Table
   Column       Type      Description
@@ -184,12 +184,10 @@ License System
   - Generator in keygen.py (seller only)
   - get_hwid.py shows customer's HWID
 
-Network Sync
-  - Syncs via shared folder on WiFi
-  - Auto-sync on app startup and exit
-  - Manual sync button in Settings
-  - Copies entire data/data.db to shared location
-  - Warning: No conflict resolution - last write wins
+Network Sync (Planned)
+  - Future feature: Sync via shared folder on WiFi
+  - Not yet implemented in the UI
+  - Database supports network_path setting for future use
 
 Backup/Restore
   - Backup: Copies data/data.db to user-selected location
@@ -198,7 +196,7 @@ Backup/Restore
 
 Open on Startup
   - Toggle in Settings to open app on Windows startup
-  - Uses Windows Registry (HKEY_CURRENT_USER)
+  - Creates a .bat file in Windows Startup folder
   - Can be enabled/disabled at any time
 
 ---
@@ -212,7 +210,7 @@ Scrollable Interface
   - Scroll position resets when changing pages
 
 Inline Search
-  - Jobs, Customers, and Invoices have search bars
+  - Jobs, Customers, Appointments, and Invoices have search bars
   - Type to filter results in real-time
   - No need to click a button
 
@@ -271,10 +269,9 @@ DEPENDENCIES
 
   tkinter     GUI (built-in)
   sqlite3     Database (built-in)
-  fpdf2       PDF generation (pip install fpdf2)
+  fpdf2       PDF generation (pip install fpdf2, see requirements.txt)
   hashlib     SHA-256 hashing (built-in)
   webbrowser  Open URLs (built-in)
-  winreg      Windows startup (built-in, Windows only)
 
 ---
 
@@ -290,4 +287,4 @@ IMPORTANT NOTES
   7. WhatsApp links        - Opens wa.me/phone?text=message
   8. Email                 - Opens mailto: link with pre-filled content
   9. Portable              - Can be placed in any folder
-  10. Auto-cleanup         - Paid invoices deleted after 7 days
+  10. Auto-cleanup         - Paid invoices older than 7 days can be cleaned from Settings

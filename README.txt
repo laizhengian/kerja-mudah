@@ -45,7 +45,6 @@ FEATURES
 - Revenue reports
 - Export data to CSV
 - Backup and restore
-- Network sync (share data between computers)
 - Open on Windows startup option
 - Supports English, Bahasa Malaysia, and Chinese
 - Smart Pickup Reminders (see below)
@@ -135,7 +134,7 @@ TIPS
 - Use "Send WhatsApp" or "Email" to send unpaid invoices to customers
 - Check Reports for revenue tracking
 - Export data regularly for backup
-- Use the search bars in Jobs, Customers, and Invoices to find things
+- Use the search bars in Jobs, Customers, Appointments, and Invoices to find things
   quickly
 - Use Smart Pickup Reminders to reduce uncollected devices
 - Add your Google review link in Settings to get more reviews
@@ -177,9 +176,10 @@ A: Go to the Pickup Reminders section. You'll see devices waiting for
    the customer.
 
 Q: How do I add my Google review link?
-A: Go to Settings > Google Review > Edit. Add your link (e.g.,
-   https://g.page/r/ABC123/review). It will be included in all future
-   invoices.
+A: Go to Settings > Google Review > Edit. You can paste either:
+   - A Google Maps link (e.g., https://www.google.com/maps/place/...)
+   - A direct review link (e.g., https://g.page/r/ABC123/review)
+   The app will automatically convert Maps links to review links.
 
 CONTACT SUPPORT
 ---------------

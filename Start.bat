@@ -1,5 +1,5 @@
 @echo off
-echo Starting RepairShop Manager...
+echo Starting Kerja Mudah...
 python main.py
 if errorlevel 1 (
     echo.
