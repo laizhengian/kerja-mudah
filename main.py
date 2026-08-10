@@ -961,20 +961,47 @@ class App:
     def pg_cal(self):
         self.clr()
         self.hdr(self.t("appointments"), self.t("new_appointment"), self.pg_new_appt)
-        today = datetime.now().strftime("%Y-%m-%d")
-        tk.Label(self.content, text=self.fmt_date(today), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12), padx=28).pack(anchor="w", pady=8)
         f = tk.Frame(self.content, bg=C["bg"], padx=20)
         f.pack(fill="both", expand=True)
-        appts = self.db.get_appointments(today)
-        if not appts:
-            tk.Label(f, text=self.t("no_appointments"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
-            return
-        for a in appts:
-            r = self.row(f)
-            tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w").pack(side="left")
-            tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left", padx=15)
-            tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
-            tk.Button(r, text="Edit", command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
+        sf = tk.Frame(f, bg=C["bg"])
+        sf.pack(fill="x", pady=(0,10))
+        self.appt_search_var = tk.StringVar()
+        self.appt_search_var.trace("w", lambda *a: self._filter_appts())
+        tk.Entry(sf, textvariable=self.appt_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
+        tk.Label(sf, text="Type to filter...", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
+        self.appt_list_frame = tk.Frame(f, bg=C["bg"])
+        self.appt_list_frame.pack(fill="both", expand=True)
+        self._filter_appts()
+
+    def _filter_appts(self):
+        for w in self.appt_list_frame.winfo_children():
+            w.destroy()
+        q = self.appt_search_var.get().strip()
+        if q:
+            appts = self.db.search_appointments(q)
+            if not appts:
+                tk.Label(self.appt_list_frame, text="No results", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+                return
+            for a in appts:
+                r = self.row(self.appt_list_frame)
+                tk.Label(r, text=a["date"], bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=12, anchor="w").pack(side="left", padx=4)
+                tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w").pack(side="left", padx=4)
+                tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left", padx=15)
+                tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
+                tk.Button(r, text="Edit", command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
+        else:
+            today = datetime.now().strftime("%Y-%m-%d")
+            tk.Label(self.appt_list_frame, text=self.fmt_date(today), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(anchor="w", pady=8)
+            appts = self.db.get_appointments(today)
+            if not appts:
+                tk.Label(self.appt_list_frame, text=self.t("no_appointments"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+                return
+            for a in appts:
+                r = self.row(self.appt_list_frame)
+                tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w").pack(side="left")
+                tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left", padx=15)
+                tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
+                tk.Button(r, text="Edit", command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
 
     def edit_appt(self, a):
         win = tk.Toplevel(self.root)

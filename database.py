@@ -186,6 +186,16 @@ class Database:
                FROM appointments a LEFT JOIN customers c ON a.customer_id = c.id
                ORDER BY a.date, a.time"""
         ).fetchall()
+
+    def search_appointments(self, query):
+        q = f"%{query}%"
+        return self.conn.execute(
+            """SELECT a.*, c.name as customer_name, c.phone as customer_phone
+               FROM appointments a LEFT JOIN customers c ON a.customer_id = c.id
+               WHERE a.date LIKE ? OR a.purpose LIKE ? OR a.notes LIKE ? OR c.name LIKE ?
+               ORDER BY a.date, a.time""",
+            (q, q, q, q)
+        ).fetchall()
         
     def add_invoice(self, job_id, amount, payment_method=None):
         invoice_code = f"INV-{datetime.now().strftime('%Y%m%d')}-{self._next_invoice_number()}"
