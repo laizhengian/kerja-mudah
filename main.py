@@ -55,7 +55,7 @@ T = {
         "new_job": "+ New Job", "new_customer": "+ Customer", "new_appointment": "+ Appointment",
         "new_job_title": "New Job", "new_customer_title": "New Customer", "new_appointment_title": "New Appointment",
         "customer": "Customer", "phone": "Phone", "item": "Item",
-        "problem": "Problem", "quote": "Quote (RM)", "email": "Email", "notes": "Notes",
+        "problem": "Service / Problem Details", "quote": "Quote (RM)", "email": "Email", "notes": "Notes",
         "due_date": "Due Date", "date": "Date", "time": "Time",
         "purpose": "Purpose", "save": "Save", "cancel": "Cancel",
         "create_invoice": "Create Invoice", "from_job": "+ From Job",
@@ -79,6 +79,11 @@ T = {
         "today_appointments": "Today's Appointments",
         "unpaid_invoices": "unpaid invoice(s)",
         "confirm_pin": "Confirm PIN",
+        "service_details": "Service / Problem Details",
+        "google_review": "Google Review Link",
+        "google_review_hint": "e.g. https://g.page/r/ABC123/review",
+        "leave_review": "We'd love your feedback!",
+        "rate_us": "Leave us a Google review",
     },
     "ms": {
         "app_title": "Kerja Mudah",
@@ -91,7 +96,7 @@ T = {
         "new_job": "+ Kerja Baru", "new_customer": "+ Pelanggan", "new_appointment": "+ Temujanji",
         "new_job_title": "Kerja Baru", "new_customer_title": "Pelanggan Baru", "new_appointment_title": "Temujanji Baru",
         "customer": "Pelanggan", "phone": "Telefon", "item": "Barang",
-        "problem": "Masalah", "quote": "Sebut Harga (RM)", "email": "Emel", "notes": "Nota",
+        "problem": "Perkhidmatan / Butiran Masalah", "quote": "Sebut Harga (RM)", "email": "Emel", "notes": "Nota",
         "due_date": "Tarikh Akhir", "date": "Tarikh", "time": "Masa",
         "purpose": "Tujuan", "save": "Simpan", "cancel": "Batal",
         "create_invoice": "Cipta Invois", "from_job": "+ Dari Kerja",
@@ -115,6 +120,11 @@ T = {
         "today_appointments": "Temujanji Hari Ini",
         "unpaid_invoices": "invois belum dibayar",
         "confirm_pin": "Sahkan PIN",
+        "service_details": "Perkhidmatan / Butiran Masalah",
+        "google_review": "Pautan Google Review",
+        "google_review_hint": "cth. https://g.page/r/ABC123/review",
+        "leave_review": "Kami menghargai maklum balas anda!",
+        "rate_us": "Tinggalkan Google review untuk kami",
     },
     "zh": {
         "app_title": "Kerja Mudah",
@@ -127,7 +137,7 @@ T = {
         "new_job": "+ 新工作", "new_customer": "+ 客户", "new_appointment": "+ 预约",
         "new_job_title": "新工作", "new_customer_title": "新客户", "new_appointment_title": "新预约",
         "customer": "客户", "phone": "电话", "item": "物品",
-        "problem": "问题", "quote": "报价 (RM)", "email": "电邮", "notes": "备注",
+        "problem": "服务/问题详情", "quote": "报价 (RM)", "email": "电邮", "notes": "备注",
         "due_date": "截止日期", "date": "日期", "time": "时间",
         "purpose": "目的", "save": "保存", "cancel": "取消",
         "create_invoice": "创建发票", "from_job": "+ 从工作",
@@ -151,6 +161,11 @@ T = {
         "today_appointments": "今日预约",
         "unpaid_invoices": "张未付款发票",
         "confirm_pin": "确认PIN",
+        "service_details": "服务/问题详情",
+        "google_review": "Google评价链接",
+        "google_review_hint": "例如 https://g.page/r/ABC123/review",
+        "leave_review": "我们期待您的反馈！",
+        "rate_us": "请给我们留个Google评价",
     },
 }
 
@@ -338,6 +353,11 @@ class App:
         self.se = {}
         for l, d in [("Business Name", ""), ("Phone", "+60"), ("Email", "")]:
             self.se[l] = self.field(f, self.t(l.lower().replace(" ","_")), d)
+        gf = tk.Frame(f, bg=C["bg"]); gf.pack(fill="x", pady=8)
+        tk.Label(gf, text=self.t("google_review"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        self.se["Google Review"] = tk.Entry(gf, font=("Segoe UI", 12), bd=1, relief="solid")
+        self.se["Google Review"].pack(side="left", fill="x", expand=True, ipady=6)
+        tk.Label(gf, text=self.t("google_review_hint"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(side="left", padx=8)
         lf = tk.Frame(f, bg=C["bg"]); lf.pack(fill="x", pady=12)
         tk.Label(lf, text="Language", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
         self.lang = tk.StringVar(value="en")
@@ -353,6 +373,7 @@ class App:
         self.db.set_setting("business_name", n)
         self.db.set_setting("business_phone", self.se["Phone"].get().strip())
         self.db.set_setting("business_email", self.se["Email"].get().strip())
+        self.db.set_setting("google_review", self.se["Google Review"].get().strip())
         self.db.set_setting("language", self.lang.get())
         self.db.set_setting("setup_complete", "true")
         self.layout()
@@ -548,8 +569,11 @@ class App:
                         return messagebox.showwarning("No Phone", "No phone number for this customer.")
                     biz_name = self.db.get_setting("business_name", "Shop")
                     msg = f"Hi {job['customer_name'] or 'Customer'},\n\n"
-                    msg += f"Your {job['item']} repair is ready for collection!\n\n"
-                    msg += f"Please pick up at your convenience.\n"
+                    msg += f"Your {job['item']} service is ready for collection!\n\n"
+                    msg += f"Please pick up at your convenience.\n\n"
+                    google_review = self.db.get_setting("google_review", "")
+                    if google_review:
+                        msg += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
                     msg += f"Thank you!\n{biz_name}"
                     url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                     try:
@@ -581,8 +605,11 @@ class App:
                     biz_name = self.db.get_setting("business_name", "Shop")
                     msg = f"Hi {cust['name']},\n\n"
                     msg += f"We miss you at {biz_name}!\n\n"
-                    msg += f"If you need any repairs, we're here to help.\n"
-                    msg += f"See you soon!"
+                    msg += f"If you need any services, we're here to help.\n"
+                    msg += f"See you soon!\n\n"
+                    google_review = self.db.get_setting("google_review", "")
+                    if google_review:
+                        msg += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n"
                     url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                     try:
                         webbrowser.open(url)
@@ -809,13 +836,16 @@ class App:
                 pdf_path = self.generate_invoice_pdf(inv_code, job, cust)
             if phone:
                 msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
-                msg += f"Your {job['item']} repair is ready for collection!\n\n"
+                msg += f"Your {job['item']} service is ready for collection!\n\n"
                 if job['problem']:
-                    msg += f"Repair: {job['problem']}\n"
+                    msg += f"Service: {job['problem']}\n"
                 msg += f"Ready since: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\n\n"
                 msg += f"Please pick up at your convenience.\n\n"
                 msg += f"Invoice: {inv_code}\n"
                 msg += f"Amount: RM {job['quote']:.2f}\n\n"
+                google_review = self.db.get_setting("google_review", "")
+                if google_review:
+                    msg += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
                 msg += f"Thank you for your business!\n{self.db.get_setting('business_name', 'Shop')}"
                 url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                 try:
@@ -845,6 +875,9 @@ class App:
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
                     body += f"Please find attached invoice {inv_code}.\n\n"
                     body += f"Amount: RM {job['quote']:.2f}\n\n"
+                    google_review = self.db.get_setting("google_review", "")
+                    if google_review:
+                        body += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
                     body += f"Thank you!\n{biz_name}"
                     mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                     try:
@@ -856,7 +889,10 @@ class App:
                 else:
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
                     body += f"Thank you for your business!\n\n"
-                    body += f"Invoice: {inv_code}\nDate: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
+                    body += f"Invoice: {inv_code}\nDate: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\nItem: {job['item']}\nService: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
+                    google_review = self.db.get_setting("google_review", "")
+                    if google_review:
+                        body += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
                     body += f"Thank you!\n{biz_name}"
                     mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                     try:
@@ -1153,9 +1189,12 @@ class App:
         if job_for_inv:
             msg += f"Item: {job_for_inv['item']}\n"
             if job_for_inv['problem']:
-                msg += f"Repair: {job_for_inv['problem']}\n"
+                msg += f"Service: {job_for_inv['problem']}\n"
         msg += f"Amount: RM {inv['amount']:.2f}\n\n"
         msg += f"Please make payment at your convenience.\n\n"
+        google_review = self.db.get_setting("google_review", "")
+        if google_review:
+            msg += f"\nWe'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
         msg += f"Thank you!\n{self.db.get_setting('business_name', 'Shop')}"
         url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
         try:
@@ -1190,6 +1229,9 @@ class App:
             body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
             body += f"Please find attached invoice {inv['invoice_code']}.\n\n"
             body += f"Amount: RM {inv['amount']:.2f}\n\n"
+            google_review = self.db.get_setting("google_review", "")
+            if google_review:
+                body += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
             body += f"Thank you!\n{biz_name}"
             mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
             try:
@@ -1205,10 +1247,13 @@ class App:
             body += f"Date: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\n"
             if job_for_inv:
                 body += f"Item: {job_for_inv['item']}\n"
-                body += f"Repair: {job_for_inv['problem'] or 'N/A'}\n"
+                body += f"Service: {job_for_inv['problem'] or 'N/A'}\n"
             body += f"Amount: RM {inv['amount']:.2f}\n"
             body += f"Status: UNPAID\n\n"
             body += f"Please make payment at your earliest convenience.\n\n"
+            google_review = self.db.get_setting("google_review", "")
+            if google_review:
+                body += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
             body += f"Thank you!\n{biz_name}"
             mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
             try:
@@ -1256,7 +1301,7 @@ class App:
         pdf.set_text_color(255, 255, 255)
         pdf.set_font("Helvetica", "B", 10)
         pdf.cell(80, 8, "  Item", fill=True)
-        pdf.cell(55, 8, "  Problem", fill=True)
+        pdf.cell(55, 8, "  Service", fill=True)
         pdf.cell(35, 8, "  Amount", new_x="LMARGIN", new_y="NEXT", fill=True)
         pdf.set_text_color(0, 0, 0)
         pdf.set_font("Helvetica", "", 10)
@@ -1269,7 +1314,17 @@ class App:
         pdf.set_font("Helvetica", "B", 12)
         pdf.cell(135, 10, "Total:")
         pdf.cell(35, 10, f"RM {job['quote']:.2f}" if job else "RM 0.00", new_x="LMARGIN", new_y="NEXT")
-        pdf.ln(15)
+        pdf.ln(10)
+        google_review = self.db.get_setting("google_review", "")
+        if google_review:
+            pdf.set_font("Helvetica", "", 10)
+            pdf.cell(0, 6, "We'd love your feedback!", new_x="LMARGIN", new_y="NEXT", align="C")
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.cell(0, 6, "Leave us a Google review:", new_x="LMARGIN", new_y="NEXT", align="C")
+            pdf.set_text_color(0, 102, 204)
+            pdf.cell(0, 6, google_review, new_x="LMARGIN", new_y="NEXT", align="C", link=google_review)
+            pdf.set_text_color(0, 0, 0)
+            pdf.ln(5)
         pdf.set_font("Helvetica", "", 10)
         pdf.cell(0, 6, "Thank you for your business!", new_x="LMARGIN", new_y="NEXT", align="C")
         filename = f"{inv_code}.pdf"
@@ -1490,6 +1545,15 @@ class App:
             r.pack(fill="x", pady=2)
             tk.Label(r, text=f"{self.t(l.lower())}: {v}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
             tk.Button(r, text="Edit", command=cmd, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+        s_gr = self.row(f)
+        tk.Label(s_gr, text=self.t("google_review"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s_gr, text="Add your Google review link to invoices", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        gr_val = self.db.get_setting("google_review", "")
+        gr_frame = tk.Frame(s_gr, bg=C["card"])
+        gr_frame.pack(fill="x", pady=5)
+        gr_display = gr_val if gr_val else "Not set"
+        tk.Label(gr_frame, text=f"Review Link: {gr_display}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
+        tk.Button(gr_frame, text="Edit", command=self.edit_google_review, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
         s2 = self.row(f)
         tk.Label(s2, text=self.t("security"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         has = bool(self.db.get_setting("pin_hash"))
@@ -1634,6 +1698,9 @@ class App:
 
     def edit_biz_email(self):
         self._edit_biz_field("business_email", "Email")
+
+    def edit_google_review(self):
+        self._edit_biz_field("google_review", "Google Review Link")
 
     def _edit_biz_field(self, field, label):
         if self.db.get_setting("pin_hash"):

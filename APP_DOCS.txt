@@ -4,7 +4,13 @@
 
 OVERVIEW
 --------
-Kerja Mudah is an offline desktop application for small repair shop businesses in Malaysia. Built with Python + Tkinter, packaged as a single .exe file. Can be placed in any folder.
+Kerja Mudah is an offline desktop application for small business shops in Malaysia. Built with Python + Tkinter, packaged as a single .exe file. Can be placed in any folder.
+
+Perfect for:
+- Phone repair shops
+- Car detailing shops
+- Electronics repair shops
+- Any service-based business
 
 Tech Stack: Python 3.14, Tkinter (GUI), SQLite (database), fpdf2 (PDF generation), PyInstaller (packaging)
 
@@ -46,6 +52,7 @@ Settings Table
   - business_name    Business name
   - business_phone   Business phone (+60...)
   - business_email   Business email
+  - google_review    Google review link (for invoices)
   - language         UI language (en/ms/zh)
   - setup_complete   Whether wizard was completed
   - pin_hash         SHA-256 hash of PIN (optional)

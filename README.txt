@@ -11,6 +11,7 @@ QUICK START
    - Enter your business name
    - Enter your phone number
    - Enter your business email
+   - Enter your Google review link (optional but recommended)
    - Choose your language (English/BM/Chinese)
 3. You're ready to go!
 
@@ -51,10 +52,10 @@ FEATURES
 
 SMART PICKUP REMINDERS
 ----------------------
-Never forget to follow up with customers! When a device is ready for collection, the app tracks it and sends automatic WhatsApp reminders.
+Never forget to follow up with customers! When a service is ready for collection, the app tracks it and sends automatic WhatsApp reminders.
 
 How it works:
-1. Mark a job as "Done" when the repair is complete
+1. Mark a job as "Done" when the service is complete
 2. The app tracks waiting pickups in the background
 3. If a customer hasn't collected after a set number of days, the app sends a reminder
 4. Reminder goes directly to their WhatsApp - professional and polite
@@ -62,10 +63,26 @@ How it works:
 Benefits:
 - Reduces uncollected devices sitting in your shop
 - Gets customers to pay and collect faster
-- No more forgotten repairs
+- No more forgotten services
 - Professional follow-up without awkward phone calls
 
-CUSTOER RETURN TRACKER
+GOOGLE REVIEW INTEGRATION
+--------------------------
+Automatically ask customers to leave a Google review when you send invoices!
+
+How it works:
+1. Add your Google review link during setup (or in Settings later)
+2. When you send an invoice via WhatsApp or email, the review link is included
+3. Customers can click the link to leave a review
+4. More reviews = more customers = more revenue!
+
+Benefits:
+- Automatically collect Google reviews
+- Build your online reputation
+- Attract new customers through reviews
+- No extra work - reviews come with every invoice
+
+CUSTOMER RETURN TRACKER
 -----------------------
 Find customers who haven't visited your shop in 60+ days and bring them back!
 
