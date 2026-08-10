@@ -6,3 +6,5 @@ dist/
 build/
 *.spec
 *.db
+keygen.py
+SALES_CHEAT_SHEET.txt
