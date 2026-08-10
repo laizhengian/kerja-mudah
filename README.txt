@@ -46,6 +46,50 @@ FEATURES
 - Network sync (share data between computers)
 - Open on Windows startup option
 - Supports English, Bahasa Malaysia, and Chinese
+- Smart Pickup Reminders (see below)
+- Customer Return Tracker (see below)
+
+SMART PICKUP REMINDERS
+----------------------
+Never forget to follow up with customers! When a device is ready for collection, the app tracks it and sends automatic WhatsApp reminders.
+
+How it works:
+1. Mark a job as "Done" when the repair is complete
+2. The app tracks waiting pickups in the background
+3. If a customer hasn't collected after a set number of days, the app sends a reminder
+4. Reminder goes directly to their WhatsApp - professional and polite
+
+Benefits:
+- Reduces uncollected devices sitting in your shop
+- Gets customers to pay and collect faster
+- No more forgotten repairs
+- Professional follow-up without awkward phone calls
+
+CUSTOER RETURN TRACKER
+-----------------------
+Find customers who haven't visited your shop in 60+ days and bring them back!
+
+How it works:
+1. The app tracks every customer visit automatically
+2. Check the Customer Return Tracker anytime
+3. See a list of customers who haven't returned in 60 days or more
+4. Send them a WhatsApp message to offer a discount or check in
+
+Benefits:
+- Re-engage old customers
+- Build loyalty and repeat business
+- Spot customers who may have gone to competitors
+- Grow your revenue from existing relationships
+
+CLEARER COMPLETION MESSAGES
+----------------------------
+When a repair is finished, you now get professional notifications:
+
+"Repair Complete - Ready for Collection"
+- Clear, professional message
+- Sent to customer via WhatsApp
+- Includes job details and amount due
+- Makes your shop look organized and trustworthy
 
 EDITING INFORMATION
 -------------------
@@ -74,6 +118,8 @@ TIPS
 - Check Reports for revenue tracking
 - Export data regularly for backup
 - Use the search bars in Jobs, Customers, and Invoices to find things quickly
+- Check the Customer Return Tracker monthly to re-engage old customers
+- Use Smart Pickup Reminders to reduce uncollected devices
 
 BACKUP YOUR DATA
 ----------------
@@ -104,6 +150,12 @@ A: In the data/invoices folder next to the app
 
 Q: Can I move the app to another computer?
 A: Yes! Copy the entire folder. You'll need to reactivate with a new license key.
+
+Q: How do the pickup reminders work?
+A: Go to the Pickup Reminders section. You'll see devices waiting for collection. Click "Send Reminder" to send a WhatsApp message to the customer.
+
+Q: How do I find customers who haven't returned?
+A: Go to the Customer Return Tracker. It shows customers who haven't visited in 60+ days. You can send them a WhatsApp message directly from there.
 
 CONTACT SUPPORT
 ---------------

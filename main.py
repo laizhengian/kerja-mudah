@@ -470,7 +470,7 @@ class App:
         tk.Frame(self.side, bg="#2A2A2A", height=1).pack(fill="x", padx=20)
         for txt, cmd in [("Home", self.pg_home), ("Jobs", self.pg_jobs), ("Customers", self.pg_custs),
                          ("Appointments", self.pg_cal), ("Invoices", self.pg_invs), ("Reports", self.pg_rpt),
-                         ("Backup", self.pg_backup), ("Settings", self.pg_set)]:
+                         ("Search", self.pg_search), ("Backup", self.pg_backup), ("Settings", self.pg_set)]:
             b = tk.Button(self.side, text=f"  {self.t(txt.lower())}", command=cmd, bg=C["side"], fg="#AAAAAA", font=("Segoe UI", 12), bd=0, anchor="w", padx=25, pady=14, activebackground=C["side_h"], activeforeground=C["white"], cursor="hand2")
             b.pack(fill="x")
             b.bind("<Enter>", lambda e, b=b: b.configure(bg=C["side_h"], fg=C["white"]))
@@ -527,6 +527,69 @@ class App:
         bf = tk.Frame(qf, bg=C["bg"]); bf.pack(fill="x")
         for t, c in [(self.t("new_job"), self.pg_new_job), (self.t("new_customer"), self.pg_new_cust), (self.t("new_appointment"), self.pg_new_appt)]:
             b = self.btn(bf, t, c); b.pack(side="left", padx=4)
+
+        uncollected = self.db.get_uncollected_jobs()
+        if uncollected:
+            uf = tk.Frame(self.content, bg=C["bg"], padx=20, pady=10)
+            uf.pack(fill="x")
+            tk.Label(uf, text=f"Waiting for Pickup ({len(uncollected)})", bg=C["bg"], fg=C["warn"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=8)
+            for j in uncollected[:5]:
+                row = tk.Frame(uf, bg="#FEF3C7", bd=1, relief="solid", pady=8, padx=14)
+                row.pack(fill="x", pady=3)
+                left = tk.Frame(row, bg="#FEF3C7")
+                left.pack(side="left", fill="x", expand=True)
+                tk.Label(left, text=f"{j['customer_name'] or 'Unknown'} - {j['item']}", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 11), anchor="w").pack(fill="x")
+                tk.Label(left, text=f"Waiting {j['days_waiting']} day(s)", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10)).pack(fill="x")
+                def send_pickup_reminder(job=j):
+                    phone = (job["customer_phone"] or "").replace("+","").replace("-","").replace(" ","")
+                    if not phone.startswith("60"):
+                        phone = "60" + phone
+                    if not phone:
+                        return messagebox.showwarning("No Phone", "No phone number for this customer.")
+                    biz_name = self.db.get_setting("business_name", "Shop")
+                    msg = f"Hi {job['customer_name'] or 'Customer'},\n\n"
+                    msg += f"Your {job['item']} repair is ready for collection!\n\n"
+                    msg += f"Please pick up at your convenience.\n"
+                    msg += f"Thank you!\n{biz_name}"
+                    url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
+                    try:
+                        webbrowser.open(url)
+                    except:
+                        pass
+                    messagebox.showinfo("Reminder Sent", f"WhatsApp opened for +{phone}")
+                tk.Button(row, text="Send Reminder", command=send_pickup_reminder, bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
+
+        inactive = self.db.get_inactive_customers(60)
+        if inactive:
+            lf = tk.Frame(self.content, bg=C["bg"], padx=20, pady=10)
+            lf.pack(fill="x")
+            tk.Label(lf, text=f"Customers Not Visited in 60+ Days ({len(inactive)})", bg=C["bg"], fg="#7C3AED", font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=8)
+            for c in inactive[:5]:
+                row = tk.Frame(lf, bg="#F5F3FF", bd=1, relief="solid", pady=8, padx=14)
+                row.pack(fill="x", pady=3)
+                left = tk.Frame(row, bg="#F5F3FF")
+                left.pack(side="left", fill="x", expand=True)
+                last_visit = self.fmt_date(c["last_job_date"]) if c["last_job_date"] else "Never"
+                tk.Label(left, text=f"{c['name']}", bg="#F5F3FF", fg="#5B21B6", font=("Segoe UI", 11), anchor="w").pack(fill="x")
+                tk.Label(left, text=f"Last visit: {last_visit}", bg="#F5F3FF", fg="#5B21B6", font=("Segoe UI", 10)).pack(fill="x")
+                def send_winback(cust=c):
+                    phone = (cust["phone"] or "").replace("+","").replace("-","").replace(" ","")
+                    if not phone.startswith("60"):
+                        phone = "60" + phone
+                    if not phone:
+                        return messagebox.showwarning("No Phone", "No phone number for this customer.")
+                    biz_name = self.db.get_setting("business_name", "Shop")
+                    msg = f"Hi {cust['name']},\n\n"
+                    msg += f"We miss you at {biz_name}!\n\n"
+                    msg += f"If you need any repairs, we're here to help.\n"
+                    msg += f"See you soon!"
+                    url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
+                    try:
+                        webbrowser.open(url)
+                    except:
+                        pass
+                    messagebox.showinfo("Message Sent", f"WhatsApp opened for +{phone}")
+                tk.Button(row, text="Send Message", command=send_winback, bg="#7C3AED", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
 
     def pg_jobs(self):
         self.clr()
@@ -702,33 +765,58 @@ class App:
         self.btn(bf, self.t("save"), save, bg=C["ok"]).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=win.destroy, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
 
+    def _job_has_invoice(self, job_id):
+        for i in self.db.get_invoices():
+            if i["job_id"] == job_id:
+                return True
+        return False
+
+    def _get_or_create_invoice(self, job):
+        invs = self.db.get_invoices()
+        for i in invs:
+            if i["job_id"] == job["id"]:
+                return i
+        self.db.add_invoice(job["id"], job["quote"])
+        invs = self.db.get_invoices()
+        return invs[-1] if invs else None
+
     def mark_done(self, job):
         self.db.update_job_status(job["id"], "done")
         win = tk.Toplevel(self.root)
         win.title("Job Complete")
-        win.geometry("360x380")
+        win.geometry("360x400")
         win.configure(bg=C["bg"])
         win.grab_set()
         tk.Label(win, text="Job Complete!", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=8)
         tk.Label(win, text=job["item"], bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack()
         tk.Label(win, text=f"RM {job['quote']:.2f}", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(pady=5)
+        cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
+        has_inv = self._job_has_invoice(job["id"])
+        if has_inv:
+            tk.Label(win, text="(Invoice already exists)", bg=C["bg"], fg=C["warn"], font=("Segoe UI", 9)).pack()
         def send_inv():
-            inv_id = self.db.add_invoice(job["id"], job["quote"])
-            inv_code = self.db.get_invoices()[-1]["invoice_code"]
-            cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
+            inv = self._get_or_create_invoice(job)
+            inv_code = inv["invoice_code"] if inv else "N/A"
             phone = ""
-            if cust:
-                if cust["phone"]:
-                    phone = cust["phone"].replace("+","").replace("-","").replace(" ","")
-                    if not phone.startswith("60"):
-                        phone = "60" + phone
+            if cust and cust["phone"]:
+                phone = cust["phone"].replace("+","").replace("-","").replace(" ","")
+                if not phone.startswith("60"):
+                    phone = "60" + phone
             win.destroy()
             use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
             pdf_path = None
             if use_pdf:
                 pdf_path = self.generate_invoice_pdf(inv_code, job, cust)
             if phone:
-                msg = f"{self.db.get_setting('business_name', 'Shop')}\nInvoice: {inv_code}\nDate: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\nItem: {job['item']}\nRepair: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\nThank you for your business!"
+                msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
+                msg += f"Your {job['item']} repair is ready for collection!\n\n"
+                if job['problem']:
+                    msg += f"Repair: {job['problem']}\n"
+                msg += f"Ready since: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\n\n"
+                msg += f"Please pick up at your convenience.\n\n"
+                msg += f"Invoice: {inv_code}\n"
+                msg += f"Amount: RM {job['quote']:.2f}\n\n"
+                msg += f"Thank you for your business!\n{self.db.get_setting('business_name', 'Shop')}"
                 url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                 try:
                     webbrowser.open(url)
@@ -742,9 +830,8 @@ class App:
                 messagebox.showwarning("Warning", "Invoice created but no phone number. Add phone to customer first.")
             self.pg_jobs()
         def send_email_inv():
-            inv_id = self.db.add_invoice(job["id"], job["quote"])
-            inv_code = self.db.get_invoices()[-1]["invoice_code"]
-            cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
+            inv = self._get_or_create_invoice(job)
+            inv_code = inv["invoice_code"] if inv else "N/A"
             email = ""
             if cust and cust["email"]:
                 email = cust["email"]
@@ -781,7 +868,7 @@ class App:
                 messagebox.showwarning("Warning", "Invoice created but no email. Add email to customer first.")
             self.pg_jobs()
         def just_inv():
-            self.db.add_invoice(job["id"], job["quote"])
+            self._get_or_create_invoice(job)
             win.destroy()
             messagebox.showinfo("Done", "Invoice created")
             self.pg_jobs()
@@ -1060,15 +1147,16 @@ class App:
         use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
         if use_pdf:
             pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job_for_inv, cust)
-        msg = f"{self.db.get_setting('business_name', 'Shop')}\n"
+        msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
+        msg += f"This is a friendly reminder for your unpaid invoice.\n\n"
         msg += f"Invoice: {inv['invoice_code']}\n"
-        msg += f"Date: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\n"
         if job_for_inv:
             msg += f"Item: {job_for_inv['item']}\n"
-            msg += f"Repair: {job_for_inv['problem'] or 'N/A'}\n"
-        msg += f"Amount: RM {inv['amount']:.2f}\n"
-        msg += f"Status: UNPAID\n\n"
-        msg += f"Please make payment. Thank you!"
+            if job_for_inv['problem']:
+                msg += f"Repair: {job_for_inv['problem']}\n"
+        msg += f"Amount: RM {inv['amount']:.2f}\n\n"
+        msg += f"Please make payment at your convenience.\n\n"
+        msg += f"Thank you!\n{self.db.get_setting('business_name', 'Shop')}"
         url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
         try:
             webbrowser.open(url)
@@ -1365,6 +1453,7 @@ class App:
         db_path = os.path.join(APP_DIR, "data", "data.db")
         try:
             shutil.copy2(fp, db_path)
+            self.db.close()
             self.db = Database(db_path)
             messagebox.showinfo("Restore Complete", "Data restored! App will refresh.")
             self.layout()
@@ -1495,12 +1584,14 @@ class App:
         net_time = os.path.getmtime(network_db) if os.path.exists(network_db) else 0
         if net_time > local_time:
             shutil.copy2(network_db, local_db)
+            self.db.close()
             self.db = Database(local_db)
             messagebox.showinfo("Sync Complete", "Pulled latest data from network.")
             self.pg_set()
         elif local_time > net_time:
             shutil.copy2(local_db, network_db)
             messagebox.showinfo("Sync Complete", "Pushed data to network.")
+            self.pg_set()
         else:
             messagebox.showinfo("Sync Complete", "Data is already up to date.")
 
@@ -1517,6 +1608,7 @@ class App:
                 local_time = os.path.getmtime(local_db) if os.path.exists(local_db) else 0
                 if net_time > local_time:
                     shutil.copy2(network_db, local_db)
+                    self.db.close()
                     self.db = Database(local_db)
         except:
             pass
@@ -1643,7 +1735,8 @@ class App:
 
     def rm_pin(self):
         if messagebox.askyesno("Confirm", "Remove PIN?"):
-            self.db.set_setting("pin_hash", "")
+            self.db.conn.execute("DELETE FROM settings WHERE key = 'pin_hash'")
+            self.db.conn.commit()
             messagebox.showinfo("Done", "PIN removed")
             self.pg_set()
 

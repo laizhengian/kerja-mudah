@@ -269,6 +269,26 @@ class Database:
             "SELECT * FROM inventory WHERE quantity <= min_quantity ORDER BY quantity"
         ).fetchall()
         
+    def get_uncollected_jobs(self):
+        return self.conn.execute("""
+            SELECT j.*, c.name as customer_name, c.phone as customer_phone,
+                   CAST((julianday('now') - julianday(j.completed_at)) AS INTEGER) as days_waiting
+            FROM jobs j LEFT JOIN customers c ON j.customer_id = c.id
+            WHERE j.status = 'done' AND j.completed_at IS NOT NULL
+            AND CAST((julianday('now') - julianday(j.completed_at)) AS INTEGER) > 0
+            ORDER BY j.completed_at ASC
+        """).fetchall()
+
+    def get_inactive_customers(self, days=60):
+        return self.conn.execute("""
+            SELECT c.*, MAX(j.created_at) as last_job_date
+            FROM customers c
+            LEFT JOIN jobs j ON c.id = j.customer_id
+            GROUP BY c.id
+            HAVING last_job_date IS NULL OR last_job_date < date('now', '-' || ? || ' days')
+            ORDER BY last_job_date ASC
+        """, (days,)).fetchall()
+
     def update_customer(self, cid, name, phone=None, email=None, address=None, notes=None):
         self.conn.execute("UPDATE customers SET name=?, phone=?, email=?, address=?, notes=? WHERE id=?",
                           (name, phone, email, address, notes, cid))
