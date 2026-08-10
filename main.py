@@ -583,41 +583,6 @@ class App:
                     messagebox.showinfo("Reminder Sent", f"WhatsApp opened for +{phone}")
                 tk.Button(row, text="Send Reminder", command=send_pickup_reminder, bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
 
-        inactive = self.db.get_inactive_customers(60)
-        if inactive:
-            lf = tk.Frame(self.content, bg=C["bg"], padx=20, pady=10)
-            lf.pack(fill="x")
-            tk.Label(lf, text=f"Customers Not Visited in 60+ Days ({len(inactive)})", bg=C["bg"], fg="#7C3AED", font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=8)
-            for c in inactive[:5]:
-                row = tk.Frame(lf, bg="#F5F3FF", bd=1, relief="solid", pady=8, padx=14)
-                row.pack(fill="x", pady=3)
-                left = tk.Frame(row, bg="#F5F3FF")
-                left.pack(side="left", fill="x", expand=True)
-                last_visit = self.fmt_date(c["last_job_date"]) if c["last_job_date"] else "Never"
-                tk.Label(left, text=f"{c['name']}", bg="#F5F3FF", fg="#5B21B6", font=("Segoe UI", 11), anchor="w").pack(fill="x")
-                tk.Label(left, text=f"Last visit: {last_visit}", bg="#F5F3FF", fg="#5B21B6", font=("Segoe UI", 10)).pack(fill="x")
-                def send_winback(cust=c):
-                    phone = (cust["phone"] or "").replace("+","").replace("-","").replace(" ","")
-                    if not phone.startswith("60"):
-                        phone = "60" + phone
-                    if not phone:
-                        return messagebox.showwarning("No Phone", "No phone number for this customer.")
-                    biz_name = self.db.get_setting("business_name", "Shop")
-                    msg = f"Hi {cust['name']},\n\n"
-                    msg += f"We miss you at {biz_name}!\n\n"
-                    msg += f"If you need any services, we're here to help.\n"
-                    msg += f"See you soon!\n\n"
-                    google_review = self.db.get_setting("google_review", "")
-                    if google_review:
-                        msg += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n"
-                    url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
-                    try:
-                        webbrowser.open(url)
-                    except:
-                        pass
-                    messagebox.showinfo("Message Sent", f"WhatsApp opened for +{phone}")
-                tk.Button(row, text="Send Message", command=send_winback, bg="#7C3AED", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
-
     def pg_jobs(self):
         self.clr()
         self.hdr(self.t("jobs"), self.t("new_job"), self.pg_new_job)

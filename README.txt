@@ -49,7 +49,6 @@ FEATURES
 - Open on Windows startup option
 - Supports English, Bahasa Malaysia, and Chinese
 - Smart Pickup Reminders (see below)
-- Customer Return Tracker (see below)
 - Google Review Integration (see below)
 
 SMART PICKUP REMINDERS
@@ -88,23 +87,6 @@ Benefits:
 - Attract new customers through reviews
 - No extra work - reviews come with every invoice
 
-CUSTOMER RETURN TRACKER
------------------------
-Find customers who haven't visited your shop in 60+ days and bring
-them back!
-
-How it works:
-1. The app tracks every customer visit automatically
-2. Check the Customer Return Tracker anytime
-3. See a list of customers who haven't returned in 60 days or more
-4. Send them a WhatsApp message to offer a discount or check in
-
-Benefits:
-- Re-engage old customers
-- Build loyalty and repeat business
-- Spot customers who may have gone to competitors
-- Grow your revenue from existing relationships
-
 CLEARER COMPLETION MESSAGES
 ----------------------------
 When a service is finished, you now get professional notifications:
@@ -137,7 +119,7 @@ You can also download PDFs directly:
 WHY KERJA MUDAH IS BETTER
 --------------------------
 Competitor apps charge RM80-220 per MONTH. Kerja Mudah is a ONE-TIME
-payment of RM200. That saves you RM760-2,240 in the first year alone.
+payment. That saves you RM760-2,240 in the first year alone.
 
 Plus:
 - Works offline (competitors need internet)
@@ -155,7 +137,6 @@ TIPS
 - Export data regularly for backup
 - Use the search bars in Jobs, Customers, and Invoices to find things
   quickly
-- Check the Customer Return Tracker monthly to re-engage old customers
 - Use Smart Pickup Reminders to reduce uncollected devices
 - Add your Google review link in Settings to get more reviews
 
@@ -175,7 +156,7 @@ Q: The app won't open
 A: Make sure the .exe file is in a folder with write permissions
 
 Q: I reinstalled my computer
-A: Contact the seller for a new license key (small fee may apply)
+A: Contact the seller for a new license key
 
 Q: How do I backup?
 A: Go to Backup > Backup Now
@@ -195,11 +176,6 @@ A: Go to the Pickup Reminders section. You'll see devices waiting for
    collection. Click "Send Reminder" to send a WhatsApp message to
    the customer.
 
-Q: How do I find customers who haven't returned?
-A: Go to the Customer Return Tracker. It shows customers who haven't
-   visited in 60+ days. You can send them a WhatsApp message directly
-   from there.
-
 Q: How do I add my Google review link?
 A: Go to Settings > Google Review > Edit. Add your link (e.g.,
    https://g.page/r/ABC123/review). It will be included in all future
@@ -208,7 +184,7 @@ A: Go to Settings > Google Review > Edit. Add your link (e.g.,
 CONTACT SUPPORT
 ---------------
 WhatsApp: +60 1154043298
-
+Email: zhengianlai@gmail.com
 ========================================
   Thank you for your purchase!
   We hope this app helps your business.

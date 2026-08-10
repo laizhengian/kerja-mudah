@@ -279,16 +279,6 @@ class Database:
             ORDER BY j.completed_at ASC
         """).fetchall()
 
-    def get_inactive_customers(self, days=60):
-        return self.conn.execute("""
-            SELECT c.*, MAX(j.created_at) as last_job_date
-            FROM customers c
-            LEFT JOIN jobs j ON c.id = j.customer_id
-            GROUP BY c.id
-            HAVING last_job_date IS NULL OR last_job_date < date('now', '-' || ? || ' days')
-            ORDER BY last_job_date ASC
-        """, (days,)).fetchall()
-
     def update_customer(self, cid, name, phone=None, email=None, address=None, notes=None):
         self.conn.execute("UPDATE customers SET name=?, phone=?, email=?, address=?, notes=? WHERE id=?",
                           (name, phone, email, address, notes, cid))
