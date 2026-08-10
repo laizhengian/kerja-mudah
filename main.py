@@ -570,7 +570,8 @@ class App:
                     msg += f"Please pick up at your convenience.\n\n"
                     google_review = self.db.get_setting("google_review", "")
                     if google_review:
-                        msg += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
+                        review_link = google_review.rstrip("/") + "/write-review"
+                        msg += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
                     msg += f"Thank you!\n{biz_name}"
                     url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                     try:
@@ -807,7 +808,8 @@ class App:
                 msg += f"Amount: RM {job['quote']:.2f}\n\n"
                 google_review = self.db.get_setting("google_review", "")
                 if google_review:
-                    msg += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
+                    review_link = google_review.rstrip("/") + "/write-review"
+                    msg += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
                 msg += f"Thank you for your business!\n{self.db.get_setting('business_name', 'Shop')}"
                 url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                 try:
@@ -839,7 +841,8 @@ class App:
                     body += f"Amount: RM {job['quote']:.2f}\n\n"
                     google_review = self.db.get_setting("google_review", "")
                     if google_review:
-                        body += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
+                        review_link = google_review.rstrip("/") + "/write-review"
+                        body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
                     body += f"Thank you!\n{biz_name}"
                     mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                     try:
@@ -854,7 +857,8 @@ class App:
                     body += f"Invoice: {inv_code}\nDate: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\nItem: {job['item']}\nService: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
                     google_review = self.db.get_setting("google_review", "")
                     if google_review:
-                        body += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
+                        review_link = google_review.rstrip("/") + "/write-review"
+                        body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
                     body += f"Thank you!\n{biz_name}"
                     mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                     try:
@@ -1156,7 +1160,8 @@ class App:
         msg += f"Please make payment at your convenience.\n\n"
         google_review = self.db.get_setting("google_review", "")
         if google_review:
-            msg += f"\nWe'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
+            review_link = google_review.rstrip("/") + "/write-review"
+            msg += f"\nWe'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
         msg += f"Thank you!\n{self.db.get_setting('business_name', 'Shop')}"
         url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
         try:
@@ -1193,7 +1198,8 @@ class App:
             body += f"Amount: RM {inv['amount']:.2f}\n\n"
             google_review = self.db.get_setting("google_review", "")
             if google_review:
-                body += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
+                review_link = google_review.rstrip("/") + "/write-review"
+                body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
             body += f"Thank you!\n{biz_name}"
             mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
             try:
@@ -1215,7 +1221,8 @@ class App:
             body += f"Please make payment at your earliest convenience.\n\n"
             google_review = self.db.get_setting("google_review", "")
             if google_review:
-                body += f"We'd love your feedback! Leave us a Google review:\n{google_review}\n\n"
+                review_link = google_review.rstrip("/") + "/write-review"
+                body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
             body += f"Thank you!\n{biz_name}"
             mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
             try:
@@ -1279,12 +1286,13 @@ class App:
         pdf.ln(10)
         google_review = self.db.get_setting("google_review", "")
         if google_review:
+            review_link = google_review.rstrip("/") + "/write-review"
             pdf.set_font("Helvetica", "", 10)
             pdf.cell(0, 6, "We'd love your feedback!", new_x="LMARGIN", new_y="NEXT", align="C")
             pdf.set_font("Helvetica", "B", 10)
             pdf.cell(0, 6, "Leave us a Google review:", new_x="LMARGIN", new_y="NEXT", align="C")
             pdf.set_text_color(0, 102, 204)
-            pdf.cell(0, 6, google_review, new_x="LMARGIN", new_y="NEXT", align="C", link=google_review)
+            pdf.cell(0, 6, review_link, new_x="LMARGIN", new_y="NEXT", align="C", link=review_link)
             pdf.set_text_color(0, 0, 0)
             pdf.ln(5)
         pdf.set_font("Helvetica", "", 10)
@@ -1509,30 +1517,22 @@ class App:
             tk.Button(r, text="Edit", command=cmd, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
         s_gr = self.row(f)
         tk.Label(s_gr, text=self.t("google_review"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
-        tk.Label(s_gr, text="Add your Google review link to invoices", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        tk.Label(s_gr, text="Add your Google Maps link to invoices", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         gr_val = self.db.get_setting("google_review", "")
         gr_frame = tk.Frame(s_gr, bg=C["card"])
         gr_frame.pack(fill="x", pady=5)
         gr_display = gr_val if gr_val else "Not set"
-        tk.Label(gr_frame, text=f"Review Link: {gr_display}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
+        tk.Label(gr_frame, text=f"Maps Link: {gr_display}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
         tk.Button(gr_frame, text="Edit", command=self.edit_google_review, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
-        tk.Label(s_gr, text="How to get your Google review link:", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(10,2))
-        tk.Label(s_gr, text="Step 1: Open your web browser (Chrome/Edge)", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="Step 2: Go to google.com/maps", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="Step 3: Type your business name in the search box", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="Step 4: Click on your business when it appears", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="Step 5: Click the 'Reviews' button", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="Step 6: Click the 'Share' button", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="Step 7: Click 'Copy link' and paste it in Edit above", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="How to get your Google Maps link:", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(10,2))
+        tk.Label(s_gr, text="1. Open Google Maps (google.com/maps)", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="2. Search for your business name", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="3. Click on your business", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="4. Click the 'Share' button (under photos)", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="5. Click 'Copy link' and paste it in Edit above", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
         tk.Label(s_gr, text="", bg=C["card"], font=("Segoe UI", 6)).pack()
         tk.Label(s_gr, text="Example link format:", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(5,2))
-        tk.Label(s_gr, text="https://g.page/r/CATEGORY/review", bg=C["card"], fg="#2563EB", font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="", bg=C["card"], font=("Segoe UI", 6)).pack()
-        tk.Label(s_gr, text="If your business is NOT on Google Maps:", bg=C["card"], fg=C["err"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(5,2))
-        tk.Label(s_gr, text="1. Go to business.google.com", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="2. Sign in with your Google account", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="3. Click 'Add your business' and follow the steps", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="4. Once verified, go back to Step 1 above", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text="https://maps.google.com/?cid=123456789", bg=C["card"], fg="#2563EB", font=("Segoe UI", 9), anchor="w").pack(fill="x")
         s2 = self.row(f)
         tk.Label(s2, text=self.t("security"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         has = bool(self.db.get_setting("pin_hash"))
