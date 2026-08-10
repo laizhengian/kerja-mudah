@@ -4,7 +4,7 @@ import os, sys, hashlib, webbrowser, urllib.parse, platform, uuid
 from datetime import datetime, timedelta
 from fpdf import FPDF
 
-APP_DIR = os.path.dirname(os.path.abspath(__file__))
+APP_DIR = os.path.dirname(os.path.abspath(sys.executable if getattr(sys, 'frozen', False) else __file__))
 os.chdir(APP_DIR)
 from database import Database
 
