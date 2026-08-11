@@ -824,11 +824,11 @@ class App:
             return "-"
         try:
             dt = datetime.strptime(date_str[:10], "%Y-%m-%d")
-            return dt.strftime("%d %B %Y")
+            return dt.strftime("%d %b %Y")
         except (ValueError, TypeError):
             try:
                 dt = datetime.strptime(date_str, "%d/%m/%Y")
-                return dt.strftime("%d %B %Y")
+                return dt.strftime("%d %b %Y")
             except (ValueError, TypeError):
                 return date_str
 
@@ -1000,10 +1000,15 @@ class App:
         year_var = tk.StringVar(value=str(today.year))
         month_var = tk.StringVar(value=f"{today.month:02d}")
         day_var = tk.StringVar(value=f"{today.day:02d}")
-        year_e = tk.Spinbox(frame, from_=2020, to=2099, textvariable=year_var, width=5, font=("Segoe UI", 12), bd=1, relief="solid", justify="center")
+        def validate_digits(p):
+            if p == "" or p.isdigit():
+                return True
+            return False
+        vcmd = (self.root.register(validate_digits), "%P")
+        year_e = tk.Spinbox(frame, from_=2020, to=2099, textvariable=year_var, width=6, font=("Segoe UI", 12), bd=1, relief="solid", justify="center", validate="key", validatecommand=vcmd)
         year_e.pack(side="left")
         tk.Label(frame, text="-", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(side="left")
-        month_e = tk.Spinbox(frame, from_=1, to=12, textvariable=month_var, width=3, font=("Segoe UI", 12), bd=1, relief="solid", justify="center", format="%02.0f")
+        month_e = tk.Spinbox(frame, from_=1, to=12, textvariable=month_var, width=3, font=("Segoe UI", 12), bd=1, relief="solid", justify="center", format="%02.0f", validate="key", validatecommand=vcmd)
         month_e.pack(side="left")
         tk.Label(frame, text="-", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(side="left")
         def get_days(*args):
@@ -1013,7 +1018,7 @@ class App:
                 return calendar.monthrange(y, m)[1]
             except:
                 return 31
-        day_e = tk.Spinbox(frame, from_=1, to=get_days(), textvariable=day_var, width=3, font=("Segoe UI", 12), bd=1, relief="solid", justify="center", format="%02.0f")
+        day_e = tk.Spinbox(frame, from_=1, to=get_days(), textvariable=day_var, width=3, font=("Segoe UI", 12), bd=1, relief="solid", justify="center", format="%02.0f", validate="key", validatecommand=vcmd)
         day_e.pack(side="left")
         def update_days(*args):
             day_e.configure(to=get_days())
@@ -1397,27 +1402,27 @@ class App:
             tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
         h = tk.Frame(self.jobs_list_frame, bg=C["bg"]); h.pack(fill="x", pady=8)
-        cols = [(self.t("code"),14),(self.t("item"),22),(self.t("customer"),16),(self.t("quote"),10),(self.t("status"),11),(self.t("due_date"),11),(self.t("action"),14)]
+        cols = [(self.t("code"),16),(self.t("item"),24),(self.t("customer"),18),(self.t("quote"),12),(self.t("status"),13),(self.t("due_date"),14),(self.t("action"),16)]
         for col_text, col_width in cols:
-            tk.Label(h, text=col_text, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=col_width, anchor="w", padx=4).pack(side="left")
+            tk.Label(h, text=col_text, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=col_width, anchor="w", padx=6).pack(side="left")
         sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
         for j in jobs:
             r = self.row(self.jobs_list_frame)
-            tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=14, anchor="w", padx=4).pack(side="left")
-            tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), width=22, anchor="w", padx=4, wraplength=220).pack(side="left")
-            tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=16, anchor="w", padx=4).pack(side="left")
-            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=10, anchor="w", padx=4).pack(side="left")
-            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 9, "bold"), width=11, anchor="center", padx=4).pack(side="left")
-            tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=11, anchor="w", padx=4).pack(side="left")
-            tk.Button(r, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right", padx=2)
+            tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=16, anchor="w", padx=6).pack(side="left")
+            tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), width=24, anchor="w", padx=6, wraplength=240).pack(side="left")
+            tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=18, anchor="w", padx=6).pack(side="left")
+            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=12, anchor="w", padx=6).pack(side="left")
+            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 9, "bold"), width=13, anchor="center", padx=6).pack(side="left")
+            tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=14, anchor="w", padx=6).pack(side="left")
+            tk.Button(r, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right", padx=4)
             if j["status"] != "done":
-                b = tk.Button(r, text=self.t("done"), command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=10, pady=2, cursor="hand2")
+                b = tk.Button(r, text=self.t("done"), command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=12, pady=2, cursor="hand2")
                 b.pack(side="right", padx=4)
             if j["status"] == "done":
                 invs = self.db.get_invoices()
                 has_inv = any(i["job_id"] == j["id"] for i in invs)
                 if not has_inv:
-                    tk.Button(r, text=self.t("pdf"), command=lambda j=j: self.download_job_pdf(j), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, pady=2, cursor="hand2").pack(side="right", padx=2)
+                    tk.Button(r, text=self.t("pdf"), command=lambda j=j: self.download_job_pdf(j), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right", padx=4)
 
     def download_job_pdf(self, job):
         invs = self.db.get_invoices()
@@ -1530,11 +1535,11 @@ class App:
     def edit_job(self, j):
         win = tk.Toplevel(self.root)
         win.title(self.t("edit_job_title"))
-        win.geometry("500x550")
+        win.geometry("620x580")
         win.configure(bg=C["bg"])
         win.grab_set()
         tk.Label(win, text=self.t("edit_job_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
-        f = tk.Frame(win, bg=C["bg"], padx=25)
+        f = tk.Frame(win, bg=C["bg"], padx=30)
         f.pack(fill="both", expand=True)
         item_e = self.field(f, self.t("item"), j["item"])
         problem_e = self.field(f, self.t("problem"), j["problem"] or "")
@@ -1544,7 +1549,7 @@ class App:
         tk.Label(status_frame, text=self.t("status"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         status_var = tk.StringVar(value=j["status"])
         for v, lbl in [("pending","Pending"),("in-progress","In-Progress"),("done","Done")]:
-            tk.Radiobutton(status_frame, text=lbl, variable=status_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=5)
+            tk.Radiobutton(status_frame, text=lbl, variable=status_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=8)
         due_var = self.date_field(f, self.t("due_date"), j["due_date"])
         notes_e = self.field(f, self.t("notes"), j["notes"] or "")
         bf = tk.Frame(f, bg=C["bg"], pady=15)
