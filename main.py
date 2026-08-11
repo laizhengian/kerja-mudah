@@ -84,6 +84,126 @@ T = {
         "google_review_hint": "e.g. https://g.page/r/ABC123/review",
         "leave_review": "We'd love your feedback!",
         "rate_us": "Leave us a Google review",
+        "pending": "Pending", "in_progress": "In Progress", "status": "Status",
+        "edit": "Edit", "pdf": "PDF", "send_reminder": "Send Reminder",
+        "activate": "Activate", "try_demo": "Try Demo (7 days)", "copy": "Copy",
+        "license_activation": "License Activation Required",
+        "enter_license_key": "Enter your license key to activate",
+        "your_hwid": "Your Hardware ID (send this to get a key):",
+        "demo_mode": "Demo mode: limited to 10 jobs, 7 day trial",
+        "contact_seller": "Contact seller to get your license key",
+        "demo_expired": "Your 7-day demo has expired. Please activate with a license key to continue.",
+        "demo_limit": "Demo mode is limited to 10 jobs. Please activate with a license key.",
+        "activated": "License activated! You can now use the full app.",
+        "invalid_key": "This license key is not valid.",
+        "hwid_copied": "HWID copied to clipboard!",
+        "pickup_reminders": "Pickup Reminders",
+        "waiting_for_pickup": "Waiting for Pickup",
+        "waiting": "Waiting",
+        "days_unit": "day(s)",
+        "ready": "Ready",
+        "code": "Code",
+        "action": "Action",
+        "or_pick": "Or pick:",
+        "edit_job": "Edit Job",
+        "edit_customer": "Edit Customer",
+        "edit_appointment": "Edit Appointment",
+        "job_complete_msg": "Job Complete!",
+        "invoice_already_exists": "(Invoice already exists)",
+        "language": "Language",
+        "invoice_format": "Invoice Format",
+        "choose_format": "Choose how invoices are sent to customers",
+        "text_plain": "Text (plain message)",
+        "pdf_professional": "PDF (professional invoice)",
+        "startup": "Startup",
+        "open_on_startup": "Open app automatically when Windows starts",
+        "toggle_startup": "Toggle Open on Startup",
+        "maps_link": "Maps Link",
+        "add_google_maps": "Add your Google Maps link to invoices",
+        "enter_pin_to_edit": "Enter PIN to edit",
+        "new_label": "New",
+        "current_pin": "Current PIN",
+        "new_pin": "New PIN",
+        "confirm_new_pin": "Confirm New PIN",
+        "pin_4_digits": "PIN (4 digits)",
+        "summary": "Summary",
+        "total_earned": "Total Earned (All Time)",
+        "outstanding_unpaid": "Outstanding (Unpaid)",
+        "total_jobs": "Total Jobs",
+        "completed_jobs": "Completed Jobs",
+        "active_jobs_count": "Active Jobs",
+        "total_customers": "Total Customers",
+        "paid_invoices_count": "Paid Invoices",
+        "unpaid_invoices_count": "Unpaid Invoices",
+        "revenue_today": "Revenue Today",
+        "revenue_week": "Revenue This Week",
+        "revenue_month": "Revenue This Month",
+        "revenue_outstanding": "Outstanding",
+        "money_today": "Money collected today",
+        "money_week": "Money collected this week",
+        "money_month": "Money collected this month",
+        "money_owed": "Still owed by customers",
+        "invoices": "invoices",
+        "total": "total",
+        "unknown": "Unknown",
+        "no_phone": "No phone number for this customer.",
+        "no_email": "No email found for this customer. Add email to customer first.",
+        "no_phone_short": "No Phone",
+        "no_email_short": "No Email",
+        "confirm_restore": "Confirm Restore",
+        "restore_warning": "This will replace ALL current data with the backup. Are you sure?",
+        "confirm": "Confirm",
+        "remove_pin_confirm": "Remove PIN?",
+        "cleanup": "Cleanup",
+        "cleanup_msg": "old paid invoice(s) older than 7 days.",
+        "backup_complete": "Backup Complete",
+        "restore_complete": "Data restored! App will refresh.",
+        "nothing_export": "Nothing to export",
+        "exported": "Exported to",
+        "full_backup": "Full Backup (Recommended)",
+        "backup_desc": "Saves all data: customers, jobs, invoices, appointments, settings",
+        "backup_now": "Backup Now",
+        "restore_backup": "Restore Backup",
+        "export_csv_section": "Export to CSV (for Excel/accounting)",
+        "customers_csv": "Customers",
+        "jobs_csv": "Jobs",
+        "invoices_csv": "Invoices",
+        "export": "Export",
+        "pdf_error": "PDF Error",
+        "pdf_failed": "Failed to generate PDF",
+        "whatsapp_opened": "WhatsApp opened for",
+        "email_opened": "Email opened for",
+        "opening_email": "Opening email client for",
+        "opening_whatsapp": "Opening WhatsApp for",
+        "invoice_created": "Invoice created!",
+        "pdf_saved": "Invoice PDF saved to:",
+        "job_saved": "Job saved",
+        "job_updated": "Job updated",
+        "customer_updated": "Customer updated",
+        "customer_saved": "Customer saved",
+        "appointment_updated": "Appointment updated",
+        "appointment_saved": "Appointment saved",
+        "pin_set": "PIN set",
+        "pin_changed": "PIN changed",
+        "pin_removed": "PIN removed",
+        "enter_business_name": "Enter business name",
+        "enter_item": "Enter item",
+        "enter_name": "Enter name",
+        "quote_number": "Quote must be a number",
+        "cannot_empty": "Cannot be empty",
+        "pin_digits": "PIN must be 4 digits",
+        "pins_match": "PINs don't match",
+        "wrong_current_pin": "Wrong current PIN",
+        "new_pin_digits": "New PIN must be 4 digits",
+        "startup_updated": "App will now open on startup",
+        "startup_removed": "App will no longer open on startup",
+        "startup_error": "Could not update startup",
+        "no_backup": "No data to backup",
+        "backup_failed": "Backup failed",
+        "restore_failed": "Restore failed",
+        "invoice_format_set": "Invoice format set to:",
+        "remove_pin_msg": "PIN removed",
+        "label_updated": "updated!",
     },
     "ms": {
         "app_title": "Kerja Mudah",
@@ -125,6 +245,126 @@ T = {
         "google_review_hint": "cth. https://g.page/r/ABC123/review",
         "leave_review": "Kami menghargai maklum balas anda!",
         "rate_us": "Tinggalkan Google review untuk kami",
+        "pending": "Menunggu", "in_progress": "Sedang Dijalankan", "status": "Status",
+        "edit": "Sunting", "pdf": "PDF", "send_reminder": "Hantar Peringatan",
+        "activate": "Aktifkan", "try_demo": "Cuba Demo (7 hari)", "copy": "Salin",
+        "license_activation": "Pengaktifan Lesen Diperlukan",
+        "enter_license_key": "Masukkan kunci lesen untuk mengaktifkan",
+        "your_hwid": "ID Perkakasan Anda (hantar ini untuk dapat kunci):",
+        "demo_mode": "Mod demo: terhad kepada 10 kerja, percubaan 7 hari",
+        "contact_seller": "Hubungi penjual untuk dapat kunci lesen",
+        "demo_expired": "Demo 7 hari anda telah tamat. Sila aktifkan dengan kunci lesen.",
+        "demo_limit": "Mod demo terhad kepada 10 kerja. Sila aktifkan dengan kunci lesen.",
+        "activated": "Lesen berjaya diaktifkan! Anda boleh guna app penuh.",
+        "invalid_key": "Kunci lesen ini tidak sah.",
+        "hwid_copied": "HWID disalin ke papan klip!",
+        "pickup_reminders": "Peringatan Pengambilan",
+        "waiting_for_pickup": "Menunggu Pengambilan",
+        "waiting": "Menunggu",
+        "days_unit": "hari",
+        "ready": "Sedia",
+        "code": "Kod",
+        "action": "Tindakan",
+        "or_pick": "Atau pilih:",
+        "edit_job": "Sunting Kerja",
+        "edit_customer": "Sunting Pelanggan",
+        "edit_appointment": "Sunting Temujanji",
+        "job_complete_msg": "Kerja Selesai!",
+        "invoice_already_exists": "(Invois sudah wujud)",
+        "language": "Bahasa",
+        "invoice_format": "Format Invois",
+        "choose_format": "Pilih cara invois dihantar kepada pelanggan",
+        "text_plain": "Teks (mesej biasa)",
+        "pdf_professional": "PDF (invois profesional)",
+        "startup": "Permulaan",
+        "open_on_startup": "Buka app secara automatik apabila Windows bermula",
+        "toggle_startup": "Tukar Buka pada Permulaan",
+        "maps_link": "Pautan Peta",
+        "add_google_maps": "Tambah pautan Google Maps anda pada invois",
+        "enter_pin_to_edit": "Masukkan PIN untuk menyunting",
+        "new_label": "Baru",
+        "current_pin": "PIN Semasa",
+        "new_pin": "PIN Baru",
+        "confirm_new_pin": "Sahkan PIN Baru",
+        "pin_4_digits": "PIN (4 digit)",
+        "summary": "Ringkasan",
+        "total_earned": "Jumlah Diperoleh (Semua Masa)",
+        "outstanding_unpaid": "Belum Dibayar",
+        "total_jobs": "Jumlah Kerja",
+        "completed_jobs": "Kerja Selesai",
+        "active_jobs_count": "Kerja Aktif",
+        "total_customers": "Jumlah Pelanggan",
+        "paid_invoices_count": "Invois Dibayar",
+        "unpaid_invoices_count": "Invois Belum Dibayar",
+        "revenue_today": "Pendapatan Hari Ini",
+        "revenue_week": "Pendapatan Minggu Ini",
+        "revenue_month": "Pendapatan Bulan Ini",
+        "revenue_outstanding": "Belum Dibayar",
+        "money_today": "Wang dikumpul hari ini",
+        "money_week": "Wang dikumpul minggu ini",
+        "money_month": "Wang dikumpul bulan ini",
+        "money_owed": "Masih berhutang oleh pelanggan",
+        "invoices": "invois",
+        "total": "jumlah",
+        "unknown": "Tidak Diketahui",
+        "no_phone": "Tiada nombor telefon untuk pelanggan ini.",
+        "no_email": "Tiada emel ditemui untuk pelanggan ini. Tambah emel kepada pelanggan dahulu.",
+        "no_phone_short": "Tiada Telefon",
+        "no_email_short": "Tiada Emel",
+        "confirm_restore": "Sahkan Pemulihan",
+        "restore_warning": "Ini akan menggantikan SEMUA data semula dengan sandaran. Anda pasti?",
+        "confirm": "Sahkan",
+        "remove_pin_confirm": "Buang PIN?",
+        "cleanup": "Pembersihan",
+        "cleanup_msg": "invois lama yang telah dibayar lebih 7 hari.",
+        "backup_complete": "Sandaran Selesai",
+        "restore_complete": "Data dipulihkan! App akan segar semula.",
+        "nothing_export": "Tiada data untuk dieksport",
+        "exported": "Dieksport ke",
+        "full_backup": "Sandaran Penuh (Disyorkan)",
+        "backup_desc": "Simpan semua data: pelanggan, kerja, invois, temujanji, tetapan",
+        "backup_now": "Sandar Sekarang",
+        "restore_backup": "Pulihkan Sandaran",
+        "export_csv_section": "Eksport ke CSV (untuk Excel/akaun)",
+        "customers_csv": "Pelanggan",
+        "jobs_csv": "Kerja",
+        "invoices_csv": "Invois",
+        "export": "Eksport",
+        "pdf_error": "Ralat PDF",
+        "pdf_failed": "Gagal menjana PDF",
+        "whatsapp_opened": "WhatsApp dibuka untuk",
+        "email_opened": "Emel dibuka untuk",
+        "opening_email": "Membuka klien emel untuk",
+        "opening_whatsapp": "Membuka WhatsApp untuk",
+        "invoice_created": "Invois dicipta!",
+        "pdf_saved": "PDF invois disimpan ke:",
+        "job_saved": "Kerja disimpan",
+        "job_updated": "Kerja dikemaskini",
+        "customer_updated": "Pelanggan dikemaskini",
+        "customer_saved": "Pelanggan disimpan",
+        "appointment_updated": "Temujanji dikemaskini",
+        "appointment_saved": "Temujanji disimpan",
+        "pin_set": "PIN ditetapkan",
+        "pin_changed": "PIN ditukar",
+        "pin_removed": "PIN dibuang",
+        "enter_business_name": "Masukkan nama perniagaan",
+        "enter_item": "Masukkan barang",
+        "enter_name": "Masukkan nama",
+        "quote_number": "Sebut harga mesti nombor",
+        "cannot_empty": "Tidak boleh kosong",
+        "pin_digits": "PIN mesti 4 digit",
+        "pins_match": "PIN tidak sepadan",
+        "wrong_current_pin": "PIN semasa salah",
+        "new_pin_digits": "PIN Baru mesti 4 digit",
+        "startup_updated": "App akan dibuka pada permulaan",
+        "startup_removed": "App tidak akan dibuka pada permulaan lagi",
+        "startup_error": "Tidak dapat mengemas kini permulaan",
+        "no_backup": "Tiada data untuk disandar",
+        "backup_failed": "Sandaran gagal",
+        "restore_failed": "Pemulihan gagal",
+        "invoice_format_set": "Format invois ditetapkan kepada:",
+        "remove_pin_msg": "PIN dibuang",
+        "label_updated": "berjaya dikemaskini!",
     },
     "zh": {
         "app_title": "Kerja Mudah",
@@ -166,6 +406,126 @@ T = {
         "google_review_hint": "例如 https://g.page/r/ABC123/review",
         "leave_review": "我们期待您的反馈！",
         "rate_us": "请给我们留个Google评价",
+        "pending": "待处理", "in_progress": "进行中", "status": "状态",
+        "edit": "编辑", "pdf": "PDF", "send_reminder": "发送提醒",
+        "activate": "激活", "try_demo": "试用演示 (7天)", "copy": "复制",
+        "license_activation": "需要激活许可证",
+        "enter_license_key": "输入许可证密钥以激活",
+        "your_hwid": "您的硬件ID（发送此码获取密钥）：",
+        "demo_mode": "演示模式：限10个工作，7天试用",
+        "contact_seller": "联系卖家获取许可证密钥",
+        "demo_expired": "您的7天演示已过期。请使用许可证密钥激活。",
+        "demo_limit": "演示模式限10个工作。请使用许可证密钥激活。",
+        "activated": "许可证已激活！您现在可以使用完整应用。",
+        "invalid_key": "此许可证密钥无效。",
+        "hwid_copied": "HWID已复制到剪贴板！",
+        "pickup_reminders": "取件提醒",
+        "waiting_for_pickup": "等待取件",
+        "waiting": "等待中",
+        "days_unit": "天",
+        "ready": "已准备好",
+        "code": "编号",
+        "action": "操作",
+        "or_pick": "或选择：",
+        "edit_job": "编辑工作",
+        "edit_customer": "编辑客户",
+        "edit_appointment": "编辑预约",
+        "job_complete_msg": "工作完成！",
+        "invoice_already_exists": "（发票已存在）",
+        "language": "语言",
+        "invoice_format": "发票格式",
+        "choose_format": "选择发票发送给客户的方式",
+        "text_plain": "文本（纯消息）",
+        "pdf_professional": "PDF（专业发票）",
+        "startup": "启动",
+        "open_on_startup": "Windows启动时自动打开应用",
+        "toggle_startup": "切换启动时打开",
+        "maps_link": "地图链接",
+        "add_google_maps": "将您的Google Maps链接添加到发票",
+        "enter_pin_to_edit": "输入PIN以编辑",
+        "new_label": "新",
+        "current_pin": "当前PIN",
+        "new_pin": "新PIN",
+        "confirm_new_pin": "确认新PIN",
+        "pin_4_digits": "PIN（4位数字）",
+        "summary": "摘要",
+        "total_earned": "总收入（全部）",
+        "outstanding_unpaid": "未收款",
+        "total_jobs": "总工作数",
+        "completed_jobs": "已完成工作",
+        "active_jobs_count": "进行中工作",
+        "total_customers": "总客户数",
+        "paid_invoices_count": "已付发票",
+        "unpaid_invoices_count": "未付发票",
+        "revenue_today": "今日收入",
+        "revenue_week": "本周收入",
+        "revenue_month": "本月收入",
+        "revenue_outstanding": "未收款",
+        "money_today": "今日收款",
+        "money_week": "本周收款",
+        "money_month": "本月收款",
+        "money_owed": "客户欠款",
+        "invoices": "张发票",
+        "total": "合计",
+        "unknown": "未知",
+        "no_phone": "此客户没有电话号码。",
+        "no_email": "未找到此客户的电子邮件。请先添加邮箱。",
+        "no_phone_short": "无电话",
+        "no_email_short": "无邮箱",
+        "confirm_restore": "确认恢复",
+        "restore_warning": "这将用备份替换所有当前数据。确定吗？",
+        "confirm": "确认",
+        "remove_pin_confirm": "删除PIN？",
+        "cleanup": "清理",
+        "cleanup_msg": "超过7天的已付款旧发票。",
+        "backup_complete": "备份完成",
+        "restore_complete": "数据已恢复！应用将刷新。",
+        "nothing_export": "没有可导出的数据",
+        "exported": "已导出到",
+        "full_backup": "完整备份（推荐）",
+        "backup_desc": "保存所有数据：客户、工作、发票、预约、设置",
+        "backup_now": "立即备份",
+        "restore_backup": "恢复备份",
+        "export_csv_section": "导出CSV（用于Excel/会计）",
+        "customers_csv": "客户",
+        "jobs_csv": "工作",
+        "invoices_csv": "发票",
+        "export": "导出",
+        "pdf_error": "PDF错误",
+        "pdf_failed": "生成PDF失败",
+        "whatsapp_opened": "WhatsApp已打开",
+        "email_opened": "邮件已打开",
+        "opening_email": "正在打开邮件客户端",
+        "opening_whatsapp": "正在打开WhatsApp",
+        "invoice_created": "发票已创建！",
+        "pdf_saved": "发票PDF已保存到：",
+        "job_saved": "工作已保存",
+        "job_updated": "工作已更新",
+        "customer_updated": "客户已更新",
+        "customer_saved": "客户已保存",
+        "appointment_updated": "预约已更新",
+        "appointment_saved": "预约已保存",
+        "pin_set": "PIN已设置",
+        "pin_changed": "PIN已更改",
+        "pin_removed": "PIN已删除",
+        "enter_business_name": "请输入商家名称",
+        "enter_item": "请输入物品",
+        "enter_name": "请输入姓名",
+        "quote_number": "报价必须是数字",
+        "cannot_empty": "不能为空",
+        "pin_digits": "PIN必须是4位数字",
+        "pins_match": "PIN不匹配",
+        "wrong_current_pin": "当前PIN错误",
+        "new_pin_digits": "新PIN必须是4位数字",
+        "startup_updated": "应用将在启动时打开",
+        "startup_removed": "应用将不再在启动时打开",
+        "startup_error": "无法更新启动设置",
+        "no_backup": "没有可备份的数据",
+        "backup_failed": "备份失败",
+        "restore_failed": "恢复失败",
+        "invoice_format_set": "发票格式设置为：",
+        "remove_pin_msg": "PIN已删除",
+        "label_updated": "已更新！",
     },
 }
 
@@ -187,7 +547,7 @@ class App:
             pass
         deleted = self.db.cleanup_old_invoices()
         if deleted > 0:
-            self.root.after(100, lambda: messagebox.showinfo("Cleanup", f"Deleted {deleted} old paid invoice(s) older than 7 days."))
+            self.root.after(100, lambda: messagebox.showinfo(self.t("cleanup"), f"{deleted} {self.t('cleanup_msg')}"))
         if check_license(self.db):
             if not self.db.get_setting("setup_complete"):
                 self.wizard()
@@ -403,7 +763,7 @@ class App:
     def save_wizard(self):
         n = self.se["Business Name"].get().strip()
         if not n:
-            return messagebox.showerror("Error", "Enter business name")
+            return messagebox.showerror(self.t("error"), self.t("enter_business_name"))
         self.db.set_setting("business_name", n)
         self.db.set_setting("business_phone", self.se["Phone"].get().strip())
         self.db.set_setting("business_email", self.se["Email"].get().strip())
@@ -449,7 +809,7 @@ class App:
         def copy_hwid():
             self.root.clipboard_clear()
             self.root.clipboard_append(hwid)
-            messagebox.showinfo("Copied", "HWID copied to clipboard!")
+            messagebox.showinfo(self.t("done"), self.t("hwid_copied"))
         copy_btn = tk.Button(hwid_row, text="Copy", command=copy_hwid, bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=12, pady=4, cursor="hand2")
         copy_btn.pack(side="right")
         copy_btn.bind("<Enter>", lambda e: copy_btn.configure(bg=C["pri_h"]))
@@ -466,7 +826,7 @@ class App:
                 self.db.set_setting("license_key", key)
                 for w in self.root.winfo_children():
                     w.destroy()
-                messagebox.showinfo("Activated", "License activated! You can now use the full app.")
+                messagebox.showinfo(self.t("done"), self.t("activated"))
                 if not self.db.get_setting("setup_complete"):
                     self.wizard()
                 else:
@@ -605,7 +965,7 @@ class App:
                     if not phone.startswith("60"):
                         phone = "60" + phone
                     if not phone:
-                        return messagebox.showwarning("No Phone", "No phone number for this customer.")
+                        return messagebox.showwarning(self.t("no_phone_short"), self.t("no_phone"))
                     biz_name = self.db.get_setting("business_name", "Shop")
                     msg = f"Hi {job['customer_name'] or 'Customer'},\n\n"
                     msg += f"Your {job['item']} service is ready for collection!\n\n"
@@ -620,7 +980,7 @@ class App:
                         webbrowser.open(url)
                     except (webbrowser.Error, OSError):
                         pass
-                    messagebox.showinfo("Reminder Sent", f"WhatsApp opened for +{phone}")
+                    messagebox.showinfo(self.t("done"), self.t("whatsapp_opened") + f" +{phone}")
                 tk.Button(row, text="Send Reminder", command=send_pickup_reminder, bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
 
     def pg_jobs(self):
@@ -646,10 +1006,10 @@ class App:
         if q:
             jobs = [j for j in jobs if q in (j["job_code"]+j["item"]+(j["problem"] or "")+(j["customer_name"] or "")).lower()]
         if not jobs:
-            tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else "No results", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
         h = tk.Frame(self.jobs_list_frame, bg=C["bg"]); h.pack(fill="x", pady=8)
-        for t, w in [("Code",14),("Item",22),("Customer",16),("Quote",10),("Status",11),("Due",11),("Action",14)]:
+        for t, w in [(self.t("code"),14),(self.t("item"),22),(self.t("customer"),16),(self.t("quote"),10),(self.t("status"),11),(self.t("due_date"),11),(self.t("action"),14)]:
             tk.Label(h, text=t, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=w, anchor="w").pack(side="left", padx=4)
         sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
         for j in jobs:
@@ -660,15 +1020,15 @@ class App:
             tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=10, anchor="w").pack(side="left", padx=4)
             tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 9, "bold"), padx=8, pady=2).pack(side="left", padx=4)
             tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=11, anchor="w").pack(side="left", padx=4)
-            tk.Button(r, text="Edit", command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right", padx=2)
+            tk.Button(r, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right", padx=2)
             if j["status"] != "done":
-                b = tk.Button(r, text="Done", command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=10, pady=2, cursor="hand2")
+                b = tk.Button(r, text=self.t("done"), command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=10, pady=2, cursor="hand2")
                 b.pack(side="right", padx=4)
             if j["status"] == "done":
                 invs = self.db.get_invoices()
                 has_inv = any(i["job_id"] == j["id"] for i in invs)
                 if not has_inv:
-                    tk.Button(r, text="PDF", command=lambda j=j: self.download_job_pdf(j), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, pady=2, cursor="hand2").pack(side="right", padx=2)
+                    tk.Button(r, text=self.t("pdf"), command=lambda j=j: self.download_job_pdf(j), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, pady=2, cursor="hand2").pack(side="right", padx=2)
 
     def download_job_pdf(self, job):
         invs = self.db.get_invoices()
@@ -683,7 +1043,7 @@ class App:
             inv = invs[-1]
         cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
         pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job, cust)
-        messagebox.showinfo("PDF Saved", f"Invoice PDF saved to:\n{pdf_path}")
+        messagebox.showinfo(self.t("done"), self.t("pdf_saved") + f"\n{pdf_path}")
         try:
             os.startfile(os.path.dirname(pdf_path))
         except (OSError, AttributeError):
@@ -747,11 +1107,11 @@ class App:
         email = self.je["Email"].get().strip()
         item = self.je["Item"].get().strip()
         if not item:
-            return messagebox.showerror("Error", "Enter item")
+            return messagebox.showerror(self.t("error"), self.t("enter_item"))
         try:
             q = float(self.je["Quote (RM)"].get().strip() or "0")
         except ValueError:
-            return messagebox.showerror("Error", "Quote must be number")
+            return messagebox.showerror(self.t("error"), self.t("quote_number"))
         if self.is_demo() and len(self.db.get_jobs()) >= 10:
             return messagebox.showerror("Demo Limit", "Demo mode is limited to 10 jobs.\nPlease activate with a license key.")
         cid = None
@@ -762,7 +1122,7 @@ class App:
                 cid = self.db.add_customer(cust_name, phone, email)
         due = self.je["Due Date"].get() if isinstance(self.je["Due Date"], tk.StringVar) else self.je["Due Date"].get().strip()
         self.db.add_job(cid, item, self.je["Problem"].get().strip(), q, due, self.je["Notes"].get().strip())
-        messagebox.showinfo("Done", "Job saved")
+        messagebox.showinfo(self.t("done"), self.t("job_saved"))
         self.pg_jobs()
 
     def edit_job(self, j):
@@ -791,11 +1151,11 @@ class App:
             try:
                 q = float(quote_e.get().strip() or "0")
             except ValueError:
-                return messagebox.showerror("Error", "Quote must be number")
+                return messagebox.showerror(self.t("error"), self.t("quote_number"))
             due = due_var.get() if isinstance(due_var, tk.StringVar) else due_var.get().strip()
             self.db.update_job(j["id"], item_e.get().strip(), problem_e.get().strip(), q, status_var.get(), due, notes_e.get().strip())
             win.destroy()
-            messagebox.showinfo("Done", "Job updated")
+            messagebox.showinfo(self.t("done"), self.t("job_updated"))
             self._filter_jobs()
         self.btn(bf, self.t("save"), save, bg=C["ok"]).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=win.destroy, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
@@ -917,7 +1277,7 @@ class App:
         def just_inv():
             self._get_or_create_invoice(job)
             win.destroy()
-            messagebox.showinfo("Done", "Invoice created")
+            messagebox.showinfo(self.t("done"), self.t("invoice_created"))
             self.pg_jobs()
         self.btn(win, "Invoice + WhatsApp", send_inv).pack(fill="x", padx=25, pady=5)
         self.btn(win, "Invoice + Email", send_email_inv, bg="#2563EB").pack(fill="x", padx=25, pady=5)
@@ -955,7 +1315,7 @@ class App:
             tk.Label(r, text=c["phone"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=20).pack(side="left")
             if c["email"]:
                 tk.Label(r, text=c["email"], bg=C["card"], fg=C["txt3"], font=("Segoe UI", 10), anchor="w", padx=15).pack(side="left")
-            tk.Button(r, text="Edit", command=lambda c=c: self.edit_cust(c), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+            tk.Button(r, text=self.t("edit"), command=lambda c=c: self.edit_cust(c), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
 
     def edit_cust(self, c):
         win = tk.Toplevel(self.root)
@@ -975,10 +1335,10 @@ class App:
         def save():
             n = name_e.get().strip()
             if not n:
-                return messagebox.showerror("Error", "Enter name")
+                return messagebox.showerror(self.t("error"), self.t("enter_name"))
             self.db.update_customer(c["id"], n, phone_e.get().strip(), email_e.get().strip(), c["address"], notes_e.get().strip())
             win.destroy()
-            messagebox.showinfo("Done", "Customer updated")
+            messagebox.showinfo(self.t("done"), self.t("customer_updated"))
             self._filter_custs()
         self.btn(bf, self.t("save"), save, bg=C["ok"]).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=win.destroy, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
@@ -1000,9 +1360,9 @@ class App:
     def save_cust(self):
         n = self.ce["Name"].get().strip()
         if not n:
-            return messagebox.showerror("Error", "Enter name")
+            return messagebox.showerror(self.t("error"), self.t("enter_name"))
         self.db.add_customer(n, self.ce["Phone"].get().strip(), self.ce["Email"].get().strip(), None, self.ce["Notes"].get().strip())
-        messagebox.showinfo("Done", "Customer saved")
+        messagebox.showinfo(self.t("done"), self.t("customer_saved"))
         self.pg_custs()
 
     def pg_cal(self):
@@ -1035,7 +1395,7 @@ class App:
                 tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w").pack(side="left", padx=4)
                 tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left", padx=15)
                 tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
-                tk.Button(r, text="Edit", command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
+                tk.Button(r, text=self.t("edit"), command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
         else:
             today = datetime.now().strftime("%Y-%m-%d")
             tk.Label(self.appt_list_frame, text=self.fmt_date(today), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(anchor="w", pady=8)
@@ -1048,7 +1408,7 @@ class App:
                 tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w").pack(side="left")
                 tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left", padx=15)
                 tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
-                tk.Button(r, text="Edit", command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
+                tk.Button(r, text=self.t("edit"), command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
 
     def edit_appt(self, a):
         win = tk.Toplevel(self.root)
@@ -1092,7 +1452,7 @@ class App:
             t = f"{hour_var.get()}:{min_var.get()}"
             self.db.update_appointment(a["id"], d, t, purpose_e.get().strip(), a["status"], notes_e.get().strip())
             win.destroy()
-            messagebox.showinfo("Done", "Appointment updated")
+            messagebox.showinfo(self.t("done"), self.t("appointment_updated"))
             self.pg_cal()
         self.btn(bf, self.t("save"), save, bg=C["ok"]).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=win.destroy, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
@@ -1125,7 +1485,7 @@ class App:
             cs = self.db.get_customers(c)
             cid = cs[0]["id"] if cs else self.db.add_customer(c)
         self.db.add_appointment(cid, d, t, self.ae["Purpose"].get().strip(), self.ae["Notes"].get().strip())
-        messagebox.showinfo("Done", "Appointment saved")
+        messagebox.showinfo(self.t("done"), self.t("appointment_saved"))
         self.pg_cal()
 
     def pg_invs(self):
@@ -1170,9 +1530,9 @@ class App:
                 tk.Label(left, text=f"RM {i['amount']:.2f}", bg="#FEF2F2", fg=C["err"], font=("Segoe UI", 12, "bold"), anchor="w", padx=15).pack(side="left")
                 right = tk.Frame(r, bg="#FEF2F2")
                 right.pack(side="right")
-                tk.Button(right, text="Email", command=lambda inv=i: self.send_email(inv), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left", padx=3)
+                tk.Button(right, text=self.t("email"), command=lambda inv=i: self.send_email(inv), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left", padx=3)
                 tk.Button(right, text=self.t("send_whatsapp"), command=lambda inv=i: self.send_whatsapp(inv), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left", padx=3)
-                tk.Button(right, text="PDF", command=lambda inv=i: self.download_inv_pdf(inv), bg="#7C3AED", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left", padx=3)
+                tk.Button(right, text=self.t("pdf"), command=lambda inv=i: self.download_inv_pdf(inv), bg="#7C3AED", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left", padx=3)
                 tk.Button(right, text=self.t("mark_paid"), command=lambda iid=i["id"]: self.mark_paid(iid), bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="left")
         if paid:
             tk.Label(self.inv_list_frame, text=f"{self.t('paid')} ({len(paid)})", bg=C["bg"], fg=C["ok"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=10)
@@ -1197,7 +1557,7 @@ class App:
         if job and job["customer_id"]:
             cust = self.db.get_customer(job["customer_id"])
         pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job, cust)
-        messagebox.showinfo("PDF Saved", f"Invoice PDF saved to:\n{pdf_path}")
+        messagebox.showinfo(self.t("done"), self.t("pdf_saved") + f"\n{pdf_path}")
         try:
             os.startfile(os.path.dirname(pdf_path))
         except (OSError, AttributeError):
@@ -1219,7 +1579,7 @@ class App:
             if not phone.startswith("60"):
                 phone = "60" + phone
         if not phone:
-            return messagebox.showwarning("No Phone", "No phone number found for this customer.")
+            return messagebox.showwarning(self.t("no_phone_short"), self.t("no_phone"))
         use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
         if use_pdf:
             pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job_for_inv, cust)
@@ -1243,9 +1603,9 @@ class App:
         except (OSError, AttributeError):
             pass
         if use_pdf:
-            messagebox.showinfo("WhatsApp", f"Opening WhatsApp for +{phone}\nPDF saved to: {pdf_path}")
+            messagebox.showinfo(self.t("done"), self.t("opening_whatsapp") + f" +{phone}\n{self.t('pdf_saved')} {pdf_path}")
         else:
-            messagebox.showinfo("WhatsApp", f"Opening WhatsApp for +{phone}")
+            messagebox.showinfo(self.t("done"), self.t("opening_whatsapp") + f" +{phone}")
 
     def send_email(self, inv):
         job = self.db.get_jobs()
@@ -1261,7 +1621,7 @@ class App:
         if cust and cust["email"]:
             email = cust["email"]
         if not email:
-            return messagebox.showwarning("No Email", "No email found for this customer.\nAdd email to customer first.")
+            return messagebox.showwarning(self.t("no_email_short"), self.t("no_email"))
         biz_name = self.db.get_setting('business_name', 'Shop')
         subject = f"Invoice {inv['invoice_code']} from {biz_name}"
         use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
@@ -1281,7 +1641,7 @@ class App:
                 os.startfile(pdf_path)
             except (webbrowser.Error, OSError):
                 pass
-            messagebox.showinfo("Email", f"Email opened for {email}\nPDF saved to: {pdf_path}")
+            messagebox.showinfo(self.t("done"), self.t("email_opened") + f" {email}\n{self.t('pdf_saved')} {pdf_path}")
         else:
             body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
             body += f"Thank you for your business!\n\n"
@@ -1303,7 +1663,7 @@ class App:
                 webbrowser.open(mailto)
             except (webbrowser.Error, OSError):
                 pass
-            messagebox.showinfo("Email", f"Opening email client for {email}")
+            messagebox.showinfo(self.t("done"), self.t("opening_email") + f" {email}")
 
     def generate_invoice_pdf(self, inv_code, job, cust):
         try:
@@ -1403,7 +1763,7 @@ class App:
             r = self.row(f)
             tk.Label(r, text=f"{j['job_code']} - {j['item']}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
             tk.Label(r, text=f"RM {j['quote']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=15).pack(side="left")
-            tk.Button(r, text="Create", command=lambda j=j: [self.db.add_invoice(j["id"], j["quote"]), messagebox.showinfo("Done", "Invoice created"), self.pg_invs()], bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=15, pady=5, cursor="hand2").pack(side="right")
+            tk.Button(r, text="Create", command=lambda j=j: [self.db.add_invoice(j["id"], j["quote"]), messagebox.showinfo(self.t("done"), self.t("invoice_created")), self.pg_invs()], bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=15, pady=5, cursor="hand2").pack(side="right")
 
     def pg_rpt(self):
         self.clr()
@@ -1533,7 +1893,7 @@ class App:
         from tkinter import filedialog
         db_path = os.path.join(APP_DIR, "data", "data.db")
         if not os.path.exists(db_path):
-            return messagebox.showerror("Error", "No data to backup")
+            return messagebox.showerror(self.t("error"), self.t("no_backup"))
         default_name = f"kerjamudah_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
         fp = filedialog.asksaveasfilename(defaultextension=".db", filetypes=[("Database","*.db")], initialfile=default_name)
         if not fp:
@@ -1541,9 +1901,9 @@ class App:
         import shutil
         try:
             shutil.copy2(db_path, fp)
-            messagebox.showinfo("Backup Complete", f"Data backed up to:\n{fp}")
+            messagebox.showinfo(self.t("backup_complete"), self.t("backup_complete") + f":\n{fp}")
         except Exception as e:
-            messagebox.showerror("Error", f"Backup failed: {e}")
+            messagebox.showerror(self.t("error"), self.t("backup_failed") + f": {e}")
 
     def do_restore(self):
         from tkinter import filedialog
@@ -1558,16 +1918,16 @@ class App:
             shutil.copy2(fp, db_path)
             self.db.close()
             self.db = Database(db_path)
-            messagebox.showinfo("Restore Complete", "Data restored! App will refresh.")
+            messagebox.showinfo(self.t("done"), self.t("restore_complete"))
             self.layout()
         except Exception as e:
-            messagebox.showerror("Error", f"Restore failed: {e}")
+            messagebox.showerror(self.t("error"), self.t("restore_failed") + f": {e}")
 
     def do_export(self, fn, g):
         from tkinter import filedialog, csv
         data = g()
         if not data:
-            return messagebox.showinfo("Info", "Nothing to export")
+            return messagebox.showinfo(self.t("done"), self.t("nothing_export"))
         fp = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV","*.csv")], initialfile=fn)
         if not fp:
             return
@@ -1577,9 +1937,9 @@ class App:
                 w.writerow(data[0].keys())
                 for row in data:
                     w.writerow(list(row))
-            messagebox.showinfo("Done", f"Exported to {fp}")
+            messagebox.showinfo(self.t("done"), self.t("exported") + f" {fp}")
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror(self.t("error"), str(e))
 
     def pg_set(self):
         self.clr()
@@ -1592,7 +1952,7 @@ class App:
             r = tk.Frame(s, bg=C["card"])
             r.pack(fill="x", pady=2)
             tk.Label(r, text=f"{self.t(l.lower())}: {v}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
-            tk.Button(r, text="Edit", command=cmd, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+            tk.Button(r, text=self.t("edit"), command=cmd, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
         s_gr = self.row(f)
         tk.Label(s_gr, text=self.t("google_review"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         tk.Label(s_gr, text="Add your Google Maps link to invoices", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
@@ -1601,7 +1961,7 @@ class App:
         gr_frame.pack(fill="x", pady=5)
         gr_display = gr_val if gr_val else "Not set"
         tk.Label(gr_frame, text=f"Maps Link: {gr_display}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
-        tk.Button(gr_frame, text="Edit", command=self.edit_google_review, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+        tk.Button(gr_frame, text=self.t("edit"), command=self.edit_google_review, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
         tk.Label(s_gr, text="How to get your Google Maps link:", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(10,2))
         tk.Label(s_gr, text="1. Open Google Maps (google.com/maps)", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
         tk.Label(s_gr, text="2. Search for your business name", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
@@ -1649,15 +2009,15 @@ class App:
         try:
             if os.path.exists(shortcut_path):
                 os.remove(shortcut_path)
-                messagebox.showinfo("Done", "App will no longer open on startup")
+                messagebox.showinfo(self.t("done"), self.t("startup_removed"))
             else:
                 exe_path = sys.executable if getattr(sys, 'frozen', False) else sys.executable
                 bat_content = f'@echo off\nstart "" "{exe_path}"'
                 with open(shortcut_path, "w") as f:
                     f.write(bat_content)
-                messagebox.showinfo("Done", "App will now open on startup")
+                messagebox.showinfo(self.t("done"), self.t("startup_updated"))
         except Exception as e:
-            messagebox.showerror("Error", f"Could not update startup: {e}")
+            messagebox.showerror(self.t("error"), self.t("startup_error") + f": {e}")
 
     def edit_biz_name(self):
         self._edit_biz_field("business_name", "Business Name")
@@ -1694,7 +2054,7 @@ class App:
                 win.destroy()
                 self._show_biz_edit_dialog(self._pending_biz_edit, self._pending_biz_label)
             else:
-                messagebox.showerror("Error", "Wrong PIN")
+                messagebox.showerror(self.t("error"), self.t("wrong_pin"))
                 pin_e.delete(0, tk.END)
         pin_e.bind("<Return>", lambda e: verify())
         self.btn(win, "Verify", verify).pack(pady=10)
@@ -1713,10 +2073,10 @@ class App:
         def save():
             val = e.get().strip()
             if not val:
-                return messagebox.showerror("Error", "Cannot be empty")
+                return messagebox.showerror(self.t("error"), self.t("cannot_empty"))
             self.db.set_setting(field, val)
             win.destroy()
-            messagebox.showinfo("Done", f"{label} updated!")
+            messagebox.showinfo(self.t("done"), f"{label} {self.t('label_updated')}")
             self.pg_set()
         e.bind("<Return>", lambda e: save())
         self.btn(win, "Save", save, bg=C["ok"]).pack(pady=10)
@@ -1736,11 +2096,11 @@ class App:
         p = self.sp1.get().strip()
         c = self.sp2.get().strip()
         if len(p) != 4 or not p.isdigit():
-            return messagebox.showerror("Error", "PIN must be 4 digits")
+            return messagebox.showerror(self.t("error"), self.t("pin_digits"))
         if p != c:
-            return messagebox.showerror("Error", "PINs don't match")
+            return messagebox.showerror(self.t("error"), self.t("pins_match"))
         self.db.set_setting("pin_hash", self.h(p))
-        messagebox.showinfo("Done", "PIN set")
+        messagebox.showinfo(self.t("done"), self.t("pin_set"))
         self.pg_set()
 
     def pg_chg_pin(self):
@@ -1760,26 +2120,26 @@ class App:
         n = self.cp2.get().strip()
         c = self.cp3.get().strip()
         if self.h(o) != self.db.get_setting("pin_hash"):
-            return messagebox.showerror("Error", "Wrong current PIN")
+            return messagebox.showerror(self.t("error"), self.t("wrong_current_pin"))
         if len(n) != 4 or not n.isdigit():
-            return messagebox.showerror("Error", "New PIN must be 4 digits")
+            return messagebox.showerror(self.t("error"), self.t("new_pin_digits"))
         if n != c:
-            return messagebox.showerror("Error", "PINs don't match")
+            return messagebox.showerror(self.t("error"), self.t("pins_match"))
         self.db.set_setting("pin_hash", self.h(n))
-        messagebox.showinfo("Done", "PIN changed")
+        messagebox.showinfo(self.t("done"), self.t("pin_changed"))
         self.pg_set()
 
     def rm_pin(self):
         if messagebox.askyesno("Confirm", "Remove PIN?"):
             self.db.conn.execute("DELETE FROM settings WHERE key = 'pin_hash'")
             self.db.conn.commit()
-            messagebox.showinfo("Done", "PIN removed")
+            messagebox.showinfo(self.t("done"), self.t("pin_removed"))
             self.pg_set()
 
     def save_inv_fmt(self):
         fmt = self.inv_fmt_var.get()
         self.db.set_setting("invoice_format", fmt)
-        messagebox.showinfo("Done", f"Invoice format set to: {fmt.upper()}")
+        messagebox.showinfo(self.t("done"), self.t("invoice_format_set") + f" {fmt.upper()}")
         self.pg_set()
 
     def change_lang(self):
