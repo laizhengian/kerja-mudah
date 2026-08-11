@@ -995,29 +995,46 @@ class App:
         f.pack(fill="x", pady=8)
         tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         today = datetime.now() if not default else datetime.strptime(default, "%Y-%m-%d")
-        var = tk.StringVar(value=today.strftime("%Y-%m-%d"))
         frame = tk.Frame(f, bg=C["bg"])
         frame.pack(side="left")
-        entry = tk.Entry(frame, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid", width=12)
-        entry.pack(side="left")
-        def validate_date_input(p):
-            if p == "" or p == "-":
-                return True
-            clean = p.replace("-", "")
-            if not clean.isdigit():
-                return False
-            if len(clean) > 8:
-                return False
-            if "-" in p:
-                parts = p.split("-")
-                if len(parts) > 3:
-                    return False
-                for part in parts:
-                    if part and not part.isdigit():
-                        return False
-            return True
-        validate_cmd = (self.root.register(validate_date_input), "%P")
-        entry.configure(validate="key", validatecommand=validate_cmd)
+        year_var = tk.StringVar(value=str(today.year))
+        month_var = tk.StringVar(value=f"{today.month:02d}")
+        day_var = tk.StringVar(value=f"{today.day:02d}")
+        year_e = tk.Spinbox(frame, from_=2020, to=2099, textvariable=year_var, width=5, font=("Segoe UI", 12), bd=1, relief="solid", justify="center")
+        year_e.pack(side="left")
+        tk.Label(frame, text="-", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(side="left")
+        month_e = tk.Spinbox(frame, from_=1, to=12, textvariable=month_var, width=3, font=("Segoe UI", 12), bd=1, relief="solid", justify="center", format="%02.0f")
+        month_e.pack(side="left")
+        tk.Label(frame, text="-", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(side="left")
+        def get_days(*args):
+            try:
+                y = int(year_var.get())
+                m = int(month_var.get())
+                return calendar.monthrange(y, m)[1]
+            except:
+                return 31
+        day_e = tk.Spinbox(frame, from_=1, to=get_days(), textvariable=day_var, width=3, font=("Segoe UI", 12), bd=1, relief="solid", justify="center", format="%02.0f")
+        day_e.pack(side="left")
+        def update_days(*args):
+            day_e.configure(to=get_days())
+        year_var.trace_add("write", update_days)
+        month_var.trace_add("write", update_days)
+        class DateStr:
+            def __init__(self, yv, mv, dv):
+                self.yv = yv
+                self.mv = mv
+                self.dv = dv
+            def get(self):
+                return f"{self.yv.get()}-{self.mv.get()}-{self.dv.get()}"
+            def set(self, val):
+                try:
+                    parts = val.split("-")
+                    self.yv.set(parts[0])
+                    self.mv.set(f"{int(parts[1]):02d}")
+                    self.dv.set(f"{int(parts[2]):02d}")
+                except:
+                    pass
+        var = DateStr(year_var, month_var, day_var)
         def show_cal():
             win = tk.Toplevel(self.root)
             win.title("Pick Date")
@@ -1238,7 +1255,12 @@ class App:
             demo_bar.pack_propagate(False)
             tk.Label(demo_bar, text=f"DEMO MODE - {days_left} days remaining | Activate with license key", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10, "bold")).pack(expand=True)
         self.content_canvas = tk.Canvas(main_frame, bg=C["bg"], highlightthickness=0)
-        self.content_scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=self.content_canvas.yview)
+        def clamp_scroll(*args):
+            first = float(args[0])
+            if first < 0:
+                first = 0
+            self.content_canvas.yview_moveto(first)
+        self.content_scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=clamp_scroll)
         self.content = tk.Frame(self.content_canvas, bg=C["bg"])
         self.content.bind("<Configure>", lambda e: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
         self.content_canvas.create_window((0, 0), window=self.content, anchor="nw", tags="inner")
@@ -1247,6 +1269,9 @@ class App:
         self.content_canvas.pack(side="left", fill="both", expand=True)
         self.content_canvas.bind("<Configure>", lambda e: self.content_canvas.itemconfig("inner", width=e.width))
         def _on_mousewheel(event):
+            current = self.content_canvas.yview()
+            if event.delta > 0 and current[0] <= 0:
+                return
             self.content_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
         def _bind_mousewheel(event):
             self.content_canvas.bind_all("<MouseWheel>", _on_mousewheel)
