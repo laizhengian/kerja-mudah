@@ -291,6 +291,14 @@ T = {
         "invoices_header": "Invoices",
         "id_label": "ID:",
         "optional_fields_hint": "Phone, Email, and Google Review are optional - you can add them later in Settings",
+        "today": "Today",
+        "this_week": "This Week",
+        "this_month": "This Month",
+        "owed": "Owed",
+        "collected_today": "Collected today",
+        "collected_week": "Collected this week",
+        "collected_month": "Collected this month",
+        "owed_desc": "Still owed",
     },
     "ms": {
         "app_title": "Kerja Mudah",
@@ -539,6 +547,14 @@ T = {
         "invoices_header": "Invois",
         "id_label": "ID:",
         "optional_fields_hint": "Telefon, Emel, dan Google Review adalah pilihan - anda boleh tambah kemudian dalam Tetapan",
+        "today": "Hari Ini",
+        "this_week": "Minggu Ini",
+        "this_month": "Bulan Ini",
+        "owed": "Hutang",
+        "collected_today": "Dikumpul hari ini",
+        "collected_week": "Dikumpul minggu ini",
+        "collected_month": "Dikumpul bulan ini",
+        "owed_desc": "Masih berhutang",
     },
     "zh": {
         "app_title": "Kerja Mudah",
@@ -787,6 +803,14 @@ T = {
         "invoices_header": "发票",
         "id_label": "ID：",
         "optional_fields_hint": "电话、电邮和Google评价是可选的 - 您可以稍后在设置中添加",
+        "today": "今天",
+        "this_week": "本周",
+        "this_month": "本月",
+        "owed": "欠款",
+        "collected_today": "今日收款",
+        "collected_week": "本周收款",
+        "collected_month": "本月收款",
+        "owed_desc": "待收款",
     },
 }
 
@@ -1242,7 +1266,7 @@ class App:
             w.destroy()
         self.root.configure(bg=C["bg"])
         self.root.title(self.t("app_title"))
-        self.side = tk.Frame(self.root, bg=C["side"], width=240)
+        self.side = tk.Frame(self.root, bg=C["side"], width=200)
         self.side.pack(side="left", fill="y")
         self.side.pack_propagate(False)
         main_frame = tk.Frame(self.root, bg=C["bg"])
@@ -1285,7 +1309,7 @@ class App:
         self.content_canvas.bind("<Enter>", _bind_mousewheel)
         self.content_canvas.bind("<Leave>", _unbind_mousewheel)
         n = self.db.get_setting("business_name", "Shop")
-        tk.Label(self.side, text=n, bg=C["side"], fg=C["white"], font=("Segoe UI", 15, "bold"), pady=25, wraplength=220).pack(fill="x")
+        tk.Label(self.side, text=n, bg=C["side"], fg=C["white"], font=("Segoe UI", 14, "bold"), pady=20, wraplength=180).pack(fill="x")
         tk.Frame(self.side, bg="#2A2A2A", height=1).pack(fill="x", padx=20)
         for txt, cmd in [("Home", self.pg_home), ("Jobs", self.pg_jobs), ("Customers", self.pg_custs),
                          ("Appointments", self.pg_cal), ("Invoices", self.pg_invs), ("Reports", self.pg_rpt),
@@ -1401,28 +1425,32 @@ class App:
         if not jobs:
             tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
-        h = tk.Frame(self.jobs_list_frame, bg=C["bg"]); h.pack(fill="x", pady=8)
-        cols = [(self.t("code"),16),(self.t("item"),24),(self.t("customer"),18),(self.t("quote"),12),(self.t("status"),13),(self.t("due_date"),14),(self.t("action"),16)]
-        for col_text, col_width in cols:
-            tk.Label(h, text=col_text, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=col_width, anchor="w", padx=6).pack(side="left")
+        header_frame = tk.Frame(self.jobs_list_frame, bg=C["bg"])
+        header_frame.pack(fill="x", pady=(8,2))
+        col_widths = [130, 180, 140, 90, 100, 110, 100]
+        col_names = [self.t("code"), self.t("item"), self.t("customer"), self.t("quote"), self.t("status"), self.t("due_date"), self.t("action")]
+        for i, (name, width) in enumerate(zip(col_names, col_widths)):
+            tk.Label(header_frame, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9, "bold"), width=width//8, anchor="w", padx=4).grid(row=0, column=i, sticky="w")
         sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
-        for j in jobs:
-            r = self.row(self.jobs_list_frame)
-            tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=16, anchor="w", padx=6).pack(side="left")
-            tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), width=24, anchor="w", padx=6, wraplength=240).pack(side="left")
-            tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=18, anchor="w", padx=6).pack(side="left")
-            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=12, anchor="w", padx=6).pack(side="left")
-            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 9, "bold"), width=13, anchor="center", padx=6).pack(side="left")
-            tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=14, anchor="w", padx=6).pack(side="left")
-            tk.Button(r, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right", padx=4)
+        for row_idx, j in enumerate(jobs):
+            r = tk.Frame(self.jobs_list_frame, bg=C["card"], bd=1, relief="solid", pady=10, padx=8)
+            r.pack(fill="x", pady=2)
+            tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), anchor="w", padx=4).grid(row=0, column=0, sticky="w")
+            tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 9), anchor="w", padx=4, wraplength=160).grid(row=0, column=1, sticky="w")
+            tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w", padx=4).grid(row=0, column=2, sticky="w")
+            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), anchor="w", padx=4).grid(row=0, column=3, sticky="w")
+            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 8, "bold"), anchor="center", padx=4).grid(row=0, column=4, sticky="w")
+            tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w", padx=4).grid(row=0, column=5, sticky="w")
+            action_frame = tk.Frame(r, bg=C["card"])
+            action_frame.grid(row=0, column=6, sticky="e")
+            tk.Button(action_frame, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 8, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right", padx=2)
             if j["status"] != "done":
-                b = tk.Button(r, text=self.t("done"), command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=12, pady=2, cursor="hand2")
-                b.pack(side="right", padx=4)
+                tk.Button(action_frame, text=self.t("done"), command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 8, "bold"), bd=0, padx=8, pady=1, cursor="hand2").pack(side="right", padx=2)
             if j["status"] == "done":
                 invs = self.db.get_invoices()
                 has_inv = any(i["job_id"] == j["id"] for i in invs)
                 if not has_inv:
-                    tk.Button(r, text=self.t("pdf"), command=lambda j=j: self.download_job_pdf(j), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right", padx=4)
+                    tk.Button(action_frame, text=self.t("pdf"), command=lambda j=j: self.download_job_pdf(j), bg="#2563EB", fg=C["white"], font=("Segoe UI", 8, "bold"), bd=0, padx=6, pady=1, cursor="hand2").pack(side="right", padx=2)
 
     def download_job_pdf(self, job):
         invs = self.db.get_invoices()
@@ -2209,17 +2237,17 @@ class App:
         sf = tk.Frame(self.content, bg=C["bg"], padx=20)
         sf.pack(fill="x")
         cards = [
-            ("Revenue Today", f"RM {today_rev:.2f}", "Money collected today", C["ok"]),
-            ("Revenue This Week", f"RM {week_rev:.2f}", "Money collected this week", C["ok"]),
-            ("Revenue This Month", f"RM {month_rev:.2f}", "Money collected this month", C["ok"]),
-            ("Outstanding", f"RM {outstanding:.2f}", "Still owed by customers", C["err"] if outstanding > 0 else C["ok"]),
+            (self.t("today"), f"RM {today_rev:.2f}", self.t("collected_today"), C["ok"]),
+            (self.t("this_week"), f"RM {week_rev:.2f}", self.t("collected_week"), C["ok"]),
+            (self.t("this_month"), f"RM {month_rev:.2f}", self.t("collected_month"), C["ok"]),
+            (self.t("owed"), f"RM {outstanding:.2f}", self.t("owed_desc"), C["err"] if outstanding > 0 else C["ok"]),
         ]
         for i, (title, value, desc, color) in enumerate(cards):
-            c = tk.Frame(sf, bg=C["card"], bd=1, relief="solid", pady=12, padx=18)
-            c.grid(row=0, column=i, padx=6, pady=8, sticky="nsew")
-            tk.Label(c, text=title, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w")
-            tk.Label(c, text=value, bg=C["card"], fg=color, font=("Segoe UI", 18, "bold")).pack(anchor="w", pady=5)
-            tk.Label(c, text=desc, bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9)).pack(anchor="w", pady=2)
+            c = tk.Frame(sf, bg=C["card"], bd=1, relief="solid", pady=10, padx=12)
+            c.grid(row=0, column=i, padx=4, pady=8, sticky="nsew")
+            tk.Label(c, text=title, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9)).pack(anchor="w")
+            tk.Label(c, text=value, bg=C["card"], fg=color, font=("Segoe UI", 14, "bold")).pack(anchor="w", pady=3)
+            tk.Label(c, text=desc, bg=C["card"], fg=C["txt3"], font=("Segoe UI", 8)).pack(anchor="w")
         for i in range(4):
             sf.columnconfigure(i, weight=1)
         st = tk.Frame(self.content, bg=C["bg"], padx=20, pady=15)
