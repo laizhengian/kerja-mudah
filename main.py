@@ -261,6 +261,38 @@ class App:
         e.pack(side="left", fill="x", expand=True, ipady=6)
         return e
 
+    def phone_field(self, parent, label, default="+60"):
+        f = tk.Frame(parent, bg=C["bg"])
+        f.pack(fill="x", pady=8)
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        var = tk.StringVar(value=default)
+        e = tk.Entry(f, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid")
+        e.pack(side="left", fill="x", expand=True, ipady=6)
+        validate_cmd = (self.root.register(lambda p: all(c.isdigit() or c in "+- " for c in p)), "%P")
+        e.configure(validate="key", validatecommand=validate_cmd)
+        return e
+
+    def email_field(self, parent, label, default=""):
+        f = tk.Frame(parent, bg=C["bg"])
+        f.pack(fill="x", pady=8)
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        e = tk.Entry(f, font=("Segoe UI", 12), bd=1, relief="solid")
+        if default:
+            e.insert(0, default)
+        e.pack(side="left", fill="x", expand=True, ipady=6)
+        return e
+
+    def number_field(self, parent, label, default=""):
+        f = tk.Frame(parent, bg=C["bg"])
+        f.pack(fill="x", pady=8)
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        var = tk.StringVar(value=default)
+        e = tk.Entry(f, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid")
+        e.pack(side="left", fill="x", expand=True, ipady=6)
+        validate_cmd = (self.root.register(lambda p: all(c.isdigit() or c in ".-" for c in p)), "%P")
+        e.configure(validate="key", validatecommand=validate_cmd)
+        return e
+
     def date_field(self, parent, label, default=None):
         import calendar
         f = tk.Frame(parent, bg=C["bg"])
@@ -352,15 +384,16 @@ class App:
         tk.Label(c, text=self.t("setup_title"), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 13)).pack(pady=8)
         f = tk.Frame(c, bg=C["bg"]); f.pack()
         self.se = {}
-        for l, d in [("Business Name", ""), ("Phone", "+60"), ("Email", "")]:
-            self.se[l] = self.field(f, self.t(l.lower().replace(" ","_")), d)
+        self.se["Business Name"] = self.field(f, self.t("business_name"), "")
+        self.se["Phone"] = self.phone_field(f, self.t("phone"), "+60")
+        self.se["Email"] = self.email_field(f, self.t("email"), "")
         gf = tk.Frame(f, bg=C["bg"]); gf.pack(fill="x", pady=8)
         tk.Label(gf, text=self.t("google_review"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
         self.se["Google Review"] = tk.Entry(gf, font=("Segoe UI", 12), bd=1, relief="solid")
         self.se["Google Review"].pack(side="left", fill="x", expand=True, ipady=6)
         tk.Label(gf, text=self.t("google_review_hint"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(side="left", padx=8)
         lf = tk.Frame(f, bg=C["bg"]); lf.pack(fill="x", pady=12)
-        tk.Label(lf, text="Language", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(lf, text=self.t("language"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
         self.lang_var = tk.StringVar(value="en")
         for v, t in [("en","English"),("ms","Bahasa Malaysia"),("zh","Chinese")]:
             tk.Radiobutton(lf, text=t, variable=self.lang_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=8)
@@ -441,6 +474,9 @@ class App:
             else:
                 messagebox.showerror("Invalid Key", "This license key is not valid.")
         def try_demo():
+            if not is_demo(self.db):
+                messagebox.showerror("Demo Expired", "Your 7-day demo has expired.\nPlease activate with a license key to continue.")
+                return
             for w in self.root.winfo_children():
                 w.destroy()
             if not self.db.get_setting("setup_complete"):
@@ -477,7 +513,12 @@ class App:
         self.content_canvas.bind("<Configure>", lambda e: self.content_canvas.itemconfig("inner", width=e.width))
         def _on_mousewheel(event):
             self.content_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-        self.content_canvas.bind_all("<MouseWheel>", _on_mousewheel)
+        def _bind_mousewheel(event):
+            self.content_canvas.bind_all("<MouseWheel>", _on_mousewheel)
+        def _unbind_mousewheel(event):
+            self.content_canvas.unbind_all("<MouseWheel>")
+        self.content_canvas.bind("<Enter>", _bind_mousewheel)
+        self.content_canvas.bind("<Leave>", _unbind_mousewheel)
         if self.is_demo():
             days_left = 7
             try:
@@ -675,13 +716,16 @@ class App:
         self.je["Phone"] = tk.Entry(pf, font=("Segoe UI", 12), bd=1, relief="solid")
         self.je["Phone"].insert(0, "+60")
         self.je["Phone"].pack(side="left", fill="x", expand=True, ipady=6)
+        phone_validate = (self.root.register(lambda p: all(c.isdigit() or c in "+- " for c in p)), "%P")
+        self.je["Phone"].configure(validate="key", validatecommand=phone_validate)
         ef = tk.Frame(f, bg=C["bg"])
         ef.pack(fill="x", pady=8)
-        tk.Label(ef, text="Email", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(ef, text=self.t("email"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
         self.je["Email"] = tk.Entry(ef, font=("Segoe UI", 12), bd=1, relief="solid")
         self.je["Email"].pack(side="left", fill="x", expand=True, ipady=6)
-        for l in ["Item", "Problem", "Quote (RM)", "Notes"]:
+        for l in ["Item", "Problem", "Notes"]:
             self.je[l] = self.field(f, self.t(l.lower()))
+        self.je["Quote (RM)"] = self.number_field(f, self.t("quote"))
         self.je["Due Date"] = self.date_field(f, self.t("due_date"))
         bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
         self.btn(bf, self.t("save"), self.save_job).pack(side="left")
@@ -923,8 +967,8 @@ class App:
         f = tk.Frame(win, bg=C["bg"], padx=25)
         f.pack(fill="both", expand=True)
         name_e = self.field(f, self.t("name"), c["name"])
-        phone_e = self.field(f, self.t("phone"), c["phone"] or "+60")
-        email_e = self.field(f, self.t("email"), c["email"] or "")
+        phone_e = self.phone_field(f, self.t("phone"), c["phone"] or "+60")
+        email_e = self.email_field(f, self.t("email"), c["email"] or "")
         notes_e = self.field(f, self.t("notes"), c["notes"] or "")
         bf = tk.Frame(f, bg=C["bg"], pady=15)
         bf.pack(fill="x")
@@ -945,8 +989,10 @@ class App:
         f = tk.Frame(self.content, bg=C["bg"], padx=25)
         f.pack(fill="both", expand=True)
         self.ce = {}
-        for l, d in [("Name",""), ("Phone","+60"), ("Email",""), ("Notes","")]:
-            self.ce[l] = self.field(f, self.t(l.lower()) if l.lower() in ["name","phone","notes"] else l, d)
+        self.ce["Name"] = self.field(f, self.t("name"), "")
+        self.ce["Phone"] = self.phone_field(f, self.t("phone"), "+60")
+        self.ce["Email"] = self.email_field(f, self.t("email"), "")
+        self.ce["Notes"] = self.field(f, self.t("notes"), "")
         bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
         self.btn(bf, self.t("save"), self.save_cust).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=self.pg_custs, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
