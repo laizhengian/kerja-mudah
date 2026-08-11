@@ -1271,6 +1271,8 @@ class App:
         self.side.pack_propagate(False)
         main_frame = tk.Frame(self.root, bg=C["bg"])
         main_frame.pack(side="left", fill="both", expand=True)
+        main_frame.columnconfigure(0, weight=1)
+        main_frame.rowconfigure(0, weight=1)
         if self.is_demo():
             days_left = 7
             try:
@@ -1280,10 +1282,13 @@ class App:
             except (ValueError, TypeError):
                 pass
             demo_bar = tk.Frame(main_frame, bg="#FEF3C7", height=30)
-            demo_bar.pack(fill="x")
-            demo_bar.pack_propagate(False)
+            demo_bar.grid(row=0, column=0, sticky="ew")
+            demo_bar.grid_propagate(False)
             tk.Label(demo_bar, text=f"DEMO MODE - {days_left} days remaining | Activate with license key", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10, "bold")).pack(expand=True)
-        self.content_canvas = tk.Canvas(main_frame, bg=C["bg"], highlightthickness=0)
+            content_row = 1
+        else:
+            content_row = 0
+        self.content_canvas = tk.Canvas(main_frame, bg=C["bg"], highlightthickness=0, bd=0)
         def clamp_scroll(*args):
             first = float(args[0])
             if first < 0:
@@ -1292,11 +1297,13 @@ class App:
         self.content_scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=clamp_scroll)
         self.content = tk.Frame(self.content_canvas, bg=C["bg"])
         self.content.bind("<Configure>", lambda e: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
-        self.content_canvas.create_window((0, 0), window=self.content, anchor="nw", tags="inner")
+        self.canvas_window = self.content_canvas.create_window((0, 0), window=self.content, anchor="nw", tags="inner")
         self.content_canvas.configure(yscrollcommand=self.content_scrollbar.set)
-        self.content_scrollbar.pack(side="right", fill="y")
-        self.content_canvas.pack(side="left", fill="both", expand=True)
-        self.content_canvas.bind("<Configure>", lambda e: self.content_canvas.itemconfig("inner", width=e.width))
+        self.content_scrollbar.grid(row=content_row, column=1, sticky="ns")
+        self.content_canvas.grid(row=content_row, column=0, sticky="nsew")
+        def on_canvas_configure(event):
+            self.content_canvas.itemconfig("inner", width=event.width)
+        self.content_canvas.bind("<Configure>", on_canvas_configure)
         def _on_mousewheel(event):
             current = self.content_canvas.yview()
             if event.delta > 0 and current[0] <= 0:
@@ -1309,12 +1316,13 @@ class App:
         self.content_canvas.bind("<Enter>", _bind_mousewheel)
         self.content_canvas.bind("<Leave>", _unbind_mousewheel)
         n = self.db.get_setting("business_name", "Shop")
-        tk.Label(self.side, text=n, bg=C["side"], fg=C["white"], font=("Segoe UI", 14, "bold"), pady=20, wraplength=180).pack(fill="x")
-        tk.Frame(self.side, bg="#2A2A2A", height=1).pack(fill="x", padx=20)
+        name_label = tk.Label(self.side, text=n, bg=C["side"], fg=C["white"], font=("Segoe UI", 13, "bold"), pady=15, wraplength=170, justify="center")
+        name_label.pack(fill="x", padx=10)
+        tk.Frame(self.side, bg="#2A2A2A", height=1).pack(fill="x", padx=15)
         for txt, cmd in [("Home", self.pg_home), ("Jobs", self.pg_jobs), ("Customers", self.pg_custs),
                          ("Appointments", self.pg_cal), ("Invoices", self.pg_invs), ("Reports", self.pg_rpt),
                          ("Backup", self.pg_backup), ("Settings", self.pg_set)]:
-            b = tk.Button(self.side, text=f"  {self.t(txt.lower())}", command=cmd, bg=C["side"], fg="#AAAAAA", font=("Segoe UI", 12), bd=0, anchor="w", padx=25, pady=14, activebackground=C["side_h"], activeforeground=C["white"], cursor="hand2")
+            b = tk.Button(self.side, text=f"  {self.t(txt.lower())}", command=cmd, bg=C["side"], fg="#AAAAAA", font=("Segoe UI", 11), bd=0, anchor="w", padx=20, pady=12, activebackground=C["side_h"], activeforeground=C["white"], cursor="hand2")
             b.pack(fill="x")
             b.bind("<Enter>", lambda e, b=b: b.configure(bg=C["side_h"], fg=C["white"]))
             b.bind("<Leave>", lambda e, b=b: b.configure(bg=C["side"], fg="#AAAAAA"))
@@ -1426,21 +1434,27 @@ class App:
             tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
         header_frame = tk.Frame(self.jobs_list_frame, bg=C["bg"])
-        header_frame.pack(fill="x", pady=(8,2))
-        col_widths = [130, 180, 140, 90, 100, 110, 100]
-        col_names = [self.t("code"), self.t("item"), self.t("customer"), self.t("quote"), self.t("status"), self.t("due_date"), self.t("action")]
-        for i, (name, width) in enumerate(zip(col_names, col_widths)):
-            tk.Label(header_frame, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9, "bold"), width=width//8, anchor="w", padx=4).grid(row=0, column=i, sticky="w")
+        header_frame.pack(fill="x", pady=(8,4), padx=10)
+        headers = [self.t("code"), self.t("item"), self.t("customer"), self.t("quote"), self.t("status"), self.t("due_date"), self.t("action")]
+        for i, name in enumerate(headers):
+            tk.Label(header_frame, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9, "bold"), anchor="w", padx=4).grid(row=0, column=i, sticky="w", padx=(0,20))
+        header_frame.columnconfigure(0, weight=0)
+        header_frame.columnconfigure(1, weight=1)
+        header_frame.columnconfigure(2, weight=1)
+        header_frame.columnconfigure(3, weight=0)
+        header_frame.columnconfigure(4, weight=0)
+        header_frame.columnconfigure(5, weight=0)
+        header_frame.columnconfigure(6, weight=0)
         sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
-        for row_idx, j in enumerate(jobs):
-            r = tk.Frame(self.jobs_list_frame, bg=C["card"], bd=1, relief="solid", pady=10, padx=8)
-            r.pack(fill="x", pady=2)
-            tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), anchor="w", padx=4).grid(row=0, column=0, sticky="w")
-            tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 9), anchor="w", padx=4, wraplength=160).grid(row=0, column=1, sticky="w")
-            tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w", padx=4).grid(row=0, column=2, sticky="w")
-            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), anchor="w", padx=4).grid(row=0, column=3, sticky="w")
-            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 8, "bold"), anchor="center", padx=4).grid(row=0, column=4, sticky="w")
-            tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w", padx=4).grid(row=0, column=5, sticky="w")
+        for j in jobs:
+            r = tk.Frame(self.jobs_list_frame, bg=C["card"], bd=1, relief="solid", pady=10, padx=10)
+            r.pack(fill="x", pady=2, padx=10)
+            tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), anchor="w", padx=4).grid(row=0, column=0, sticky="w", padx=(0,20))
+            tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 9), anchor="w", padx=4, wraplength=150).grid(row=0, column=1, sticky="w", padx=(0,20))
+            tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w", padx=4).grid(row=0, column=2, sticky="w", padx=(0,20))
+            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), anchor="w", padx=4).grid(row=0, column=3, sticky="w", padx=(0,20))
+            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 8, "bold"), anchor="center", padx=6).grid(row=0, column=4, sticky="w", padx=(0,20))
+            tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w", padx=4).grid(row=0, column=5, sticky="w", padx=(0,20))
             action_frame = tk.Frame(r, bg=C["card"])
             action_frame.grid(row=0, column=6, sticky="e")
             tk.Button(action_frame, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 8, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right", padx=2)
@@ -1451,6 +1465,13 @@ class App:
                 has_inv = any(i["job_id"] == j["id"] for i in invs)
                 if not has_inv:
                     tk.Button(action_frame, text=self.t("pdf"), command=lambda j=j: self.download_job_pdf(j), bg="#2563EB", fg=C["white"], font=("Segoe UI", 8, "bold"), bd=0, padx=6, pady=1, cursor="hand2").pack(side="right", padx=2)
+            r.columnconfigure(0, weight=0)
+            r.columnconfigure(1, weight=1)
+            r.columnconfigure(2, weight=1)
+            r.columnconfigure(3, weight=0)
+            r.columnconfigure(4, weight=0)
+            r.columnconfigure(5, weight=0)
+            r.columnconfigure(6, weight=0)
 
     def download_job_pdf(self, job):
         invs = self.db.get_invoices()
