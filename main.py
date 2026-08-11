@@ -211,6 +211,85 @@ T = {
         "preview_invoice": "Preview Invoice",
         "invoice_parameters": "Invoice Parameters",
         "customize_invoice": "Customize invoice text and footer",
+        "search_jobs": "Search jobs...",
+        "search_customers": "Search customers...",
+        "search_appointments": "Search appointments...",
+        "search_invoices": "Search invoices...",
+        "waiting_for_pickup_count": "Waiting for Pickup",
+        "send_reminder": "Send Reminder",
+        "or_pick": "Or pick:",
+        "edit_job_title": "Edit Job",
+        "edit_customer_title": "Edit Customer",
+        "edit_appointment_title": "Edit Appointment",
+        "job_complete_title": "Job Complete!",
+        "invoice_already_exists": "(Invoice already exists)",
+        "invoice_whatsapp": "Invoice + WhatsApp",
+        "invoice_email": "Invoice + Email",
+        "just_invoice": "Just Invoice",
+        "skip": "Skip",
+        "create": "Create",
+        "confirm_restore_title": "Confirm Restore",
+        "confirm_restore_msg": "This will replace ALL current data with the backup.\n\nAre you sure?",
+        "full_backup": "Full Backup (Recommended)",
+        "backup_desc": "Saves all data: customers, jobs, invoices, appointments, settings",
+        "backup_now": "Backup Now",
+        "restore_backup": "Restore Backup",
+        "export_csv_section": "Export to CSV (for Excel/accounting)",
+        "export_customers": "Export customers.csv",
+        "export_jobs": "Export jobs.csv",
+        "export_invoices": "Export invoices.csv",
+        "revenue_today": "Revenue Today",
+        "revenue_week": "Revenue This Week",
+        "revenue_month": "Revenue This Month",
+        "outstanding": "Outstanding",
+        "summary": "Summary",
+        "total_earned": "Total Earned (All Time)",
+        "outstanding_unpaid": "Outstanding (Unpaid)",
+        "total_jobs": "Total Jobs",
+        "completed_jobs": "Completed Jobs",
+        "active_jobs_count": "Active Jobs",
+        "total_customers": "Total Customers",
+        "paid_invoices_count": "Paid Invoices",
+        "unpaid_invoices_count": "Unpaid Invoices",
+        "language": "Language",
+        "invoice_format": "Invoice Format",
+        "choose_format": "Choose how invoices are sent to customers",
+        "text_plain": "Text (plain message)",
+        "pdf_professional": "PDF (professional invoice)",
+        "preview_invoice": "Preview Invoice",
+        "startup": "Startup",
+        "open_on_startup": "Open app automatically when Windows starts",
+        "toggle_startup": "Toggle Open on Startup",
+        "invoice_parameters": "Invoice Parameters",
+        "customize_invoice": "Customize invoice text and footer",
+        "invoice_title": "Invoice Title",
+        "payment_terms": "Payment Terms",
+        "thank_you_note": "Thank You Note",
+        "footer_text": "Footer Text",
+        "bill_to": "Bill To:",
+        "total": "Total:",
+        "status": "Status",
+        "unpaid_status": "UNPAID",
+        "paid_status": "PAID",
+        "close": "Close",
+        "verify": "Verify",
+        "enter_pin_to_edit": "Enter PIN to edit",
+        "new_prefix": "New",
+        "maps_link_label": "Maps Link:",
+        "add_google_maps": "Add your Google Maps link to invoices",
+        "google_maps_instructions": "How to get your Google Maps link:",
+        "google_maps_step1": "1. Open Google Maps (google.com/maps)",
+        "google_maps_step2": "2. Search for your business name",
+        "google_maps_step3": "3. Click on your business",
+        "google_maps_step4": "4. Click the 'Share' button (under photos)",
+        "google_maps_step5": "5. Click 'Copy link' and paste it in Edit above",
+        "example_link": "Example link format:",
+        "no_results_for": "No results for",
+        "results_count": "result(s) for",
+        "jobs_header": "Jobs",
+        "customers_header": "Customers",
+        "invoices_header": "Invoices",
+        "id_label": "ID:",
     },
     "ms": {
         "app_title": "Kerja Mudah",
@@ -379,6 +458,85 @@ T = {
         "preview_invoice": "Pratonton Invois",
         "invoice_parameters": "Parameter Invois",
         "customize_invoice": "Suaikan teks invois dan kaki",
+        "search_jobs": "Carian kerja...",
+        "search_customers": "Carian pelanggan...",
+        "search_appointments": "Carian temujanji...",
+        "search_invoices": "Carian invois...",
+        "waiting_for_pickup_count": "Menunggu Pengambilan",
+        "send_reminder": "Hantar Peringatan",
+        "or_pick": "Atau pilih:",
+        "edit_job_title": "Sunting Kerja",
+        "edit_customer_title": "Sunting Pelanggan",
+        "edit_appointment_title": "Sunting Temujanji",
+        "job_complete_title": "Kerja Selesai!",
+        "invoice_already_exists": "(Invois sudah wujud)",
+        "invoice_whatsapp": "Invois + WhatsApp",
+        "invoice_email": "Invois + Emel",
+        "just_invoice": "Invois Sahaja",
+        "skip": "Langkau",
+        "create": "Cipta",
+        "confirm_restore_title": "Sahkan Pemulihan",
+        "confirm_restore_msg": "Ini akan menggantikan SEMUA data semula dengan sandaran. Anda pasti?",
+        "full_backup": "Sandaran Penuh (Disyorkan)",
+        "backup_desc": "Simpan semua data: pelanggan, kerja, invois, temujanji, tetapan",
+        "backup_now": "Sandar Sekarang",
+        "restore_backup": "Pulihkan Sandaran",
+        "export_csv_section": "Eksport ke CSV (untuk Excel/akaun)",
+        "export_customers": "Eksport customers.csv",
+        "export_jobs": "Eksport jobs.csv",
+        "export_invoices": "Eksport invoices.csv",
+        "revenue_today": "Pendapatan Hari Ini",
+        "revenue_week": "Pendapatan Minggu Ini",
+        "revenue_month": "Pendapatan Bulan Ini",
+        "outstanding": "Belum Dibayar",
+        "summary": "Ringkasan",
+        "total_earned": "Jumlah Diperoleh (Semua Masa)",
+        "outstanding_unpaid": "Belum Dibayar",
+        "total_jobs": "Jumlah Kerja",
+        "completed_jobs": "Kerja Selesai",
+        "active_jobs_count": "Kerja Aktif",
+        "total_customers": "Jumlah Pelanggan",
+        "paid_invoices_count": "Invois Dibayar",
+        "unpaid_invoices_count": "Invois Belum Dibayar",
+        "language": "Bahasa",
+        "invoice_format": "Format Invois",
+        "choose_format": "Pilih cara invois dihantar kepada pelanggan",
+        "text_plain": "Teks (mesej biasa)",
+        "pdf_professional": "PDF (invois profesional)",
+        "preview_invoice": "Pratonton Invois",
+        "startup": "Permulaan",
+        "open_on_startup": "Buka app secara automatik apabila Windows bermula",
+        "toggle_startup": "Tukar Buka pada Permulaan",
+        "invoice_parameters": "Parameter Invois",
+        "customize_invoice": "Suaikan teks invois dan kaki",
+        "invoice_title": "Tajuk Invois",
+        "payment_terms": "Syarat Pembayaran",
+        "thank_you_note": "Nota Terima Kasih",
+        "footer_text": "Teks Kaki",
+        "bill_to": "Bil Kepada:",
+        "total": "Jumlah:",
+        "status": "Status",
+        "unpaid_status": "BELUM DIBAYAR",
+        "paid_status": "DIBAYAR",
+        "close": "Tutup",
+        "verify": "Sahkan",
+        "enter_pin_to_edit": "Masukkan PIN untuk menyunting",
+        "new_prefix": "Baru",
+        "maps_link_label": "Pautan Peta:",
+        "add_google_maps": "Tambah pautan Google Maps anda pada invois",
+        "google_maps_instructions": "Cara dapat pautan Google Maps anda:",
+        "google_maps_step1": "1. Buka Google Maps (google.com/maps)",
+        "google_maps_step2": "2. Cari nama perniagaan anda",
+        "google_maps_step3": "3. Klik pada perniagaan anda",
+        "google_maps_step4": "4. Klik butang 'Share' (di bawah foto)",
+        "google_maps_step5": "5. Klik 'Copy link' dan tampal di Edit di atas",
+        "example_link": "Contoh format pautan:",
+        "no_results_for": "Tiada hasil untuk",
+        "results_count": "hasil untuk",
+        "jobs_header": "Kerja",
+        "customers_header": "Pelanggan",
+        "invoices_header": "Invois",
+        "id_label": "ID:",
     },
     "zh": {
         "app_title": "Kerja Mudah",
@@ -547,6 +705,85 @@ T = {
         "preview_invoice": "预览发票",
         "invoice_parameters": "发票参数",
         "customize_invoice": "自定义发票文本和页脚",
+        "search_jobs": "搜索工作...",
+        "search_customers": "搜索客户...",
+        "search_appointments": "搜索预约...",
+        "search_invoices": "搜索发票...",
+        "waiting_for_pickup_count": "等待取件",
+        "send_reminder": "发送提醒",
+        "or_pick": "或选择：",
+        "edit_job_title": "编辑工作",
+        "edit_customer_title": "编辑客户",
+        "edit_appointment_title": "编辑预约",
+        "job_complete_title": "工作完成！",
+        "invoice_already_exists": "（发票已存在）",
+        "invoice_whatsapp": "发票 + WhatsApp",
+        "invoice_email": "发票 + 电邮",
+        "just_invoice": "仅发票",
+        "skip": "跳过",
+        "create": "创建",
+        "confirm_restore_title": "确认恢复",
+        "confirm_restore_msg": "这将用备份替换所有当前数据。确定吗？",
+        "full_backup": "完整备份（推荐）",
+        "backup_desc": "保存所有数据：客户、工作、发票、预约、设置",
+        "backup_now": "立即备份",
+        "restore_backup": "恢复备份",
+        "export_csv_section": "导出CSV（用于Excel/会计）",
+        "export_customers": "导出customers.csv",
+        "export_jobs": "导出jobs.csv",
+        "export_invoices": "导出invoices.csv",
+        "revenue_today": "今日收入",
+        "revenue_week": "本周收入",
+        "revenue_month": "本月收入",
+        "outstanding": "未收款",
+        "summary": "摘要",
+        "total_earned": "总收入（全部）",
+        "outstanding_unpaid": "未收款",
+        "total_jobs": "总工作数",
+        "completed_jobs": "已完成工作",
+        "active_jobs_count": "进行中工作",
+        "total_customers": "总客户数",
+        "paid_invoices_count": "已付发票",
+        "unpaid_invoices_count": "未付发票",
+        "language": "语言",
+        "invoice_format": "发票格式",
+        "choose_format": "选择发票发送给客户的方式",
+        "text_plain": "文本（纯消息）",
+        "pdf_professional": "PDF（专业发票）",
+        "preview_invoice": "预览发票",
+        "startup": "启动",
+        "open_on_startup": "Windows启动时自动打开应用",
+        "toggle_startup": "切换启动时打开",
+        "invoice_parameters": "发票参数",
+        "customize_invoice": "自定义发票文本和页脚",
+        "invoice_title": "发票标题",
+        "payment_terms": "付款条款",
+        "thank_you_note": "感谢语",
+        "footer_text": "页脚文本",
+        "bill_to": "收款方：",
+        "total": "合计：",
+        "status": "状态",
+        "unpaid_status": "未付款",
+        "paid_status": "已付款",
+        "close": "关闭",
+        "verify": "验证",
+        "enter_pin_to_edit": "输入PIN以编辑",
+        "new_prefix": "新",
+        "maps_link_label": "地图链接：",
+        "add_google_maps": "将您的Google Maps链接添加到发票",
+        "google_maps_instructions": "如何获取您的Google Maps链接：",
+        "google_maps_step1": "1. 打开Google Maps (google.com/maps)",
+        "google_maps_step2": "2. 搜索您的商家名称",
+        "google_maps_step3": "3. 点击您的商家",
+        "google_maps_step4": "4. 点击'分享'按钮（在照片下方）",
+        "google_maps_step5": "5. 点击'复制链接'并粘贴到上方的编辑中",
+        "example_link": "链接格式示例：",
+        "no_results_for": "未找到",
+        "results_count": "个结果",
+        "jobs_header": "工作",
+        "customers_header": "客户",
+        "invoices_header": "发票",
+        "id_label": "ID：",
     },
 }
 
@@ -601,6 +838,12 @@ class App:
     def is_demo(self):
         return is_demo(self.db)
 
+    def check_demo_limit(self):
+        if self.is_demo() and len(self.db.get_jobs()) >= 10:
+            messagebox.showerror(self.t("error"), self.t("demo_limit"))
+            return True
+        return False
+
     def is_licensed(self):
         return check_license(self.db)
 
@@ -625,6 +868,28 @@ class App:
         f = tk.Frame(parent, bg=C["card"], bd=1, relief="solid", pady=14, padx=20)
         f.pack(fill="x", pady=4, **kw)
         return f
+
+    def search_field(self, parent, placeholder, variable):
+        e = tk.Entry(parent, textvariable=variable, font=("Segoe UI", 11), bd=1, relief="solid")
+        e.pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
+        e.insert(0, placeholder)
+        e.config(fg=C["txt3"])
+        def on_focus_in(event):
+            if e.get() == placeholder:
+                e.delete(0, tk.END)
+                e.config(fg=C["txt"])
+        def on_focus_out(event):
+            if not e.get():
+                e.insert(0, placeholder)
+                e.config(fg=C["txt3"])
+        def on_keypress(event):
+            if e.get() == placeholder:
+                e.delete(0, tk.END)
+                e.config(fg=C["txt"])
+        e.bind("<FocusIn>", on_focus_in)
+        e.bind("<FocusOut>", on_focus_out)
+        e.bind("<Key>", on_keypress)
+        return e
 
     def btn(self, parent, txt, cmd, bg=None, fg=None):
         b = tk.Button(parent, text=txt, command=cmd, bg=bg or C["pri"], fg=fg or C["white"], font=("Segoe UI", 11, "bold"), bd=0, padx=20, pady=10, cursor="hand2")
@@ -671,6 +936,17 @@ class App:
         e = tk.Entry(f, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid")
         e.pack(side="left", fill="x", expand=True, ipady=6)
         validate_cmd = (self.root.register(lambda p: all(c.isdigit() or c in ".-" for c in p)), "%P")
+        e.configure(validate="key", validatecommand=validate_cmd)
+        return e
+
+    def pin_field(self, parent, label, default=""):
+        f = tk.Frame(parent, bg=C["bg"])
+        f.pack(fill="x", pady=8)
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
+        var = tk.StringVar(value=default)
+        e = tk.Entry(f, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid", show="*")
+        e.pack(side="left", fill="x", expand=True, ipady=6)
+        validate_cmd = (self.root.register(lambda p: all(c.isdigit() for c in p) and len(p) <= 4), "%P")
         e.configure(validate="key", validatecommand=validate_cmd)
         return e
 
@@ -973,7 +1249,7 @@ class App:
         if uncollected:
             uf = tk.Frame(self.content, bg=C["bg"], padx=20, pady=10)
             uf.pack(fill="x")
-            tk.Label(uf, text=f"Waiting for Pickup ({len(uncollected)})", bg=C["bg"], fg=C["warn"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=8)
+            tk.Label(uf, text=f"{self.t('waiting_for_pickup_count')} ({len(uncollected)})", bg=C["bg"], fg=C["warn"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=8)
             for j in uncollected[:5]:
                 row = tk.Frame(uf, bg="#FEF3C7", bd=1, relief="solid", pady=8, padx=14)
                 row.pack(fill="x", pady=3)
@@ -1002,7 +1278,7 @@ class App:
                     except (webbrowser.Error, OSError):
                         pass
                     messagebox.showinfo(self.t("done"), self.t("whatsapp_opened") + f" +{phone}")
-                tk.Button(row, text="Send Reminder", command=send_pickup_reminder, bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
+                tk.Button(row, text=self.t("send_reminder"), command=send_pickup_reminder, bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
 
     def pg_jobs(self):
         self.clr()
@@ -1013,7 +1289,7 @@ class App:
         sf.pack(fill="x", pady=(0,10))
         self.jobs_search_var = tk.StringVar()
         self.jobs_search_var.trace("w", lambda *a: self._filter_jobs())
-        tk.Entry(sf, textvariable=self.jobs_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
+        self.search_field(sf, "Search jobs...", self.jobs_search_var)
         
         self.jobs_list_frame = tk.Frame(f, bg=C["bg"])
         self.jobs_list_frame.pack(fill="both", expand=True)
@@ -1024,14 +1300,15 @@ class App:
             w.destroy()
         jobs = self.db.get_jobs()
         q = self.jobs_search_var.get().strip().lower()
-        if q:
+        if q and q != "search jobs...":
             jobs = [j for j in jobs if q in (j["job_code"]+j["item"]+(j["problem"] or "")+(j["customer_name"] or "")).lower()]
         if not jobs:
             tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
         h = tk.Frame(self.jobs_list_frame, bg=C["bg"]); h.pack(fill="x", pady=8)
-        for t in [(self.t("code"),14),(self.t("item"),22),(self.t("customer"),16),(self.t("quote"),10),(self.t("status"),11),(self.t("due_date"),11),(self.t("action"),14)]:
-            tk.Label(h, text=t, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=t[1], anchor="w", padx=4).pack(side="left")
+        cols = [(self.t("code"),14),(self.t("item"),22),(self.t("customer"),16),(self.t("quote"),10),(self.t("status"),11),(self.t("due_date"),11),(self.t("action"),14)]
+        for col_text, col_width in cols:
+            tk.Label(h, text=col_text, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=col_width, anchor="w", padx=4).pack(side="left")
         sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
         for j in jobs:
             r = self.row(self.jobs_list_frame)
@@ -1061,14 +1338,17 @@ class App:
         if not inv:
             inv_id = self.db.add_invoice(job["id"], job["quote"])
             invs = self.db.get_invoices()
-            inv = invs[-1]
+            inv = invs[-1] if invs else None
+        if not inv:
+            return messagebox.showerror(self.t("error"), self.t("pdf_failed"))
         cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
         pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job, cust)
-        messagebox.showinfo(self.t("done"), self.t("pdf_saved") + f"\n{pdf_path}")
-        try:
-            os.startfile(os.path.dirname(pdf_path))
-        except (OSError, AttributeError):
-            pass
+        if pdf_path:
+            messagebox.showinfo(self.t("done"), self.t("pdf_saved") + f"\n{pdf_path}")
+            try:
+                os.startfile(os.path.dirname(pdf_path))
+            except (OSError, AttributeError):
+                pass
 
     def pg_new_job(self):
         self.clr()
@@ -1086,7 +1366,7 @@ class App:
         self.cust_entry = tk.Entry(cf, font=("Segoe UI", 12), bd=1, relief="solid")
         self.cust_entry.pack(side="left", fill="x", expand=True, ipady=6)
         if cust_names:
-            tk.Label(cf, text="Or pick:", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left", padx=(10,5))
+            tk.Label(cf, text=self.t("or_pick"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left", padx=(10,5))
             self.cust_menu_var = tk.StringVar()
             menu = tk.OptionMenu(cf, self.cust_menu_var, *cust_names, command=self._pick_cust)
             menu.configure(font=("Segoe UI", 10), width=15)
@@ -1133,8 +1413,8 @@ class App:
             q = float(self.je["Quote (RM)"].get().strip() or "0")
         except ValueError:
             return messagebox.showerror(self.t("error"), self.t("quote_number"))
-        if self.is_demo() and len(self.db.get_jobs()) >= 10:
-            return messagebox.showerror("Demo Limit", "Demo mode is limited to 10 jobs.\nPlease activate with a license key.")
+        if self.check_demo_limit():
+            return
         cid = None
         if cust_name:
             if cust_name in self.cust_map:
@@ -1148,11 +1428,11 @@ class App:
 
     def edit_job(self, j):
         win = tk.Toplevel(self.root)
-        win.title("Edit Job")
+        win.title(self.t("edit_job_title"))
         win.geometry("500x550")
         win.configure(bg=C["bg"])
         win.grab_set()
-        tk.Label(win, text="Edit Job", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
+        tk.Label(win, text=self.t("edit_job_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
         f = tk.Frame(win, bg=C["bg"], padx=25)
         f.pack(fill="both", expand=True)
         item_e = self.field(f, self.t("item"), j["item"])
@@ -1160,7 +1440,7 @@ class App:
         quote_e = self.field(f, self.t("quote"), str(j["quote"]))
         status_frame = tk.Frame(f, bg=C["bg"])
         status_frame.pack(fill="x", pady=8)
-        tk.Label(status_frame, text="Status", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
+        tk.Label(status_frame, text=self.t("status"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         status_var = tk.StringVar(value=j["status"])
         for v, lbl in [("pending","Pending"),("in-progress","In-Progress"),("done","Done")]:
             tk.Radiobutton(status_frame, text=lbl, variable=status_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=5)
@@ -1199,17 +1479,17 @@ class App:
     def mark_done(self, job):
         self.db.update_job_status(job["id"], "done")
         win = tk.Toplevel(self.root)
-        win.title("Job Complete")
+        win.title(self.t("job_complete_title"))
         win.geometry("360x400")
         win.configure(bg=C["bg"])
         win.grab_set()
-        tk.Label(win, text="Job Complete!", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=8)
+        tk.Label(win, text=self.t("job_complete_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=8)
         tk.Label(win, text=job["item"], bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack()
         tk.Label(win, text=f"RM {job['quote']:.2f}", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(pady=5)
         cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
         has_inv = self._job_has_invoice(job["id"])
         if has_inv:
-            tk.Label(win, text="(Invoice already exists)", bg=C["bg"], fg=C["warn"], font=("Segoe UI", 9)).pack()
+            tk.Label(win, text=self.t("invoice_already_exists"), bg=C["bg"], fg=C["warn"], font=("Segoe UI", 9)).pack()
         def send_inv():
             inv = self._get_or_create_invoice(job)
             inv_code = inv["invoice_code"] if inv else "N/A"
@@ -1243,11 +1523,11 @@ class App:
                 except (webbrowser.Error, OSError):
                     pass
                 if use_pdf:
-                    messagebox.showinfo("Done", f"Invoice created! WhatsApp opened for +{phone}\nPDF saved to: {pdf_path}")
+                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('opening_whatsapp')} +{phone}\n{self.t('pdf_saved')} {pdf_path}")
                 else:
-                    messagebox.showinfo("Done", f"Invoice created! WhatsApp opened for +{phone}")
+                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('opening_whatsapp')} +{phone}")
             else:
-                messagebox.showwarning("Warning", "Invoice created but no phone number. Add phone to customer first.")
+                messagebox.showwarning(self.t("warning"), self.t("invoice_created") + "\n" + self.t("no_phone"))
             self.pg_jobs()
         def send_email_inv():
             inv = self._get_or_create_invoice(job)
@@ -1276,7 +1556,7 @@ class App:
                         os.startfile(pdf_path)
                     except (webbrowser.Error, OSError):
                         pass
-                    messagebox.showinfo("Done", f"Invoice created! Email opened for {email}\nPDF saved to: {pdf_path}")
+                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_opened')} {email}\n{self.t('pdf_saved')} {pdf_path}")
                 else:
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
                     body += f"Thank you for your business!\n\n"
@@ -1291,19 +1571,19 @@ class App:
                         webbrowser.open(mailto)
                     except (webbrowser.Error, OSError):
                         pass
-                    messagebox.showinfo("Done", f"Invoice created! Email opened for {email}")
+                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_opened')} {email}")
             else:
-                messagebox.showwarning("Warning", "Invoice created but no email. Add email to customer first.")
+                messagebox.showwarning(self.t("warning"), self.t("invoice_created") + "\n" + self.t("no_email"))
             self.pg_jobs()
         def just_inv():
             self._get_or_create_invoice(job)
             win.destroy()
             messagebox.showinfo(self.t("done"), self.t("invoice_created"))
             self.pg_jobs()
-        self.btn(win, "Invoice + WhatsApp", send_inv).pack(fill="x", padx=25, pady=5)
-        self.btn(win, "Invoice + Email", send_email_inv, bg="#2563EB").pack(fill="x", padx=25, pady=5)
-        self.btn(win, "Just Invoice", just_inv, bg=C["card"], fg=C["txt"]).pack(fill="x", padx=25, pady=5)
-        tk.Button(win, text="Skip", command=win.destroy, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10), bd=0, cursor="hand2").pack(pady=10)
+        self.btn(win, self.t("invoice_whatsapp"), send_inv).pack(fill="x", padx=25, pady=5)
+        self.btn(win, self.t("invoice_email"), send_email_inv, bg="#2563EB").pack(fill="x", padx=25, pady=5)
+        self.btn(win, self.t("just_invoice"), just_inv, bg=C["card"], fg=C["txt"]).pack(fill="x", padx=25, pady=5)
+        tk.Button(win, text=self.t("skip"), command=win.destroy, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10), bd=0, cursor="hand2").pack(pady=10)
 
     def pg_custs(self):
         self.clr()
@@ -1314,7 +1594,7 @@ class App:
         sf.pack(fill="x", pady=(0,10))
         self.cust_search_var = tk.StringVar()
         self.cust_search_var.trace("w", lambda *a: self._filter_custs())
-        tk.Entry(sf, textvariable=self.cust_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
+        self.search_field(sf, "Search customers...", self.cust_search_var)
         
         self.cust_list_frame = tk.Frame(f, bg=C["bg"])
         self.cust_list_frame.pack(fill="both", expand=True)
@@ -1325,10 +1605,10 @@ class App:
             w.destroy()
         cs = self.db.get_customers()
         q = self.cust_search_var.get().strip().lower()
-        if q:
+        if q and q != "search customers...":
             cs = [c for c in cs if q in (c["name"]+(c["phone"] or "")+(c["email"] or "")).lower()]
         if not cs:
-            tk.Label(self.cust_list_frame, text=self.t("no_customers") if not q else "No results", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            tk.Label(self.cust_list_frame, text=self.t("no_customers") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
         for c in cs:
             r = self.row(self.cust_list_frame)
@@ -1340,11 +1620,11 @@ class App:
 
     def edit_cust(self, c):
         win = tk.Toplevel(self.root)
-        win.title("Edit Customer")
+        win.title(self.t("edit_customer_title"))
         win.geometry("450x350")
         win.configure(bg=C["bg"])
         win.grab_set()
-        tk.Label(win, text="Edit Customer", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
+        tk.Label(win, text=self.t("edit_customer_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
         f = tk.Frame(win, bg=C["bg"], padx=25)
         f.pack(fill="both", expand=True)
         name_e = self.field(f, self.t("name"), c["name"])
@@ -1395,7 +1675,7 @@ class App:
         sf.pack(fill="x", pady=(0,10))
         self.appt_search_var = tk.StringVar()
         self.appt_search_var.trace("w", lambda *a: self._filter_appts())
-        tk.Entry(sf, textvariable=self.appt_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
+        self.search_field(sf, "Search appointments...", self.appt_search_var)
         
         self.appt_list_frame = tk.Frame(f, bg=C["bg"])
         self.appt_list_frame.pack(fill="both", expand=True)
@@ -1405,10 +1685,10 @@ class App:
         for w in self.appt_list_frame.winfo_children():
             w.destroy()
         q = self.appt_search_var.get().strip()
-        if q:
+        if q and q != "search appointments...":
             appts = self.db.search_appointments(q)
             if not appts:
-                tk.Label(self.appt_list_frame, text="No results", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+                tk.Label(self.appt_list_frame, text=self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
                 return
             for a in appts:
                 r = self.row(self.appt_list_frame)
@@ -1433,11 +1713,11 @@ class App:
 
     def edit_appt(self, a):
         win = tk.Toplevel(self.root)
-        win.title("Edit Appointment")
+        win.title(self.t("edit_appointment_title"))
         win.geometry("500x450")
         win.configure(bg=C["bg"])
         win.grab_set()
-        tk.Label(win, text="Edit Appointment", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
+        tk.Label(win, text=self.t("edit_appointment_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
         f = tk.Frame(win, bg=C["bg"], padx=25)
         f.pack(fill="both", expand=True)
         cust_name_e = self.field(f, self.t("customer"), a["customer_name"] or "")
@@ -1469,7 +1749,7 @@ class App:
         def save():
             d = date_var.get().strip()
             if not d:
-                return messagebox.showerror("Error", "Enter date")
+                return messagebox.showerror(self.t("error"), self.t("cannot_empty"))
             t = f"{hour_var.get()}:{min_var.get()}"
             self.db.update_appointment(a["id"], d, t, purpose_e.get().strip(), a["status"], notes_e.get().strip())
             win.destroy()
@@ -1500,7 +1780,7 @@ class App:
         m = self.ae["Time"][1].get()
         t = f"{h}:{m}"
         if not d:
-            return messagebox.showerror("Error", "Enter date")
+            return messagebox.showerror(self.t("error"), self.t("cannot_empty"))
         cid = None
         if c:
             cs = self.db.get_customers(c)
@@ -1518,7 +1798,7 @@ class App:
         sf.pack(fill="x", pady=(0,10))
         self.inv_search_var = tk.StringVar()
         self.inv_search_var.trace("w", lambda *a: self._filter_invs())
-        tk.Entry(sf, textvariable=self.inv_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
+        self.search_field(sf, "Search invoices...", self.inv_search_var)
         
         self.inv_list_frame = tk.Frame(f, bg=C["bg"])
         self.inv_list_frame.pack(fill="both", expand=True)
@@ -1529,10 +1809,10 @@ class App:
             w.destroy()
         invs = self.db.get_invoices()
         q = self.inv_search_var.get().strip().lower()
-        if q:
+        if q and q != "search invoices...":
             invs = [i for i in invs if q in (i["invoice_code"]+(i["customer_name"] or "")).lower()]
         if not invs:
-            tk.Label(self.inv_list_frame, text=self.t("no_invoices") if not q else "No results", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            tk.Label(self.inv_list_frame, text=self.t("no_invoices") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
         unpaid = [i for i in invs if not i["paid"]]
         paid = [i for i in invs if i["paid"]]
@@ -1602,6 +1882,7 @@ class App:
         if not phone:
             return messagebox.showwarning(self.t("no_phone_short"), self.t("no_phone"))
         use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
+        pdf_path = None
         if use_pdf:
             pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job_for_inv, cust)
         msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
@@ -1620,10 +1901,14 @@ class App:
         msg += f"Thank you!\n{self.db.get_setting('business_name', 'Shop')}"
         url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
         try:
-            os.startfile(os.path.dirname(pdf_path))
-        except (OSError, AttributeError):
+            webbrowser.open(url)
+        except (webbrowser.Error, OSError):
             pass
-        if use_pdf:
+        if use_pdf and pdf_path:
+            try:
+                os.startfile(os.path.dirname(pdf_path))
+            except (OSError, AttributeError):
+                pass
             messagebox.showinfo(self.t("done"), self.t("opening_whatsapp") + f" +{phone}\n{self.t('pdf_saved')} {pdf_path}")
         else:
             messagebox.showinfo(self.t("done"), self.t("opening_whatsapp") + f" +{phone}")
@@ -1646,8 +1931,10 @@ class App:
         biz_name = self.db.get_setting('business_name', 'Shop')
         subject = f"Invoice {inv['invoice_code']} from {biz_name}"
         use_pdf = self.db.get_setting("invoice_format", "text") == "pdf"
+        pdf_path = None
         if use_pdf:
             pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job_for_inv, cust)
+        if use_pdf and pdf_path:
             body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
             body += f"Please find attached invoice {inv['invoice_code']}.\n\n"
             body += f"Amount: RM {inv['amount']:.2f}\n\n"
@@ -1796,7 +2083,7 @@ class App:
             r = self.row(f)
             tk.Label(r, text=f"{j['job_code']} - {j['item']}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
             tk.Label(r, text=f"RM {j['quote']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=15).pack(side="left")
-            tk.Button(r, text="Create", command=lambda j=j: [self.db.add_invoice(j["id"], j["quote"]), messagebox.showinfo(self.t("done"), self.t("invoice_created")), self.pg_invs()], bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=15, pady=5, cursor="hand2").pack(side="right")
+            tk.Button(r, text=self.t("create"), command=lambda j=j: [self.db.add_invoice(j["id"], j["quote"]), messagebox.showinfo(self.t("done"), self.t("invoice_created")), self.pg_invs()], bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=15, pady=5, cursor="hand2").pack(side="right")
 
     def pg_rpt(self):
         self.clr()
@@ -1874,31 +2161,31 @@ class App:
         fi = [i for i in invs if q_lower in (i["invoice_code"]+(i["customer_name"] or "")).lower() or q == str(i["id"])]
         t = len(fj)+len(fc)+len(fi)
         if t == 0:
-            tk.Label(self.srch_r, text=f"No results for '{q}'", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=40)
+            tk.Label(self.srch_r, text=f"{self.t('no_results_for')} '{q}'", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=40)
             return
-        tk.Label(self.srch_r, text=f"{t} result(s) for '{q}'", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(anchor="w", pady=8)
+        tk.Label(self.srch_r, text=f"{t} {self.t('results_count')} '{q}'", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(anchor="w", pady=8)
         if fj:
-            tk.Label(self.srch_r, text=f"Jobs ({len(fj)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
+            tk.Label(self.srch_r, text=f"{self.t('jobs_header')} ({len(fj)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
             for j in fj:
                 r = self.row(self.srch_r)
                 tk.Label(r, text=f"{j['job_code']} - {j['item']}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
                 tk.Label(r, text=j["status"].upper(), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), padx=10).pack(side="left")
-                tk.Label(r, text=f"ID: {j['id']}", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
+                tk.Label(r, text=f"{self.t('id_label')} {j['id']}", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
         if fc:
-            tk.Label(self.srch_r, text=f"Customers ({len(fc)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
+            tk.Label(self.srch_r, text=f"{self.t('customers_header')} ({len(fc)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
             for c in fc:
                 r = self.row(self.srch_r)
                 tk.Label(r, text=c["name"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
                 tk.Label(r, text=c["phone"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), padx=10).pack(side="left")
                 if c["email"]:
                     tk.Label(r, text=c["email"], bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
-                tk.Label(r, text=f"ID: {c['id']}", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
+                tk.Label(r, text=f"{self.t('id_label')} {c['id']}", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
         if fi:
-            tk.Label(self.srch_r, text=f"Invoices ({len(fi)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
+            tk.Label(self.srch_r, text=f"{self.t('invoices_header')} ({len(fi)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
             for i in fi:
                 r = self.row(self.srch_r)
                 tk.Label(r, text=f"{i['invoice_code']} - RM {i['amount']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
-                s = "PAID" if i["paid"] else "UNPAID"
+                s = self.t("paid_status") if i["paid"] else self.t("unpaid_status")
                 co = C["ok"] if i["paid"] else C["err"]
                 tk.Label(r, text=s, bg=co, fg=C["white"], font=("Segoe UI", 9, "bold"), padx=8, pady=2).pack(side="right")
 
@@ -1908,19 +2195,19 @@ class App:
         f = tk.Frame(self.content, bg=C["bg"], padx=20)
         f.pack(fill="both", expand=True)
         s1 = self.row(f)
-        tk.Label(s1, text="Full Backup (Recommended)", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
-        tk.Label(s1, text="Saves all data: customers, jobs, invoices, appointments, settings", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        tk.Label(s1, text=self.t("full_backup"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s1, text=self.t("backup_desc"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         bf1 = tk.Frame(s1, bg=C["card"])
         bf1.pack(fill="x", pady=5)
-        self.btn(bf1, "Backup Now", self.do_backup, bg=C["ok"]).pack(side="left", padx=5)
-        self.btn(bf1, "Restore Backup", self.do_restore, bg=C["warn"]).pack(side="left", padx=5)
+        self.btn(bf1, self.t("backup_now"), self.do_backup, bg=C["ok"]).pack(side="left", padx=5)
+        self.btn(bf1, self.t("restore_backup"), self.do_restore, bg=C["warn"]).pack(side="left", padx=5)
         s2 = self.row(f)
-        tk.Label(s2, text="Export to CSV (for Excel/accounting)", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
-        for l, fn, g in [("Customers","customers.csv",lambda:self.db.get_customers()),("Jobs","jobs.csv",lambda:self.db.get_jobs()),("Invoices","invoices.csv",lambda:self.db.get_invoices())]:
+        tk.Label(s2, text=self.t("export_csv_section"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        for l, fn, g, tk_key in [("Customers","customers.csv",lambda:self.db.get_customers(), "export_customers"),("Jobs","jobs.csv",lambda:self.db.get_jobs(), "export_jobs"),("Invoices","invoices.csv",lambda:self.db.get_invoices(), "export_invoices")]:
             r = tk.Frame(s2, bg=C["card"])
             r.pack(fill="x", pady=3)
             tk.Label(r, text=l, bg=C["card"], fg=C["txt"], font=("Segoe UI", 11), anchor="w").pack(side="left")
-            tk.Button(r, text=f"Export {fn}", command=lambda fn=fn,g=g: self.do_export(fn,g), bg=C["pri"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=12, pady=4, cursor="hand2").pack(side="right")
+            tk.Button(r, text=self.t(tk_key), command=lambda fn=fn,g=g: self.do_export(fn,g), bg=C["pri"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=12, pady=4, cursor="hand2").pack(side="right")
 
     def do_backup(self):
         from tkinter import filedialog
@@ -1943,7 +2230,7 @@ class App:
         fp = filedialog.askopenfilename(filetypes=[("Database","*.db")])
         if not fp:
             return
-        if not messagebox.askyesno("Confirm Restore", "This will replace ALL current data with the backup.\n\nAre you sure?"):
+        if not messagebox.askyesno(self.t("confirm_restore_title"), self.t("confirm_restore_msg")):
             return
         import shutil
         db_path = os.path.join(APP_DIR, "data", "data.db")
@@ -2015,7 +2302,7 @@ class App:
             tk.Label(s2, text=self.t("pin_not_set"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(anchor="w", pady=2)
             self.btn(s2, self.t("set_pin"), self.pg_set_pin).pack(anchor="w", pady=5)
         s3 = self.row(f)
-        tk.Label(s3, text="Language", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s3, text=self.t("language"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         lf = tk.Frame(s3, bg=C["card"])
         lf.pack(fill="x", pady=5)
         self.lang_var = tk.StringVar(value=self.lang)
@@ -2023,22 +2310,22 @@ class App:
             tk.Radiobutton(lf, text=t, variable=self.lang_var, value=v, bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
         self.btn(s3, self.t("save"), self.change_lang, bg=C["ok"]).pack(anchor="w", pady=5)
         s_inv = self.row(f)
-        tk.Label(s_inv, text="Invoice Format", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
-        tk.Label(s_inv, text="Choose how invoices are sent to customers", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        tk.Label(s_inv, text=self.t("invoice_format"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s_inv, text=self.t("choose_format"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         ifr = tk.Frame(s_inv, bg=C["card"])
         ifr.pack(fill="x", pady=5)
         self.inv_fmt_var = tk.StringVar(value=self.db.get_setting("invoice_format", "text"))
-        tk.Radiobutton(ifr, text="Text (plain message)", variable=self.inv_fmt_var, value="text", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
-        tk.Radiobutton(ifr, text="PDF (professional invoice)", variable=self.inv_fmt_var, value="pdf", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
+        tk.Radiobutton(ifr, text=self.t("text_plain"), variable=self.inv_fmt_var, value="text", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
+        tk.Radiobutton(ifr, text=self.t("pdf_professional"), variable=self.inv_fmt_var, value="pdf", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
         self.btn(s_inv, self.t("save"), self.save_inv_fmt, bg=C["ok"]).pack(anchor="w", pady=5)
         self.btn(s_inv, "Preview Invoice", self.preview_invoice, bg="#2563EB").pack(anchor="w", pady=5)
         s5 = self.row(f)
-        tk.Label(s5, text="Startup", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
-        tk.Label(s5, text="Open app automatically when Windows starts", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
-        self.btn(s5, "Toggle Open on Startup", self.toggle_startup, bg=C["warn"]).pack(anchor="w", pady=5)
+        tk.Label(s5, text=self.t("startup"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s5, text=self.t("open_on_startup"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        self.btn(s5, self.t("toggle_startup"), self.toggle_startup, bg=C["warn"]).pack(anchor="w", pady=5)
         s6 = self.row(f)
-        tk.Label(s6, text="Invoice Parameters", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
-        tk.Label(s6, text="Customize invoice text and footer", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        tk.Label(s6, text=self.t("invoice_parameters"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s6, text=self.t("customize_invoice"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         params = [
             ("Invoice Title", "invoice_title", "INVOICE"),
             ("Payment Terms", "payment_terms", "Payment due upon receipt"),
@@ -2087,12 +2374,12 @@ class App:
         biz_email = self.db.get_setting("business_email", "")
         google_review = self.db.get_setting("google_review", "")
         tk.Label(scroll_frame, text=biz_name, bg=C["white"], fg=C["txt"], font=("Segoe UI", 20, "bold")).pack(pady=(20,5))
-        tk.Label(scroll_frame, text="INVOICE", bg=C["white"], fg=C["txt3"], font=("Segoe UI", 14)).pack()
+        tk.Label(scroll_frame, text=self.t("preview_invoice"), bg=C["white"], fg=C["txt3"], font=("Segoe UI", 14)).pack()
         tk.Frame(scroll_frame, bg=C["bdr"], height=2).pack(fill="x", padx=30, pady=15)
         tk.Label(scroll_frame, text="Invoice #: INV-DEMO-001", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
         tk.Label(scroll_frame, text=f"Date: {datetime.now().strftime('%d %B %Y')}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
         tk.Label(scroll_frame, text="", bg=C["white"], font=("Segoe UI", 6)).pack()
-        tk.Label(scroll_frame, text="Bill To:", bg=C["white"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w").pack(fill="x", padx=40)
+        tk.Label(scroll_frame, text=self.t("bill_to"), bg=C["white"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w").pack(fill="x", padx=40)
         tk.Label(scroll_frame, text="Customer Name", bg=C["white"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(fill="x", padx=40)
         tk.Label(scroll_frame, text="+60 12-345 6789", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
         tk.Frame(scroll_frame, bg=C["bdr"], height=1).pack(fill="x", padx=30, pady=10)
@@ -2100,7 +2387,7 @@ class App:
         tk.Label(scroll_frame, text="iPhone 15 Pro Screen Replacement", bg=C["white"], fg=C["txt"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
         tk.Label(scroll_frame, text="Service: Replace cracked screen", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10), anchor="w").pack(fill="x", padx=40)
         tk.Frame(scroll_frame, bg=C["bdr"], height=1).pack(fill="x", padx=30, pady=10)
-        tk.Label(scroll_frame, text="Total: RM 450", bg=C["white"], fg=C["txt"], font=("Segoe UI", 16, "bold"), anchor="e").pack(fill="x", padx=40)
+        tk.Label(scroll_frame, text=f"{self.t('total')} RM 450", bg=C["white"], fg=C["txt"], font=("Segoe UI", 16, "bold"), anchor="e").pack(fill="x", padx=40)
         tk.Frame(scroll_frame, bg=C["bdr"], height=2).pack(fill="x", padx=30, pady=15)
         if biz_phone:
             tk.Label(scroll_frame, text=f"Phone: {biz_phone}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
@@ -2108,7 +2395,7 @@ class App:
             tk.Label(scroll_frame, text=f"Email: {biz_email}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
         if google_review:
             tk.Label(scroll_frame, text="Leave us a Google review!", bg=C["white"], fg=C["txt3"], font=("Segoe UI", 9)).pack(anchor="w", padx=40, pady=(10,2))
-        tk.Button(scroll_frame, text="Close", command=win.destroy, bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), bd=1, relief="solid", padx=15, cursor="hand2").pack(pady=15)
+        tk.Button(scroll_frame, text=self.t("close"), command=win.destroy, bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), bd=1, relief="solid", padx=15, cursor="hand2").pack(pady=15)
 
     def edit_biz_name(self):
         self._edit_biz_field("business_name", "Business Name")
@@ -2148,7 +2435,7 @@ class App:
                 messagebox.showerror(self.t("error"), self.t("wrong_pin"))
                 pin_e.delete(0, tk.END)
         pin_e.bind("<Return>", lambda e: verify())
-        self.btn(win, "Verify", verify).pack(pady=10)
+        self.btn(win, self.t("verify"), verify).pack(pady=10)
 
     def _show_biz_edit_dialog(self, field, label):
         win = tk.Toplevel(self.root)
@@ -2156,7 +2443,7 @@ class App:
         win.geometry("350x180")
         win.configure(bg=C["bg"])
         win.grab_set()
-        tk.Label(win, text=f"New {label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
+        tk.Label(win, text=f"{self.t('new_prefix')} {label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
         e = tk.Entry(win, font=("Segoe UI", 14), bd=1, relief="solid", width=25)
         e.insert(0, self.db.get_setting(field, ""))
         e.pack(pady=5)
@@ -2170,7 +2457,7 @@ class App:
             messagebox.showinfo(self.t("done"), f"{label} {self.t('label_updated')}")
             self.pg_set()
         e.bind("<Return>", lambda e: save())
-        self.btn(win, "Save", save, bg=C["ok"]).pack(pady=10)
+        self.btn(win, self.t("save"), save, bg=C["ok"]).pack(pady=10)
 
     def _edit_invoice_param(self, key, label):
         win = tk.Toplevel(self.root)
@@ -2189,15 +2476,15 @@ class App:
             messagebox.showinfo(self.t("done"), f"{label} updated")
             self.pg_set()
         e.bind("<Return>", lambda e: save())
-        self.btn(win, "Save", save, bg=C["ok"]).pack(pady=10)
+        self.btn(win, self.t("save"), save, bg=C["ok"]).pack(pady=10)
 
     def pg_set_pin(self):
         self.clr()
         self.hdr(self.t("set_pin"))
         f = tk.Frame(self.content, bg=C["bg"], padx=25)
         f.pack(fill="both", expand=True)
-        self.sp1 = self.field(f, "PIN (4 digits)")
-        self.sp2 = self.field(f, self.t("confirm_pin"))
+        self.sp1 = self.pin_field(f, self.t("pin_4_digits"))
+        self.sp2 = self.pin_field(f, self.t("confirm_pin"))
         bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
         self.btn(bf, self.t("save"), self.save_pin).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=self.pg_set, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
@@ -2218,9 +2505,9 @@ class App:
         self.hdr(self.t("change_pin"))
         f = tk.Frame(self.content, bg=C["bg"], padx=25)
         f.pack(fill="both", expand=True)
-        self.cp1 = self.field(f, "Current PIN")
-        self.cp2 = self.field(f, "New PIN")
-        self.cp3 = self.field(f, "Confirm New PIN")
+        self.cp1 = self.pin_field(f, self.t("current_pin"))
+        self.cp2 = self.pin_field(f, self.t("new_pin"))
+        self.cp3 = self.pin_field(f, self.t("confirm_new_pin"))
         bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
         self.btn(bf, self.t("save"), self.save_chg_pin).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=self.pg_set, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
@@ -2240,7 +2527,7 @@ class App:
         self.pg_set()
 
     def rm_pin(self):
-        if messagebox.askyesno("Confirm", "Remove PIN?"):
+        if messagebox.askyesno(self.t("confirm"), self.t("remove_pin_confirm")):
             self.db.conn.execute("DELETE FROM settings WHERE key = 'pin_hash'")
             self.db.conn.commit()
             messagebox.showinfo(self.t("done"), self.t("pin_removed"))
