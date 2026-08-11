@@ -204,6 +204,13 @@ T = {
         "invoice_format_set": "Invoice format set to:",
         "remove_pin_msg": "PIN removed",
         "label_updated": "updated!",
+        "invoice_title": "Invoice Title",
+        "payment_terms": "Payment Terms",
+        "thank_you_note": "Thank You Note",
+        "footer_text": "Footer Text",
+        "preview_invoice": "Preview Invoice",
+        "invoice_parameters": "Invoice Parameters",
+        "customize_invoice": "Customize invoice text and footer",
     },
     "ms": {
         "app_title": "Kerja Mudah",
@@ -365,6 +372,13 @@ T = {
         "invoice_format_set": "Format invois ditetapkan kepada:",
         "remove_pin_msg": "PIN dibuang",
         "label_updated": "berjaya dikemaskini!",
+        "invoice_title": "Tajuk Invois",
+        "payment_terms": "Syarat Pembayaran",
+        "thank_you_note": "Nota Terima Kasih",
+        "footer_text": "Teks Kaki",
+        "preview_invoice": "Pratonton Invois",
+        "invoice_parameters": "Parameter Invois",
+        "customize_invoice": "Suaikan teks invois dan kaki",
     },
     "zh": {
         "app_title": "Kerja Mudah",
@@ -526,6 +540,13 @@ T = {
         "invoice_format_set": "发票格式设置为：",
         "remove_pin_msg": "PIN已删除",
         "label_updated": "已更新！",
+        "invoice_title": "发票标题",
+        "payment_terms": "付款条款",
+        "thank_you_note": "感谢语",
+        "footer_text": "页脚文本",
+        "preview_invoice": "预览发票",
+        "invoice_parameters": "发票参数",
+        "customize_invoice": "自定义发票文本和页脚",
     },
 }
 
@@ -614,7 +635,7 @@ class App:
     def field(self, parent, label, default=""):
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
-        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         e = tk.Entry(f, font=("Segoe UI", 12), bd=1, relief="solid")
         if default:
             e.insert(0, default)
@@ -624,7 +645,7 @@ class App:
     def phone_field(self, parent, label, default="+60"):
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
-        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         var = tk.StringVar(value=default)
         e = tk.Entry(f, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid")
         e.pack(side="left", fill="x", expand=True, ipady=6)
@@ -635,7 +656,7 @@ class App:
     def email_field(self, parent, label, default=""):
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
-        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         e = tk.Entry(f, font=("Segoe UI", 12), bd=1, relief="solid")
         if default:
             e.insert(0, default)
@@ -645,7 +666,7 @@ class App:
     def number_field(self, parent, label, default=""):
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
-        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         var = tk.StringVar(value=default)
         e = tk.Entry(f, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid")
         e.pack(side="left", fill="x", expand=True, ipady=6)
@@ -657,7 +678,7 @@ class App:
         import calendar
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
-        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         today = datetime.now() if not default else datetime.strptime(default, "%Y-%m-%d")
         var = tk.StringVar(value=today.strftime("%Y-%m-%d"))
         frame = tk.Frame(f, bg=C["bg"])
@@ -718,7 +739,7 @@ class App:
     def time_field(self, parent, label, default=None):
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
-        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         now = datetime.now() if not default else datetime.strptime(default, "%H:%M")
         hour_var = tk.StringVar(value=str(now.hour).zfill(2))
         min_var = tk.StringVar(value=str(now.minute // 15 * 15).zfill(2))
@@ -748,12 +769,12 @@ class App:
         self.se["Phone"] = self.phone_field(f, self.t("phone"), "+60")
         self.se["Email"] = self.email_field(f, self.t("email"), "")
         gf = tk.Frame(f, bg=C["bg"]); gf.pack(fill="x", pady=8)
-        tk.Label(gf, text=self.t("google_review"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(gf, text=self.t("google_review"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         self.se["Google Review"] = tk.Entry(gf, font=("Segoe UI", 12), bd=1, relief="solid")
         self.se["Google Review"].pack(side="left", fill="x", expand=True, ipady=6)
         tk.Label(gf, text=self.t("google_review_hint"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(side="left", padx=8)
         lf = tk.Frame(f, bg=C["bg"]); lf.pack(fill="x", pady=12)
-        tk.Label(lf, text=self.t("language"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(lf, text=self.t("language"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         self.lang_var = tk.StringVar(value="en")
         for v, t in [("en","English"),("ms","Bahasa Malaysia"),("zh","Chinese")]:
             tk.Radiobutton(lf, text=t, variable=self.lang_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=8)
@@ -993,7 +1014,7 @@ class App:
         self.jobs_search_var = tk.StringVar()
         self.jobs_search_var.trace("w", lambda *a: self._filter_jobs())
         tk.Entry(sf, textvariable=self.jobs_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
-        tk.Label(sf, text="Type to filter...", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
+        
         self.jobs_list_frame = tk.Frame(f, bg=C["bg"])
         self.jobs_list_frame.pack(fill="both", expand=True)
         self._filter_jobs()
@@ -1009,17 +1030,17 @@ class App:
             tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
         h = tk.Frame(self.jobs_list_frame, bg=C["bg"]); h.pack(fill="x", pady=8)
-        for t, w in [(self.t("code"),14),(self.t("item"),22),(self.t("customer"),16),(self.t("quote"),10),(self.t("status"),11),(self.t("due_date"),11),(self.t("action"),14)]:
-            tk.Label(h, text=t, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=w, anchor="w").pack(side="left", padx=4)
+        for t in [(self.t("code"),14),(self.t("item"),22),(self.t("customer"),16),(self.t("quote"),10),(self.t("status"),11),(self.t("due_date"),11),(self.t("action"),14)]:
+            tk.Label(h, text=t, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), width=t[1], anchor="w", padx=4).pack(side="left")
         sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
         for j in jobs:
             r = self.row(self.jobs_list_frame)
-            tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=14, anchor="w").pack(side="left", padx=4)
-            tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), width=22, anchor="w").pack(side="left", padx=4)
-            tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=16, anchor="w").pack(side="left", padx=4)
-            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=10, anchor="w").pack(side="left", padx=4)
-            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 9, "bold"), padx=8, pady=2).pack(side="left", padx=4)
-            tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=11, anchor="w").pack(side="left", padx=4)
+            tk.Label(r, text=j["job_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=14, anchor="w", padx=4).pack(side="left")
+            tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), width=22, anchor="w", padx=4, wraplength=220).pack(side="left")
+            tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=16, anchor="w", padx=4).pack(side="left")
+            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=10, anchor="w", padx=4).pack(side="left")
+            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 9, "bold"), padx=8, pady=2, width=11, anchor="center").pack(side="left", padx=4)
+            tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=11, anchor="w", padx=4).pack(side="left")
             tk.Button(r, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right", padx=2)
             if j["status"] != "done":
                 b = tk.Button(r, text=self.t("done"), command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=10, pady=2, cursor="hand2")
@@ -1057,7 +1078,7 @@ class App:
         self.je = {}
         cf = tk.Frame(f, bg=C["bg"])
         cf.pack(fill="x", pady=8)
-        tk.Label(cf, text=self.t("customer"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(cf, text=self.t("customer"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         customers = self.db.get_customers()
         cust_names = [c["name"] for c in customers] if customers else []
         self.cust_map = {c["name"]: c for c in customers} if customers else {}
@@ -1072,7 +1093,7 @@ class App:
             menu.pack(side="left", ipady=4)
         pf = tk.Frame(f, bg=C["bg"])
         pf.pack(fill="x", pady=8)
-        tk.Label(pf, text=self.t("phone"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(pf, text=self.t("phone"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         self.je["Phone"] = tk.Entry(pf, font=("Segoe UI", 12), bd=1, relief="solid")
         self.je["Phone"].insert(0, "+60")
         self.je["Phone"].pack(side="left", fill="x", expand=True, ipady=6)
@@ -1080,7 +1101,7 @@ class App:
         self.je["Phone"].configure(validate="key", validatecommand=phone_validate)
         ef = tk.Frame(f, bg=C["bg"])
         ef.pack(fill="x", pady=8)
-        tk.Label(ef, text=self.t("email"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(ef, text=self.t("email"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         self.je["Email"] = tk.Entry(ef, font=("Segoe UI", 12), bd=1, relief="solid")
         self.je["Email"].pack(side="left", fill="x", expand=True, ipady=6)
         for l in ["Item", "Problem", "Notes"]:
@@ -1139,7 +1160,7 @@ class App:
         quote_e = self.field(f, self.t("quote"), str(j["quote"]))
         status_frame = tk.Frame(f, bg=C["bg"])
         status_frame.pack(fill="x", pady=8)
-        tk.Label(status_frame, text="Status", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(status_frame, text="Status", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         status_var = tk.StringVar(value=j["status"])
         for v, lbl in [("pending","Pending"),("in-progress","In-Progress"),("done","Done")]:
             tk.Radiobutton(status_frame, text=lbl, variable=status_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=5)
@@ -1294,7 +1315,7 @@ class App:
         self.cust_search_var = tk.StringVar()
         self.cust_search_var.trace("w", lambda *a: self._filter_custs())
         tk.Entry(sf, textvariable=self.cust_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
-        tk.Label(sf, text="Type to filter...", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
+        
         self.cust_list_frame = tk.Frame(f, bg=C["bg"])
         self.cust_list_frame.pack(fill="both", expand=True)
         self._filter_custs()
@@ -1375,7 +1396,7 @@ class App:
         self.appt_search_var = tk.StringVar()
         self.appt_search_var.trace("w", lambda *a: self._filter_appts())
         tk.Entry(sf, textvariable=self.appt_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
-        tk.Label(sf, text="Type to filter...", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
+        
         self.appt_list_frame = tk.Frame(f, bg=C["bg"])
         self.appt_list_frame.pack(fill="both", expand=True)
         self._filter_appts()
@@ -1391,10 +1412,10 @@ class App:
                 return
             for a in appts:
                 r = self.row(self.appt_list_frame)
-                tk.Label(r, text=a["date"], bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=12, anchor="w").pack(side="left", padx=4)
-                tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w").pack(side="left", padx=4)
-                tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left", padx=15)
-                tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
+                tk.Label(r, text=a["date"], bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=12, anchor="w", padx=4).pack(side="left")
+                tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w", padx=4).pack(side="left")
+                tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w", padx=15, wraplength=200).pack(side="left")
+                tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15, wraplength=250).pack(side="left")
                 tk.Button(r, text=self.t("edit"), command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
         else:
             today = datetime.now().strftime("%Y-%m-%d")
@@ -1405,9 +1426,9 @@ class App:
                 return
             for a in appts:
                 r = self.row(self.appt_list_frame)
-                tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w").pack(side="left")
-                tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(side="left", padx=15)
-                tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
+                tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w", padx=4).pack(side="left")
+                tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w", padx=15, wraplength=200).pack(side="left")
+                tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15, wraplength=250).pack(side="left")
                 tk.Button(r, text=self.t("edit"), command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
 
     def edit_appt(self, a):
@@ -1423,7 +1444,7 @@ class App:
         date_var = tk.StringVar(value=a["date"])
         date_frame = tk.Frame(f, bg=C["bg"])
         date_frame.pack(fill="x", pady=8)
-        tk.Label(date_frame, text=self.t("date"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(date_frame, text=self.t("date"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         date_entry = tk.Entry(date_frame, textvariable=date_var, font=("Segoe UI", 12), bd=1, relief="solid", width=12)
         date_entry.pack(side="left")
         time_parts = a["time"].split(":") if a["time"] else ["09", "00"]
@@ -1431,7 +1452,7 @@ class App:
         min_var = tk.StringVar(value=time_parts[1] if len(time_parts) > 1 else "00")
         time_frame = tk.Frame(f, bg=C["bg"])
         time_frame.pack(fill="x", pady=8)
-        tk.Label(time_frame, text=self.t("time"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left")
+        tk.Label(time_frame, text=self.t("time"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         hours = [str(i).zfill(2) for i in range(24)]
         h_menu = tk.OptionMenu(time_frame, hour_var, *hours)
         h_menu.configure(font=("Segoe UI", 11), width=3, bg=C["white"])
@@ -1498,7 +1519,7 @@ class App:
         self.inv_search_var = tk.StringVar()
         self.inv_search_var.trace("w", lambda *a: self._filter_invs())
         tk.Entry(sf, textvariable=self.inv_search_var, font=("Segoe UI", 11), bd=1, relief="solid").pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
-        tk.Label(sf, text="Type to filter...", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left")
+        
         self.inv_list_frame = tk.Frame(f, bg=C["bg"])
         self.inv_list_frame.pack(fill="both", expand=True)
         self._filter_invs()
@@ -1525,8 +1546,8 @@ class App:
                 r.configure(bg="#FEF2F2")
                 left = tk.Frame(r, bg="#FEF2F2")
                 left.pack(side="left", fill="x", expand=True)
-                tk.Label(left, text=i["invoice_code"], bg="#FEF2F2", fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
-                tk.Label(left, text=i["customer_name"] or "Unknown", bg="#FEF2F2", fg=C["txt"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
+                tk.Label(left, text=i["invoice_code"], bg="#FEF2F2", fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=4).pack(side="left")
+                tk.Label(left, text=i["customer_name"] or "Unknown", bg="#FEF2F2", fg=C["txt"], font=("Segoe UI", 11), anchor="w", padx=15, wraplength=200).pack(side="left")
                 tk.Label(left, text=f"RM {i['amount']:.2f}", bg="#FEF2F2", fg=C["err"], font=("Segoe UI", 12, "bold"), anchor="w", padx=15).pack(side="left")
                 right = tk.Frame(r, bg="#FEF2F2")
                 right.pack(side="right")
@@ -1538,8 +1559,8 @@ class App:
             tk.Label(self.inv_list_frame, text=f"{self.t('paid')} ({len(paid)})", bg=C["bg"], fg=C["ok"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=10)
             for i in paid:
                 r = self.row(self.inv_list_frame)
-                tk.Label(r, text=i["invoice_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
-                tk.Label(r, text=i["customer_name"] or "Unknown", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15).pack(side="left")
+                tk.Label(r, text=i["invoice_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=4).pack(side="left")
+                tk.Label(r, text=i["customer_name"] or "Unknown", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15, wraplength=200).pack(side="left")
                 tk.Label(r, text=f"RM {i['amount']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=15).pack(side="left")
                 method = i["payment_method"] or ""
                 if method:
@@ -1671,8 +1692,9 @@ class App:
             os.makedirs(invoice_dir, exist_ok=True)
             pdf = FPDF()
             pdf.add_page()
+            invoice_title = self.db.get_setting("invoice_title", "INVOICE")
             pdf.set_font("Helvetica", "B", 22)
-            pdf.cell(0, 12, "INVOICE", new_x="LMARGIN", new_y="NEXT", align="R")
+            pdf.cell(0, 12, invoice_title, new_x="LMARGIN", new_y="NEXT", align="R")
             pdf.set_font("Helvetica", "", 10)
             pdf.cell(0, 6, f"Invoice: {inv_code}", new_x="LMARGIN", new_y="NEXT", align="R")
             pdf.cell(0, 6, f"Date: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}", new_x="LMARGIN", new_y="NEXT", align="R")
@@ -1718,7 +1740,12 @@ class App:
             pdf.set_font("Helvetica", "B", 12)
             pdf.cell(135, 10, "Total:")
             pdf.cell(35, 10, f"RM {job['quote']:.2f}" if job else "RM 0.00", new_x="LMARGIN", new_y="NEXT")
-            pdf.ln(10)
+            payment_terms = self.db.get_setting("payment_terms", "")
+            if payment_terms:
+                pdf.ln(5)
+                pdf.set_font("Helvetica", "", 10)
+                pdf.cell(0, 6, payment_terms, new_x="LMARGIN", new_y="NEXT", align="C")
+            pdf.ln(5)
             google_review = self.db.get_setting("google_review", "")
             if google_review:
                 review_link = google_review.rstrip("/") + "/write-review"
@@ -1730,8 +1757,14 @@ class App:
                 pdf.cell(0, 6, review_link, new_x="LMARGIN", new_y="NEXT", align="C", link=review_link)
                 pdf.set_text_color(0, 0, 0)
                 pdf.ln(5)
-            pdf.set_font("Helvetica", "", 10)
-            pdf.cell(0, 6, "Thank you for your business!", new_x="LMARGIN", new_y="NEXT", align="C")
+            thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+            if thank_you:
+                pdf.set_font("Helvetica", "", 10)
+                pdf.cell(0, 6, thank_you, new_x="LMARGIN", new_y="NEXT", align="C")
+            footer_text = self.db.get_setting("footer_text", "")
+            if footer_text:
+                pdf.set_font("Helvetica", "", 8)
+                pdf.cell(0, 6, footer_text, new_x="LMARGIN", new_y="NEXT", align="C")
             filename = f"{inv_code}.pdf"
             filepath = os.path.join(invoice_dir, filename)
             pdf.output(filepath)
@@ -1998,10 +2031,26 @@ class App:
         tk.Radiobutton(ifr, text="Text (plain message)", variable=self.inv_fmt_var, value="text", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
         tk.Radiobutton(ifr, text="PDF (professional invoice)", variable=self.inv_fmt_var, value="pdf", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
         self.btn(s_inv, self.t("save"), self.save_inv_fmt, bg=C["ok"]).pack(anchor="w", pady=5)
+        self.btn(s_inv, "Preview Invoice", self.preview_invoice, bg="#2563EB").pack(anchor="w", pady=5)
         s5 = self.row(f)
         tk.Label(s5, text="Startup", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         tk.Label(s5, text="Open app automatically when Windows starts", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         self.btn(s5, "Toggle Open on Startup", self.toggle_startup, bg=C["warn"]).pack(anchor="w", pady=5)
+        s6 = self.row(f)
+        tk.Label(s6, text="Invoice Parameters", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        tk.Label(s6, text="Customize invoice text and footer", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        params = [
+            ("Invoice Title", "invoice_title", "INVOICE"),
+            ("Payment Terms", "payment_terms", "Payment due upon receipt"),
+            ("Thank You Note", "thank_you_note", "Thank you for your business!"),
+            ("Footer Text", "footer_text", ""),
+        ]
+        for label_text, key, default_val in params:
+            pf = tk.Frame(s6, bg=C["card"])
+            pf.pack(fill="x", pady=3)
+            val = self.db.get_setting(key, default_val)
+            tk.Label(pf, text=f"{label_text}: {val if val else '(empty)'}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(side="left")
+            tk.Button(pf, text="Edit", command=lambda k=key, l=label_text: self._edit_invoice_param(k, l), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
 
     def toggle_startup(self):
         startup_folder = os.path.join(os.environ["APPDATA"], "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
@@ -2018,6 +2067,48 @@ class App:
                 messagebox.showinfo(self.t("done"), self.t("startup_updated"))
         except Exception as e:
             messagebox.showerror(self.t("error"), self.t("startup_error") + f": {e}")
+
+    def preview_invoice(self):
+        win = tk.Toplevel(self.root)
+        win.title("Invoice Preview")
+        win.geometry("500x650")
+        win.configure(bg=C["white"])
+        win.grab_set()
+        canvas = tk.Canvas(win, bg=C["white"], highlightthickness=0)
+        scrollbar = tk.Scrollbar(win, orient="vertical", command=canvas.yview)
+        scroll_frame = tk.Frame(canvas, bg=C["white"])
+        scroll_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        biz_name = self.db.get_setting("business_name", "Your Business")
+        biz_phone = self.db.get_setting("business_phone", "")
+        biz_email = self.db.get_setting("business_email", "")
+        google_review = self.db.get_setting("google_review", "")
+        tk.Label(scroll_frame, text=biz_name, bg=C["white"], fg=C["txt"], font=("Segoe UI", 20, "bold")).pack(pady=(20,5))
+        tk.Label(scroll_frame, text="INVOICE", bg=C["white"], fg=C["txt3"], font=("Segoe UI", 14)).pack()
+        tk.Frame(scroll_frame, bg=C["bdr"], height=2).pack(fill="x", padx=30, pady=15)
+        tk.Label(scroll_frame, text="Invoice #: INV-DEMO-001", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
+        tk.Label(scroll_frame, text=f"Date: {datetime.now().strftime('%d %B %Y')}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
+        tk.Label(scroll_frame, text="", bg=C["white"], font=("Segoe UI", 6)).pack()
+        tk.Label(scroll_frame, text="Bill To:", bg=C["white"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w").pack(fill="x", padx=40)
+        tk.Label(scroll_frame, text="Customer Name", bg=C["white"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w").pack(fill="x", padx=40)
+        tk.Label(scroll_frame, text="+60 12-345 6789", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
+        tk.Frame(scroll_frame, bg=C["bdr"], height=1).pack(fill="x", padx=30, pady=10)
+        tk.Label(scroll_frame, text="Item", bg=C["white"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w").pack(fill="x", padx=40)
+        tk.Label(scroll_frame, text="iPhone 15 Pro Screen Replacement", bg=C["white"], fg=C["txt"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
+        tk.Label(scroll_frame, text="Service: Replace cracked screen", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10), anchor="w").pack(fill="x", padx=40)
+        tk.Frame(scroll_frame, bg=C["bdr"], height=1).pack(fill="x", padx=30, pady=10)
+        tk.Label(scroll_frame, text="Total: RM 450", bg=C["white"], fg=C["txt"], font=("Segoe UI", 16, "bold"), anchor="e").pack(fill="x", padx=40)
+        tk.Frame(scroll_frame, bg=C["bdr"], height=2).pack(fill="x", padx=30, pady=15)
+        if biz_phone:
+            tk.Label(scroll_frame, text=f"Phone: {biz_phone}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
+        if biz_email:
+            tk.Label(scroll_frame, text=f"Email: {biz_email}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
+        if google_review:
+            tk.Label(scroll_frame, text="Leave us a Google review!", bg=C["white"], fg=C["txt3"], font=("Segoe UI", 9)).pack(anchor="w", padx=40, pady=(10,2))
+        tk.Button(scroll_frame, text="Close", command=win.destroy, bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), bd=1, relief="solid", padx=15, cursor="hand2").pack(pady=15)
 
     def edit_biz_name(self):
         self._edit_biz_field("business_name", "Business Name")
@@ -2077,6 +2168,25 @@ class App:
             self.db.set_setting(field, val)
             win.destroy()
             messagebox.showinfo(self.t("done"), f"{label} {self.t('label_updated')}")
+            self.pg_set()
+        e.bind("<Return>", lambda e: save())
+        self.btn(win, "Save", save, bg=C["ok"]).pack(pady=10)
+
+    def _edit_invoice_param(self, key, label):
+        win = tk.Toplevel(self.root)
+        win.title(f"Edit {label}")
+        win.geometry("400x180")
+        win.configure(bg=C["bg"])
+        win.grab_set()
+        tk.Label(win, text=f"{label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
+        e = tk.Entry(win, font=("Segoe UI", 12), bd=1, relief="solid", width=30)
+        e.insert(0, self.db.get_setting(key, ""))
+        e.pack(pady=5)
+        e.focus()
+        def save():
+            self.db.set_setting(key, e.get().strip())
+            win.destroy()
+            messagebox.showinfo(self.t("done"), f"{label} updated")
             self.pg_set()
         e.bind("<Return>", lambda e: save())
         self.btn(win, "Save", save, bg=C["ok"]).pack(pady=10)
