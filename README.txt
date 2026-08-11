@@ -8,12 +8,15 @@ QUICK START
 -----------
 1. Double-click "Kerja Mudah.exe" to run the app
 2. The Setup Wizard will guide you through:
-   - Enter your business name
-   - Enter your phone number
-   - Enter your business email
-   - Enter your Google review link (optional but recommended)
+   - Enter your business name (required)
+   - Enter your phone number (optional - can add later in Settings)
+   - Enter your business email (optional - can add later in Settings)
+   - Enter your Google review link (optional - can add later in Settings)
    - Choose your language (English/BM/Chinese)
 3. You're ready to go!
+
+Note: Only your business name is required during setup. You can add
+phone, email, and Google review link later in Settings.
 
 Note: The app can be placed in any folder - it doesn't need to be on
 the Desktop.
@@ -48,6 +51,10 @@ FEATURES
 - Open on Windows startup option
 - Supports English, Bahasa Malaysia, and Chinese
 - Smart Pickup Reminders (see below)
+- Google Review Integration (see below)
+- Customizable invoice title, payment terms, and footer
+- Preview invoice before sending
+- Field validation to prevent invalid input
 - Google Review Integration (see below)
 
 SMART PICKUP REMINDERS
@@ -114,6 +121,19 @@ To use PDF invoices:
 You can also download PDFs directly:
 - In Invoices: Click "PDF" button on any unpaid invoice
 - In Jobs: Click "PDF" button on completed jobs
+
+CUSTOMIZING INVOICES
+--------------------
+You can customize how your invoices look:
+1. Go to Settings
+2. Edit these fields:
+   - Invoice Title (e.g., "INVOICE", "RECEIPT", "BILL")
+   - Payment Terms (e.g., "Payment due within 7 days")
+   - Thank You Note (e.g., "Thank you for your business!")
+   - Footer Text (e.g., "Questions? Contact us at +60...")
+3. Click Save
+4. Click "Preview Invoice" to see how it looks
+5. All future invoices will use your custom settings
 
 WHY KERJA MUDAH IS BETTER
 --------------------------

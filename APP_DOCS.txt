@@ -61,6 +61,10 @@ Settings Table
   - install_date     Demo install date
   - invoice_format   "text" or "pdf"
   - network_path     Shared folder path for sync
+  - invoice_title    Custom invoice title (default: "INVOICE")
+  - payment_terms    Payment terms text (default: "Payment due within 7 days")
+  - thank_you_note   Thank you message (default: "Thank you for your business!")
+  - footer_text      Invoice footer text
 
 Customers Table
   Column     Type      Description
@@ -174,6 +178,17 @@ Edit Capability
   - Customers: Edit name, phone, email, notes
   - Appointments: Edit date, time, purpose, status, notes
 
+Field Validation
+  Input validation is enforced across all forms:
+  - name_field(): Blocks <>(){}[]|\' characters in names
+  - phone_field(): Digits and + only, max 15 chars
+  - pin_field(): Digits only, max 4 chars, displays as * 
+  - email_field(): Blocks <>(){}[]|\' characters
+  - date_field(): Digits and hyphens only, YYYY-MM-DD format
+  - number_field(): Digits and decimals only
+  - search_field(): Gray placeholder text, clears on focus
+  - Required fields: Customer name + Item required for new jobs
+
 Date Format
   All dates displayed as: 10 August 2026 format
 
@@ -208,11 +223,19 @@ Scrollable Interface
   - All pages use Canvas + Scrollbar for scrolling
   - Content scrolls when window is small
   - Scroll position resets when changing pages
+  - Mousewheel binds on hover over content area only
+  - Demo mode banner stays fixed at top of content area
+
+Responsive Design
+  - Font sizes adapt based on window width
+  - Smaller windows get slightly smaller fonts to prevent cutoff
+  - Content stays readable across different screen sizes
 
 Inline Search
   - Jobs, Customers, Appointments, and Invoices have search bars
   - Type to filter results in real-time
   - No need to click a button
+  - Placeholder text shows what to search for
 
 Dashboard
   - Active jobs count

@@ -290,6 +290,7 @@ T = {
         "customers_header": "Customers",
         "invoices_header": "Invoices",
         "id_label": "ID:",
+        "optional_fields_hint": "Phone, Email, and Google Review are optional - you can add them later in Settings",
     },
     "ms": {
         "app_title": "Kerja Mudah",
@@ -537,6 +538,7 @@ T = {
         "customers_header": "Pelanggan",
         "invoices_header": "Invois",
         "id_label": "ID:",
+        "optional_fields_hint": "Telefon, Emel, dan Google Review adalah pilihan - anda boleh tambah kemudian dalam Tetapan",
     },
     "zh": {
         "app_title": "Kerja Mudah",
@@ -784,6 +786,7 @@ T = {
         "customers_header": "客户",
         "invoices_header": "发票",
         "id_label": "ID：",
+        "optional_fields_hint": "电话、电邮和Google评价是可选的 - 您可以稍后在设置中添加",
     },
 }
 
@@ -869,6 +872,17 @@ class App:
         f.pack(fill="x", pady=4, **kw)
         return f
 
+    def get_font_size(self, base_size):
+        try:
+            width = self.root.winfo_width()
+            if width < 1000:
+                return max(8, base_size - 2)
+            elif width < 1200:
+                return max(9, base_size - 1)
+            return base_size
+        except:
+            return base_size
+
     def search_field(self, parent, placeholder, variable):
         e = tk.Entry(parent, textvariable=variable, font=("Segoe UI", 11), bd=1, relief="solid")
         e.pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
@@ -926,6 +940,14 @@ class App:
         if default:
             e.insert(0, default)
         e.pack(side="left", fill="x", expand=True, ipady=6)
+        def validate_email(p):
+            if not p:
+                return True
+            if any(c in p for c in "<>(){}[]|\\"):
+                return False
+            return True
+        validate_cmd = (self.root.register(validate_email), "%P")
+        e.configure(validate="key", validatecommand=validate_cmd)
         return e
 
     def number_field(self, parent, label, default=""):
@@ -936,6 +958,23 @@ class App:
         e = tk.Entry(f, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid")
         e.pack(side="left", fill="x", expand=True, ipady=6)
         validate_cmd = (self.root.register(lambda p: all(c.isdigit() or c in ".-" for c in p)), "%P")
+        e.configure(validate="key", validatecommand=validate_cmd)
+        return e
+
+    def name_field(self, parent, label, default=""):
+        f = tk.Frame(parent, bg=C["bg"])
+        f.pack(fill="x", pady=8)
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
+        var = tk.StringVar(value=default)
+        e = tk.Entry(f, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid")
+        e.pack(side="left", fill="x", expand=True, ipady=6)
+        def validate_name(p):
+            if not p:
+                return True
+            if any(c in p for c in "<>(){}[]|\\\"'"):
+                return False
+            return True
+        validate_cmd = (self.root.register(validate_name), "%P")
         e.configure(validate="key", validatecommand=validate_cmd)
         return e
 
@@ -961,6 +1000,24 @@ class App:
         frame.pack(side="left")
         entry = tk.Entry(frame, textvariable=var, font=("Segoe UI", 12), bd=1, relief="solid", width=12)
         entry.pack(side="left")
+        def validate_date_input(p):
+            if p == "" or p == "-":
+                return True
+            clean = p.replace("-", "")
+            if not clean.isdigit():
+                return False
+            if len(clean) > 8:
+                return False
+            if "-" in p:
+                parts = p.split("-")
+                if len(parts) > 3:
+                    return False
+                for part in parts:
+                    if part and not part.isdigit():
+                        return False
+            return True
+        validate_cmd = (self.root.register(validate_date_input), "%P")
+        entry.configure(validate="key", validatecommand=validate_cmd)
         def show_cal():
             win = tk.Toplevel(self.root)
             win.title("Pick Date")
@@ -1039,6 +1096,7 @@ class App:
         c.pack(expand=True, fill="both")
         tk.Label(c, text=self.t("welcome"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 28, "bold")).pack(pady=8)
         tk.Label(c, text=self.t("setup_title"), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 13)).pack(pady=8)
+        tk.Label(c, text=self.t("optional_fields_hint"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(pady=(0,8))
         f = tk.Frame(c, bg=C["bg"]); f.pack()
         self.se = {}
         self.se["Business Name"] = self.field(f, self.t("business_name"), "")
@@ -1048,6 +1106,14 @@ class App:
         tk.Label(gf, text=self.t("google_review"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         self.se["Google Review"] = tk.Entry(gf, font=("Segoe UI", 12), bd=1, relief="solid")
         self.se["Google Review"].pack(side="left", fill="x", expand=True, ipady=6)
+        def validate_review(p):
+            if not p:
+                return True
+            if any(c in p for c in "<>(){}[]|\\"):
+                return False
+            return True
+        review_validate = (self.root.register(validate_review), "%P")
+        self.se["Google Review"].configure(validate="key", validatecommand=review_validate)
         tk.Label(gf, text=self.t("google_review_hint"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(side="left", padx=8)
         lf = tk.Frame(f, bg=C["bg"]); lf.pack(fill="x", pady=12)
         tk.Label(lf, text=self.t("language"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
@@ -1159,6 +1225,18 @@ class App:
         self.side.pack_propagate(False)
         main_frame = tk.Frame(self.root, bg=C["bg"])
         main_frame.pack(side="left", fill="both", expand=True)
+        if self.is_demo():
+            days_left = 7
+            try:
+                install_date = self.db.get_setting("install_date")
+                if install_date:
+                    days_left = 7 - (datetime.now() - datetime.fromisoformat(install_date)).days
+            except (ValueError, TypeError):
+                pass
+            demo_bar = tk.Frame(main_frame, bg="#FEF3C7", height=30)
+            demo_bar.pack(fill="x")
+            demo_bar.pack_propagate(False)
+            tk.Label(demo_bar, text=f"DEMO MODE - {days_left} days remaining | Activate with license key", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10, "bold")).pack(expand=True)
         self.content_canvas = tk.Canvas(main_frame, bg=C["bg"], highlightthickness=0)
         self.content_scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=self.content_canvas.yview)
         self.content = tk.Frame(self.content_canvas, bg=C["bg"])
@@ -1176,24 +1254,12 @@ class App:
             self.content_canvas.unbind_all("<MouseWheel>")
         self.content_canvas.bind("<Enter>", _bind_mousewheel)
         self.content_canvas.bind("<Leave>", _unbind_mousewheel)
-        if self.is_demo():
-            days_left = 7
-            try:
-                install_date = self.db.get_setting("install_date")
-                if install_date:
-                    days_left = 7 - (datetime.now() - datetime.fromisoformat(install_date)).days
-            except (ValueError, TypeError):
-                pass
-            demo_bar = tk.Frame(self.root, bg="#FEF3C7", height=30)
-            demo_bar.place(relx=0.5, rely=0, anchor="n", relwidth=1)
-            demo_bar.pack_propagate(False)
-            tk.Label(demo_bar, text=f"DEMO MODE - {days_left} days remaining | Activate with license key", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10, "bold")).pack(expand=True)
         n = self.db.get_setting("business_name", "Shop")
         tk.Label(self.side, text=n, bg=C["side"], fg=C["white"], font=("Segoe UI", 15, "bold"), pady=25, wraplength=220).pack(fill="x")
         tk.Frame(self.side, bg="#2A2A2A", height=1).pack(fill="x", padx=20)
         for txt, cmd in [("Home", self.pg_home), ("Jobs", self.pg_jobs), ("Customers", self.pg_custs),
                          ("Appointments", self.pg_cal), ("Invoices", self.pg_invs), ("Reports", self.pg_rpt),
-                         ("Search", self.pg_search), ("Backup", self.pg_backup), ("Settings", self.pg_set)]:
+                         ("Backup", self.pg_backup), ("Settings", self.pg_set)]:
             b = tk.Button(self.side, text=f"  {self.t(txt.lower())}", command=cmd, bg=C["side"], fg="#AAAAAA", font=("Segoe UI", 12), bd=0, anchor="w", padx=25, pady=14, activebackground=C["side_h"], activeforeground=C["white"], cursor="hand2")
             b.pack(fill="x")
             b.bind("<Enter>", lambda e, b=b: b.configure(bg=C["side_h"], fg=C["white"]))
@@ -1316,7 +1382,7 @@ class App:
             tk.Label(r, text=j["item"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), width=22, anchor="w", padx=4, wraplength=220).pack(side="left")
             tk.Label(r, text=j["customer_name"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=16, anchor="w", padx=4).pack(side="left")
             tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), width=10, anchor="w", padx=4).pack(side="left")
-            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 9, "bold"), padx=8, pady=2, width=11, anchor="center").pack(side="left", padx=4)
+            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 9, "bold"), width=11, anchor="center", padx=4).pack(side="left")
             tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=11, anchor="w", padx=4).pack(side="left")
             tk.Button(r, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right", padx=2)
             if j["status"] != "done":
@@ -1365,6 +1431,14 @@ class App:
         self.je["Customer"] = tk.StringVar()
         self.cust_entry = tk.Entry(cf, font=("Segoe UI", 12), bd=1, relief="solid")
         self.cust_entry.pack(side="left", fill="x", expand=True, ipady=6)
+        def validate_cust(p):
+            if not p:
+                return True
+            if any(c in p for c in "<>(){}[]|\\\"'"):
+                return False
+            return True
+        cust_validate = (self.root.register(validate_cust), "%P")
+        self.cust_entry.configure(validate="key", validatecommand=cust_validate)
         if cust_names:
             tk.Label(cf, text=self.t("or_pick"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(side="left", padx=(10,5))
             self.cust_menu_var = tk.StringVar()
@@ -1404,6 +1478,8 @@ class App:
 
     def save_job(self):
         cust_name = self.cust_entry.get().strip()
+        if not cust_name:
+            return messagebox.showerror(self.t("error"), self.t("enter_name"))
         phone = self.je["Phone"].get().strip()
         email = self.je["Email"].get().strip()
         item = self.je["Item"].get().strip()
@@ -1437,7 +1513,7 @@ class App:
         f.pack(fill="both", expand=True)
         item_e = self.field(f, self.t("item"), j["item"])
         problem_e = self.field(f, self.t("problem"), j["problem"] or "")
-        quote_e = self.field(f, self.t("quote"), str(j["quote"]))
+        quote_e = self.number_field(f, self.t("quote"), str(j["quote"]))
         status_frame = tk.Frame(f, bg=C["bg"])
         status_frame.pack(fill="x", pady=8)
         tk.Label(status_frame, text=self.t("status"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
