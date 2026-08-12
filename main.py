@@ -2301,10 +2301,10 @@ class App:
         outstanding = sum(i["amount"] for i in unpaid)
         total_earned = sum(i["amount"] for i in paid)
         def fmt_rm(val):
-            if val > 999999:
-                return f"RM {val/1000:.1f}K"
-            elif val > 999999999:
+            if val >= 1000000:
                 return f"RM {val/1000000:.1f}M"
+            elif val >= 1000:
+                return f"RM {val/1000:.1f}K"
             return f"RM {val:.2f}"
         sf = tk.Frame(self.content, bg=C["bg"], padx=20)
         sf.pack(fill="x")
