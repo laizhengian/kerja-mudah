@@ -1884,16 +1884,15 @@ class App:
     def pg_custs(self):
         self.clr()
         self.hdr(self.t("customers"), self.t("new_customer"), self.pg_new_cust)
-        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f = tk.Frame(self.content, bg=C["bg"], padx=12)
         f.pack(fill="both", expand=True)
         sf = tk.Frame(f, bg=C["bg"])
         sf.pack(fill="x", pady=(0,10))
         self.cust_search_var = tk.StringVar()
-        self.cust_search_var.trace("w", lambda *a: self._filter_custs())
         self.search_field(sf, "Search customers...", self.cust_search_var)
-        
         self.cust_list_frame = tk.Frame(f, bg=C["bg"])
         self.cust_list_frame.pack(fill="both", expand=True)
+        self.cust_search_var.trace("w", lambda *a: self._filter_custs())
         self._filter_custs()
 
     def _filter_custs(self):
@@ -1906,21 +1905,24 @@ class App:
         if not cs:
             tk.Label(self.cust_list_frame, text=self.t("no_customers") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
-        cols = [self.t("name"), self.t("phone"), self.t("email"), self.t("action")]
-        col_w = [25, 18, 25, 16]
         table = tk.Frame(self.cust_list_frame, bg=C["bg"])
-        table.pack(fill="x", padx=10)
-        hdr = tk.Frame(table, bg=C["bg"])
-        hdr.pack(fill="x")
-        for i, (name, w) in enumerate(zip(cols, col_w)):
-            tk.Label(hdr, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9, "bold"), width=w, anchor="w", padx=4).grid(row=0, column=i, sticky="w")
-        for c in cs:
-            r = tk.Frame(table, bg=C["card"], bd=1, relief="solid", pady=10, padx=8)
-            r.pack(fill="x", pady=2)
-            tk.Label(r, text=self.truncate(c["name"], 24), bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), width=25, anchor="w", padx=4).grid(row=0, column=0, sticky="w")
-            tk.Label(r, text=c["phone"] or "-", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), width=18, anchor="w", padx=4).grid(row=0, column=1, sticky="w")
-            tk.Label(r, text=self.truncate(c["email"] or "-", 24), bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), width=25, anchor="w", padx=4).grid(row=0, column=2, sticky="w")
-            tk.Button(r, text=self.t("edit"), command=lambda c=c: self.edit_cust(c), bg=C["card"], fg=C["pri"], font=("Segoe UI", 8, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").grid(row=0, column=3, sticky="e")
+        table.pack(fill="both", expand=True, padx=8)
+        col_names = [self.t("name"), self.t("phone"), self.t("email"), ""]
+        col_wt = [3, 2, 3, 0]
+        col_minsize = [180, 130, 180, 80]
+        for i in range(4):
+            table.grid_columnconfigure(i, weight=col_wt[i], minsize=col_minsize[i])
+        for i, name in enumerate(col_names):
+            if name:
+                tk.Label(table, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w", padx=4).grid(row=0, column=i, sticky="w", pady=(8, 4))
+        for ri, c in enumerate(cs):
+            row_bg = C["card"] if ri % 2 == 0 else C["bg"]
+            row = ri + 1
+            table.rowconfigure(row, pad=12)
+            self.cell(table, c["name"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"], tooltip_text=c["name"]).grid(row=row, column=0, sticky="ew", padx=2)
+            self.cell(table, c["phone"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"]).grid(row=row, column=1, sticky="ew", padx=2)
+            self.cell(table, c["email"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=c["email"] or "").grid(row=row, column=2, sticky="ew", padx=2)
+            tk.Button(table, text=self.t("edit"), command=lambda c=c: self.edit_cust(c), bg=row_bg, fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=3, sticky="e", padx=1)
 
     def edit_cust(self, c):
         win = tk.Toplevel(self.root)
@@ -1973,34 +1975,26 @@ class App:
     def pg_cal(self):
         self.clr()
         self.hdr(self.t("appointments"), self.t("new_appointment"), self.pg_new_appt)
-        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f = tk.Frame(self.content, bg=C["bg"], padx=12)
         f.pack(fill="both", expand=True)
         sf = tk.Frame(f, bg=C["bg"])
         sf.pack(fill="x", pady=(0,10))
         self.appt_search_var = tk.StringVar()
-        self.appt_search_var.trace("w", lambda *a: self._filter_appts())
         self.search_field(sf, "Search appointments...", self.appt_search_var)
-        
         self.appt_list_frame = tk.Frame(f, bg=C["bg"])
         self.appt_list_frame.pack(fill="both", expand=True)
+        self.appt_search_var.trace("w", lambda *a: self._filter_appts())
         self._filter_appts()
 
     def _filter_appts(self):
         for w in self.appt_list_frame.winfo_children():
             w.destroy()
-        q = self.appt_search_var.get().strip()
+        q = self.appt_search_var.get().strip().lower()
         if q and q != "search appointments...":
             appts = self.db.search_appointments(q)
             if not appts:
                 tk.Label(self.appt_list_frame, text=self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
                 return
-            for a in appts:
-                r = self.row(self.appt_list_frame)
-                tk.Label(r, text=a["date"], bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), width=12, anchor="w", padx=4).pack(side="left")
-                tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w", padx=4).pack(side="left")
-                tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w", padx=15, wraplength=200).pack(side="left")
-                tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15, wraplength=250).pack(side="left")
-                tk.Button(r, text=self.t("edit"), command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
         else:
             today = datetime.now().strftime("%Y-%m-%d")
             tk.Label(self.appt_list_frame, text=self.fmt_date(today), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(anchor="w", pady=8)
@@ -2008,12 +2002,25 @@ class App:
             if not appts:
                 tk.Label(self.appt_list_frame, text=self.t("no_appointments"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
                 return
-            for a in appts:
-                r = self.row(self.appt_list_frame)
-                tk.Label(r, text=a["time"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 14, "bold"), width=8, anchor="w", padx=4).pack(side="left")
-                tk.Label(r, text=a["customer_name"] or "Walk-in", bg=C["card"], fg=C["txt"], font=("Segoe UI", 12, "bold"), anchor="w", padx=15, wraplength=200).pack(side="left")
-                tk.Label(r, text=a["purpose"] or "", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15, wraplength=250).pack(side="left")
-                tk.Button(r, text=self.t("edit"), command=lambda a=a: self.edit_appt(a), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right")
+        table = tk.Frame(self.appt_list_frame, bg=C["bg"])
+        table.pack(fill="both", expand=True, padx=8)
+        col_names = [self.t("date"), self.t("time"), self.t("customer"), self.t("purpose"), ""]
+        col_wt = [1, 1, 2, 3, 0]
+        col_minsize = [100, 70, 130, 180, 80]
+        for i in range(5):
+            table.grid_columnconfigure(i, weight=col_wt[i], minsize=col_minsize[i])
+        for i, name in enumerate(col_names):
+            if name:
+                tk.Label(table, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w", padx=4).grid(row=0, column=i, sticky="w", pady=(8, 4))
+        for ri, a in enumerate(appts):
+            row_bg = C["card"] if ri % 2 == 0 else C["bg"]
+            row = ri + 1
+            table.rowconfigure(row, pad=12)
+            self.cell(table, self.fmt_date(a["date"]), font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"]).grid(row=row, column=0, sticky="ew", padx=2)
+            self.cell(table, a["time"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=1, sticky="ew", padx=2)
+            self.cell(table, a["customer_name"] or self.t("walk_in"), font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"], tooltip_text=a["customer_name"] or "").grid(row=row, column=2, sticky="ew", padx=2)
+            self.cell(table, a["purpose"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=a["purpose"] or "").grid(row=row, column=3, sticky="ew", padx=2)
+            tk.Button(table, text=self.t("edit"), command=lambda a=a: self.edit_appt(a), bg=row_bg, fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=4, sticky="e", padx=1)
 
     def edit_appt(self, a):
         win = tk.Toplevel(self.root)
@@ -2096,16 +2103,16 @@ class App:
     def pg_invs(self):
         self.clr()
         self.hdr(self.t("invoices"), self.t("from_job"), self.pg_new_inv)
-        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f = tk.Frame(self.content, bg=C["bg"], padx=12)
         f.pack(fill="both", expand=True)
         sf = tk.Frame(f, bg=C["bg"])
         sf.pack(fill="x", pady=(0,10))
         self.inv_search_var = tk.StringVar()
-        self.inv_search_var.trace("w", lambda *a: self._filter_invs())
         self.search_field(sf, "Search invoices...", self.inv_search_var)
-        
         self.inv_list_frame = tk.Frame(f, bg=C["bg"])
         self.inv_list_frame.pack(fill="both", expand=True)
+        self.inv_search_var.trace("w", lambda *a: self._filter_invs())
+        self._filter_invs()
         self._filter_invs()
 
     def _filter_invs(self):
@@ -2122,49 +2129,50 @@ class App:
         paid = [i for i in invs if i["paid"]]
         if unpaid:
             total_owed = sum(i["amount"] for i in unpaid)
-            hdr = tk.Frame(self.inv_list_frame, bg=C["bg"])
-            hdr.pack(fill="x", pady=5, padx=10)
-            tk.Label(hdr, text=f"{self.t('unpaid')} ({len(unpaid)} invoices, RM {total_owed:.2f} total)", bg=C["bg"], fg=C["err"], font=("Segoe UI", 13, "bold")).pack(side="left")
-            cols = [self.t("code"), self.t("customer"), self.t("amount"), self.t("action")]
-            col_w = [17, 22, 12, 20]
+            tk.Label(self.inv_list_frame, text=f"{self.t('unpaid')} ({len(unpaid)}, RM {total_owed:.2f})", bg=C["bg"], fg=C["err"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=(8, 4), padx=8)
             table = tk.Frame(self.inv_list_frame, bg=C["bg"])
-            table.pack(fill="x", padx=10)
-            hdr_row = tk.Frame(table, bg=C["bg"])
-            hdr_row.pack(fill="x")
-            for i, (name, w) in enumerate(zip(cols, col_w)):
-                tk.Label(hdr_row, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9, "bold"), width=w, anchor="w", padx=4).grid(row=0, column=i, sticky="w")
-            for i in unpaid:
-                r = tk.Frame(table, bg="#FEF2F2", bd=1, relief="solid", pady=10, padx=8)
-                r.pack(fill="x", pady=2)
-                tk.Label(r, text=i["invoice_code"], bg="#FEF2F2", fg=C["txt"], font=("Segoe UI", 9, "bold"), width=17, anchor="w", padx=4).grid(row=0, column=0, sticky="w")
-                tk.Label(r, text=self.truncate(i["customer_name"] or "Unknown", 21), bg="#FEF2F2", fg=C["txt"], font=("Segoe UI", 9), width=22, anchor="w", padx=4).grid(row=0, column=1, sticky="w")
-                tk.Label(r, text=f"RM {i['amount']:.2f}", bg="#FEF2F2", fg=C["err"], font=("Segoe UI", 9, "bold"), width=12, anchor="w", padx=4).grid(row=0, column=2, sticky="w")
-                btn = tk.Frame(r, bg="#FEF2F2")
-                btn.grid(row=0, column=3, sticky="e")
-                tk.Button(btn, text=self.t("mark_paid"), command=lambda iid=i["id"]: self.mark_paid(iid), bg=C["warn"], fg=C["white"], font=("Segoe UI", 8, "bold"), bd=0, padx=6, pady=1, cursor="hand2").pack(side="right", padx=2)
-                tk.Button(btn, text=self.t("pdf"), command=lambda inv=i: self.download_inv_pdf(inv), bg="#7C3AED", fg=C["white"], font=("Segoe UI", 8, "bold"), bd=0, padx=6, pady=1, cursor="hand2").pack(side="right", padx=2)
-                tk.Button(btn, text=self.t("send_whatsapp"), command=lambda inv=i: self.send_whatsapp(inv), bg=C["ok"], fg=C["white"], font=("Segoe UI", 8, "bold"), bd=0, padx=6, pady=1, cursor="hand2").pack(side="right", padx=2)
-                tk.Button(btn, text=self.t("email"), command=lambda inv=i: self.send_email(inv), bg="#2563EB", fg=C["white"], font=("Segoe UI", 8, "bold"), bd=0, padx=6, pady=1, cursor="hand2").pack(side="right", padx=2)
+            table.pack(fill="both", expand=True, padx=8)
+            col_names = [self.t("code"), self.t("customer"), self.t("amount"), "", "", "", ""]
+            col_wt = [2, 3, 1, 0, 0, 0, 0]
+            col_minsize = [130, 160, 90, 70, 70, 70, 70]
+            for i in range(7):
+                table.grid_columnconfigure(i, weight=col_wt[i], minsize=col_minsize[i])
+            for i, name in enumerate(col_names):
+                if name:
+                    tk.Label(table, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w", padx=4).grid(row=0, column=i, sticky="w", pady=(8, 4))
+            for ri, inv in enumerate(unpaid):
+                row_bg = "#FEF2F2" if ri % 2 == 0 else C["bg"]
+                row = ri + 1
+                table.rowconfigure(row, pad=12)
+                self.cell(table, inv["invoice_code"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=0, sticky="ew", padx=2)
+                self.cell(table, inv["customer_name"] or "Unknown", font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=inv["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
+                self.cell(table, f"RM {inv['amount']:.2f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["err"]).grid(row=row, column=2, sticky="ew", padx=2)
+                tk.Button(table, text=self.t("email"), command=lambda i=inv: self.send_email(i), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=3, sticky="e", padx=1)
+                tk.Button(table, text="WA", command=lambda i=inv: self.send_whatsapp(i), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=4, sticky="e", padx=1)
+                tk.Button(table, text=self.t("pdf"), command=lambda i=inv: self.download_inv_pdf(i), bg="#7C3AED", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=5, sticky="e", padx=1)
+                tk.Button(table, text=self.t("mark_paid"), command=lambda iid=inv["id"]: self.mark_paid(iid), bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=6, sticky="e", padx=1)
         if paid:
-            tk.Label(self.inv_list_frame, text=f"{self.t('paid')} ({len(paid)})", bg=C["bg"], fg=C["ok"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=10, padx=10)
-            cols = [self.t("code"), self.t("customer"), self.t("amount"), self.t("method"), self.t("status")]
-            col_w = [17, 22, 12, 12, 10]
-            table = tk.Frame(self.inv_list_frame, bg=C["bg"])
-            table.pack(fill="x", padx=10)
-            hdr_row = tk.Frame(table, bg=C["bg"])
-            hdr_row.pack(fill="x")
-            for i, (name, w) in enumerate(zip(cols, col_w)):
-                tk.Label(hdr_row, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9, "bold"), width=w, anchor="w", padx=4).grid(row=0, column=i, sticky="w")
-            for i in paid:
-                r = tk.Frame(table, bg=C["card"], bd=1, relief="solid", pady=10, padx=8)
-                r.pack(fill="x", pady=2)
-                tk.Label(r, text=i["invoice_code"], bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), width=17, anchor="w", padx=4).grid(row=0, column=0, sticky="w")
-                tk.Label(r, text=self.truncate(i["customer_name"] or "Unknown", 21), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), width=22, anchor="w", padx=4).grid(row=0, column=1, sticky="w")
-                tk.Label(r, text=f"RM {i['amount']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), width=12, anchor="w", padx=4).grid(row=0, column=2, sticky="w")
-                method = i["payment_method"] or "-"
+            tk.Label(self.inv_list_frame, text=f"{self.t('paid')} ({len(paid)})", bg=C["bg"], fg=C["ok"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=(12, 4), padx=8)
+            table2 = tk.Frame(self.inv_list_frame, bg=C["bg"])
+            table2.pack(fill="both", expand=True, padx=8)
+            col_names2 = [self.t("code"), self.t("customer"), self.t("amount"), self.t("method"), self.t("status")]
+            col_wt2 = [2, 3, 1, 1, 1]
+            col_minsize2 = [130, 160, 90, 90, 80]
+            for i in range(5):
+                table2.grid_columnconfigure(i, weight=col_wt2[i], minsize=col_minsize2[i])
+            for i, name in enumerate(col_names2):
+                tk.Label(table2, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w", padx=4).grid(row=0, column=i, sticky="w", pady=(8, 4))
+            for ri, inv in enumerate(paid):
+                row_bg = C["card"] if ri % 2 == 0 else C["bg"]
+                row = ri + 1
+                table2.rowconfigure(row, pad=12)
+                self.cell(table2, inv["invoice_code"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=0, sticky="ew", padx=2)
+                self.cell(table2, inv["customer_name"] or "Unknown", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=inv["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
+                self.cell(table2, f"RM {inv['amount']:.2f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=2, sticky="ew", padx=2)
+                method = inv["payment_method"] or "-"
                 method_bg = {"Cash": C["ok"], "E-Wallet": "#2563EB", "Card": "#7C3AED", "Transfer": C["warn"]}.get(method, C["txt3"])
-                tk.Label(r, text=method, bg=method_bg, fg=C["white"], font=("Segoe UI", 8, "bold"), width=12, anchor="center", padx=4).grid(row=0, column=3, sticky="w")
-                tk.Label(r, text="PAID", bg=C["ok"], fg=C["white"], font=("Segoe UI", 8, "bold"), width=10, anchor="center", padx=4).grid(row=0, column=4, sticky="w")
+                tk.Label(table2, text=method, bg=method_bg, fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=3, sticky="ew", padx=2)
+                tk.Label(table2, text="PAID", bg=C["ok"], fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=4, sticky="ew", padx=2)
 
     def download_inv_pdf(self, inv):
         job = None
