@@ -1046,7 +1046,7 @@ class App:
         e.configure(validate="key", validatecommand=validate_cmd)
         return e
 
-    def text_area_field(self, parent, label, default="", height=3):
+    def text_area_field(self, parent, label, default="", height=3, max_len=500):
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
         tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
@@ -1054,6 +1054,11 @@ class App:
         text.pack(side="left", fill="x", expand=True, ipady=4)
         if default:
             text.insert("1.0", default)
+        def validate_text(event=None):
+            content = text.get("1.0", "end-1c")
+            if len(content) > max_len:
+                text.delete("1.0", f"1.{max_len}")
+        text.bind("<KeyRelease>", validate_text)
         def get_text():
             return text.get("1.0", "end-1c")
         text.get = get_text
@@ -1081,7 +1086,7 @@ class App:
         def validate_email(p):
             if not p:
                 return True
-            if len(p) > 100:
+            if len(p) > 80:
                 return False
             if any(c in p for c in "<>(){}[]|\\"):
                 return False
@@ -1111,7 +1116,7 @@ class App:
         def validate_name(p):
             if not p:
                 return True
-            if len(p) > 100:
+            if len(p) > 50:
                 return False
             if any(c in p for c in "<>(){}[]|\\\"'"):
                 return False
@@ -1563,9 +1568,9 @@ class App:
             return
         table = tk.Frame(self.jobs_list_frame, bg=C["bg"])
         table.pack(fill="both", expand=True, padx=8)
-        col_names = [self.t("code"), self.t("item"), self.t("customer"), self.t("quote"), self.t("status"), self.t("due_date"), self.t("notes"), "", ""]
-        col_wt = [2, 3, 2, 1, 1, 1, 2, 0, 0]
-        col_minsize = [110, 150, 100, 75, 75, 105, 90, 60, 50]
+        col_names = [self.t("code"), self.t("customer"), self.t("item"), self.t("quote"), self.t("status"), self.t("due_date"), self.t("notes"), "", self.t("action")]
+        col_wt = [2, 2, 3, 1, 1, 1, 2, 0, 0]
+        col_minsize = [110, 100, 150, 75, 75, 105, 90, 60, 50]
         for i in range(9):
             table.grid_columnconfigure(i, weight=col_wt[i], minsize=col_minsize[i])
         for i, name in enumerate(col_names):
@@ -1577,8 +1582,8 @@ class App:
             row = ri + 1
             table.rowconfigure(row, pad=12)
             self.cell(table, j["job_code"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"], tooltip_text=j["job_code"]).grid(row=row, column=0, sticky="ew", padx=2)
-            self.cell(table, j["item"], font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=j["item"]).grid(row=row, column=1, sticky="ew", padx=2)
-            self.cell(table, j["customer_name"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=j["customer_name"] or "").grid(row=row, column=2, sticky="ew", padx=2)
+            self.cell(table, j["customer_name"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=j["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
+            self.cell(table, j["item"], font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=j["item"]).grid(row=row, column=2, sticky="ew", padx=2)
             self.cell(table, f"RM {float(j['quote'] or 0):.0f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=3, sticky="ew", padx=2)
             tk.Label(table, text=j["status"].upper(), bg=sc.get(j["status"], "#999"), fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=4, sticky="ew", padx=2)
             self.cell(table, self.fmt_date(j["due_date"]), font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"]).grid(row=row, column=5, sticky="ew", padx=2)
@@ -2635,9 +2640,10 @@ class App:
         try:
             with open(fp, "w", newline="", encoding="utf-8") as f:
                 w = csv.writer(f)
-                w.writerow(data[0].keys())
+                keys = list(data[0].keys())
+                w.writerow(keys)
                 for row in data:
-                    w.writerow(list(row))
+                    w.writerow([row[k] for k in keys])
             messagebox.showinfo(self.t("done"), self.t("exported") + f" {fp}")
         except Exception as e:
             messagebox.showerror(self.t("error"), str(e))
@@ -2734,7 +2740,10 @@ class App:
                 os.remove(shortcut_path)
                 messagebox.showinfo(self.t("done"), self.t("startup_removed"))
             else:
-                exe_path = sys.executable if getattr(sys, 'frozen', False) else sys.executable
+                if getattr(sys, 'frozen', False):
+                    exe_path = sys.executable
+                else:
+                    exe_path = os.path.abspath(sys.argv[0])
                 bat_content = f'@echo off\nstart "" "{exe_path}"'
                 with open(shortcut_path, "w") as f:
                     f.write(bat_content)
@@ -2744,7 +2753,7 @@ class App:
 
     def preview_invoice(self):
         win = tk.Toplevel(self.root)
-        win.title("Invoice Preview")
+        win.title(self.t("preview_invoice"))
         win.geometry("500x650")
         win.configure(bg=C["white"])
         win.grab_set()
@@ -2760,8 +2769,13 @@ class App:
         biz_phone = self.db.get_setting("business_phone", "")
         biz_email = self.db.get_setting("business_email", "")
         google_review = self.db.get_setting("google_review", "")
+        inv_title = self.db.get_setting("invoice_title", "INVOICE")
+        payment_terms = self.db.get_setting("payment_terms", "Payment due upon receipt")
+        thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+        footer = self.db.get_setting("footer_text", "")
+        inv_fmt = self.db.get_setting("invoice_format", "text")
         tk.Label(scroll_frame, text=biz_name, bg=C["white"], fg=C["txt"], font=("Segoe UI", 20, "bold")).pack(pady=(20,5))
-        tk.Label(scroll_frame, text=self.t("preview_invoice"), bg=C["white"], fg=C["txt3"], font=("Segoe UI", 14)).pack()
+        tk.Label(scroll_frame, text=inv_title, bg=C["white"], fg=C["txt3"], font=("Segoe UI", 14)).pack()
         tk.Frame(scroll_frame, bg=C["bdr"], height=2).pack(fill="x", padx=30, pady=15)
         tk.Label(scroll_frame, text="Invoice #: INV-DEMO-001", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
         tk.Label(scroll_frame, text=f"Date: {datetime.now().strftime('%d %B %Y')}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w").pack(fill="x", padx=40)
@@ -2775,13 +2789,21 @@ class App:
         tk.Label(scroll_frame, text="Service: Replace cracked screen", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10), anchor="w").pack(fill="x", padx=40)
         tk.Frame(scroll_frame, bg=C["bdr"], height=1).pack(fill="x", padx=30, pady=10)
         tk.Label(scroll_frame, text=f"{self.t('total')} RM 450", bg=C["white"], fg=C["txt"], font=("Segoe UI", 16, "bold"), anchor="e").pack(fill="x", padx=40)
+        if payment_terms:
+            tk.Label(scroll_frame, text=payment_terms, bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10), anchor="w").pack(fill="x", padx=40, pady=(5,0))
         tk.Frame(scroll_frame, bg=C["bdr"], height=2).pack(fill="x", padx=30, pady=15)
         if biz_phone:
             tk.Label(scroll_frame, text=f"Phone: {biz_phone}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
         if biz_email:
             tk.Label(scroll_frame, text=f"Email: {biz_email}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
         if google_review:
-            tk.Label(scroll_frame, text="Leave us a Google review!", bg=C["white"], fg=C["txt3"], font=("Segoe UI", 9)).pack(anchor="w", padx=40, pady=(10,2))
+            tk.Label(scroll_frame, text=self.t("rate_us"), bg=C["white"], fg=C["txt3"], font=("Segoe UI", 9)).pack(anchor="w", padx=40, pady=(10,2))
+        if thank_you:
+            tk.Label(scroll_frame, text=thank_you, bg=C["white"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", padx=40, pady=(10,2))
+        if footer:
+            tk.Label(scroll_frame, text=footer, bg=C["white"], fg=C["txt3"], font=("Segoe UI", 9)).pack(anchor="w", padx=40, pady=(5,0))
+        fmt_label = f"Format: {inv_fmt.upper()}"
+        tk.Label(scroll_frame, text=fmt_label, bg=C["white"], fg=C["txt3"], font=("Segoe UI", 8)).pack(anchor="w", padx=40, pady=(10,0))
         tk.Button(scroll_frame, text=self.t("close"), command=win.destroy, bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), bd=1, relief="solid", padx=15, cursor="hand2").pack(pady=15)
 
     def edit_biz_name(self):
@@ -2934,6 +2956,7 @@ class App:
         self.db.set_setting("invoice_format", fmt)
         messagebox.showinfo(self.t("done"), self.t("invoice_format_set") + f" {fmt.upper()}")
         self.pg_set()
+        self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def change_lang(self):
         if getattr(self, '_changing_lang', False):
