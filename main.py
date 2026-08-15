@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-import os, sys, hashlib, webbrowser, urllib.parse, platform, uuid
+import os, sys, hashlib, webbrowser, urllib.parse, platform, uuid, time
 from datetime import datetime, timedelta
 from fpdf import FPDF
 
@@ -50,7 +50,7 @@ T = {
         "appointments": "Appointments", "invoices": "Invoices",
         "reports": "Reports", "search": "Search", "backup": "Backup", "settings": "Settings",
         "dashboard": "Dashboard", "active_jobs": "Active Jobs", "today": "Today",
-        "outstanding": "Outstanding", "jobs_done": "Jobs Done",
+        "outstanding": "Outstanding", "jobs_done": "Jobs Done (This Month)",
         "reminders": "Reminders", "quick_actions": "Quick Actions",
         "new_job": "+ New Job", "new_customer": "+ Customer", "new_appointment": "+ Appointment",
         "new_job_title": "New Job", "new_customer_title": "New Customer", "new_appointment_title": "New Appointment",
@@ -81,7 +81,7 @@ T = {
         "confirm_pin": "Confirm PIN",
         "service_details": "Service / Problem Details",
         "google_review": "Google Review Link",
-        "google_review_hint": "e.g. https://g.page/r/ABC123/review",
+        "google_review_hint": "Paste your Google Maps business link",
         "leave_review": "We'd love your feedback!",
         "rate_us": "Leave us a Google review",
         "pending": "Pending", "in_progress": "In Progress", "status": "Status",
@@ -307,7 +307,7 @@ T = {
         "appointments": "Temujanji", "invoices": "Invois",
         "reports": "Laporan", "search": "Carian", "backup": "Sandaran", "settings": "Tetapan",
         "dashboard": "Papan Pemuka", "active_jobs": "Kerja Aktif", "today": "Hari Ini",
-        "outstanding": "Belum Dibayar", "jobs_done": "Kerja Selesai",
+        "outstanding": "Belum Dibayar", "jobs_done": "Kerja Selesai (Bulan Ini)",
         "reminders": "Peringatan", "quick_actions": "Tindakan Pantas",
         "new_job": "+ Kerja Baru", "new_customer": "+ Pelanggan", "new_appointment": "+ Temujanji",
         "new_job_title": "Kerja Baru", "new_customer_title": "Pelanggan Baru", "new_appointment_title": "Temujanji Baru",
@@ -338,7 +338,7 @@ T = {
         "confirm_pin": "Sahkan PIN",
         "service_details": "Perkhidmatan / Butiran Masalah",
         "google_review": "Pautan Google Review",
-        "google_review_hint": "cth. https://g.page/r/ABC123/review",
+        "google_review_hint": "Tampal pautan Google Maps perniagaan anda",
         "leave_review": "Kami menghargai maklum balas anda!",
         "rate_us": "Tinggalkan Google review untuk kami",
         "pending": "Menunggu", "in_progress": "Sedang Dijalankan", "status": "Status",
@@ -564,7 +564,7 @@ T = {
         "appointments": "预约", "invoices": "发票",
         "reports": "报告", "search": "搜索", "backup": "备份", "settings": "设置",
         "dashboard": "仪表板", "active_jobs": "进行中", "today": "今天",
-        "outstanding": "未收款", "jobs_done": "已完成",
+        "outstanding": "未收款", "jobs_done": "已完成 (本月)",
         "reminders": "提醒", "quick_actions": "快捷操作",
         "new_job": "+ 新工作", "new_customer": "+ 客户", "new_appointment": "+ 预约",
         "new_job_title": "新工作", "new_customer_title": "新客户", "new_appointment_title": "新预约",
@@ -595,7 +595,7 @@ T = {
         "confirm_pin": "确认PIN",
         "service_details": "服务/问题详情",
         "google_review": "Google评价链接",
-        "google_review_hint": "例如 https://g.page/r/ABC123/review",
+        "google_review_hint": "粘贴您的Google Maps商家链接",
         "leave_review": "我们期待您的反馈！",
         "rate_us": "请给我们留个Google评价",
         "pending": "待处理", "in_progress": "进行中", "status": "状态",
@@ -867,6 +867,76 @@ class App:
             return text
         return text[:max_len-1] + "..."
 
+    def get_review_link(self, google_review):
+        if not google_review:
+            return ""
+        lower = google_review.lower()
+        if "write-review" in lower or "/review" in lower.rstrip("/"):
+            return google_review
+        if "g.page" in lower:
+            return google_review.rstrip("/") + "/write-review"
+        return google_review
+
+    def tooltip(self, widget, text):
+        tip = None
+        def on_enter(event):
+            nonlocal tip
+            if not text or tip is not None:
+                return
+            tip = tk.Toplevel(widget)
+            tip.wm_overrideredirect(True)
+            tip.wm_geometry(f"+{event.x_root+12}+{event.y_root+10}")
+            lbl = tk.Label(tip, text=text, bg="#222222", fg="#FFFFFF",
+                           font=("Segoe UI", 9), padx=8, pady=4, wraplength=400,
+                           justify="left")
+            lbl.pack()
+        def on_leave(event):
+            nonlocal tip
+            if tip is not None:
+                tip.destroy()
+                tip = None
+        widget.bind("<Enter>", on_enter)
+        widget.bind("<Leave>", on_leave)
+        widget.bind("<Button-1>", on_leave)
+
+    def cell(self, parent, text, font=("Segoe UI", 9), bg=C["card"], fg=C["txt"],
+             anchor="w", padx=6, tooltip_text=None):
+        import tkinter.font as tkfont
+        full = str(text)
+        lbl = tk.Label(parent, text=full, bg=bg, fg=fg, font=font, anchor=anchor,
+                       padx=padx, bd=0)
+        fnt = tkfont.Font(root=self.root, font=font)
+        last_needed = None
+        def fit(event=None):
+            nonlocal last_needed
+            w = lbl.winfo_width() - padx * 2
+            if w <= 0:
+                return
+            if fnt.measure(full) <= w:
+                need = full
+            else:
+                need = self._fit_to_px(fnt, full, w)
+            if need != last_needed:
+                lbl.configure(text=need)
+                last_needed = need
+        lbl.bind("<Configure>", fit)
+        self.tooltip(lbl, tooltip_text if tooltip_text is not None else full)
+        return lbl
+
+    def _fit_to_px(self, fnt, text, width_px):
+        if fnt.measure(text) <= width_px:
+            return text
+        lo, hi, best = 0, len(text), ""
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            cand = text[:mid]
+            if fnt.measure(cand + "...") <= width_px:
+                best = cand
+                lo = mid + 1
+            else:
+                hi = mid - 1
+        return (best + "...") if best else "..."
+
     def make_table(self, parent, columns, rows, col_widths):
         header = tk.Frame(parent, bg=C["bg"])
         header.pack(fill="x", pady=(8,2), padx=10)
@@ -976,6 +1046,19 @@ class App:
         e.configure(validate="key", validatecommand=validate_cmd)
         return e
 
+    def text_area_field(self, parent, label, default="", height=3):
+        f = tk.Frame(parent, bg=C["bg"])
+        f.pack(fill="x", pady=8)
+        tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
+        text = tk.Text(f, font=("Segoe UI", 12), bd=1, relief="solid", height=height, wrap="word")
+        text.pack(side="left", fill="x", expand=True, ipady=4)
+        if default:
+            text.insert("1.0", default)
+        def get_text():
+            return text.get("1.0", "end-1c")
+        text.get = get_text
+        return text
+
     def phone_field(self, parent, label, default="+60"):
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
@@ -1046,6 +1129,15 @@ class App:
         e.pack(side="left", fill="x", expand=True, ipady=6)
         validate_cmd = (self.root.register(lambda p: all(c.isdigit() for c in p) and len(p) <= 4), "%P")
         e.configure(validate="key", validatecommand=validate_cmd)
+        def toggle_show():
+            if e.cget("show") == "*":
+                e.configure(show="")
+                show_btn.configure(text="Hide")
+            else:
+                e.configure(show="*")
+                show_btn.configure(text="Show")
+        show_btn = tk.Button(f, text="Show", command=toggle_show, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), bd=1, relief="solid", padx=6, cursor="hand2")
+        show_btn.pack(side="left", padx=4)
         return e
 
     def date_field(self, parent, label, default=None):
@@ -1223,8 +1315,19 @@ class App:
         n = self.db.get_setting("business_name", "Shop")
         tk.Label(c, text=n, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 26, "bold")).pack(pady=8)
         tk.Label(c, text=self.t("enter_pin"), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(pady=8)
-        self.pin_e = tk.Entry(c, font=("Segoe UI", 24), bd=1, relief="solid", width=8, justify="center", show="*")
-        self.pin_e.pack(ipady=8)
+        pf = tk.Frame(c, bg=C["bg"])
+        pf.pack(pady=8)
+        self.pin_e = tk.Entry(pf, font=("Segoe UI", 24), bd=1, relief="solid", width=8, justify="center", show="*")
+        self.pin_e.pack(side="left", ipady=8)
+        def toggle_pin():
+            if self.pin_e.cget("show") == "*":
+                self.pin_e.configure(show="")
+                pin_btn.configure(text="Hide")
+            else:
+                self.pin_e.configure(show="*")
+                pin_btn.configure(text="Show")
+        pin_btn = tk.Button(pf, text="Show", command=toggle_pin, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), bd=1, relief="solid", padx=8, cursor="hand2")
+        pin_btn.pack(side="left", padx=8)
         self.pin_e.focus()
         self.pin_e.bind("<Return>", lambda e: self.chk_pin())
         self.btn(c, self.t("login"), self.chk_pin).pack(pady=20)
@@ -1328,6 +1431,7 @@ class App:
         self.content_canvas.pack(side="left", fill="both", expand=True)
         def on_canvas_configure(event):
             self.content_canvas.itemconfig("inner", width=event.width)
+            self.content.configure(width=event.width)
         self.content_canvas.bind("<Configure>", on_canvas_configure)
         def _on_mousewheel(event):
             current = self.content_canvas.yview()
@@ -1351,7 +1455,7 @@ class App:
             b.pack(fill="x")
             b.bind("<Enter>", lambda e, b=b: b.configure(bg=C["side_h"], fg=C["white"]))
             b.bind("<Leave>", lambda e, b=b: b.configure(bg=C["side"], fg="#AAAAAA"))
-        self.pg_home()
+        self.root.after(10, self.pg_home)
 
     def pg_home(self):
         self.clr()
@@ -1364,7 +1468,7 @@ class App:
         owed = sum(i["amount"] for i in unpaid)
         tf = tk.Frame(self.content, bg=C["bg"], padx=20)
         tf.pack(fill="x")
-        done_count = len([j for j in jobs if j["status"] == "done"])
+        done_count = len([j for j in jobs if j["status"] == "done" and (j["completed_at"] or "").startswith(datetime.now().strftime("%Y-%m"))])
         for i, (l, v, cmd) in enumerate([(self.t("active_jobs"), str(active), self.pg_jobs), (self.t("appointments"), str(appts), self.pg_cal), (self.t("outstanding"), f"RM {owed:.0f}", self.pg_invs), (self.t("jobs_done"), str(done_count), self.pg_jobs)]):
             c = tk.Frame(tf, bg=C["card"], bd=1, relief="solid", cursor="hand2")
             c.grid(row=0, column=i, padx=6, pady=6, sticky="nsew")
@@ -1436,16 +1540,15 @@ class App:
     def pg_jobs(self):
         self.clr()
         self.hdr(self.t("jobs"), self.t("new_job"), self.pg_new_job)
-        f = tk.Frame(self.content, bg=C["bg"], padx=20)
+        f = tk.Frame(self.content, bg=C["bg"], padx=12)
         f.pack(fill="both", expand=True)
         sf = tk.Frame(f, bg=C["bg"])
-        sf.pack(fill="x", pady=(0,10))
+        sf.pack(fill="x", pady=(0, 10))
         self.jobs_search_var = tk.StringVar()
-        self.jobs_search_var.trace("w", lambda *a: self._filter_jobs())
         self.search_field(sf, "Search jobs...", self.jobs_search_var)
-        
         self.jobs_list_frame = tk.Frame(f, bg=C["bg"])
         self.jobs_list_frame.pack(fill="both", expand=True)
+        self.jobs_search_var.trace("w", lambda *a: self._filter_jobs())
         self._filter_jobs()
 
     def _filter_jobs(self):
@@ -1454,38 +1557,40 @@ class App:
         jobs = self.db.get_jobs()
         q = self.jobs_search_var.get().strip().lower()
         if q and q != "search jobs...":
-            jobs = [j for j in jobs if q in (j["job_code"]+j["item"]+(j["problem"] or "")+(j["customer_name"] or "")).lower()]
+            jobs = [j for j in jobs if q in (j["job_code"]+j["item"]+(j["problem"] or "")+(j["customer_name"] or "")+(j["notes"] or "")).lower()]
         if not jobs:
             tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
-        cols = [self.t("code"), self.t("item"), self.t("customer"), self.t("quote"), self.t("status"), self.t("due_date"), self.t("action")]
-        col_w = [16, 22, 18, 10, 12, 14, 16]
         table = tk.Frame(self.jobs_list_frame, bg=C["bg"])
-        table.pack(fill="x", padx=10)
-        hdr = tk.Frame(table, bg=C["bg"])
-        hdr.pack(fill="x")
-        for i, (name, w) in enumerate(zip(cols, col_w)):
-            tk.Label(hdr, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9, "bold"), width=w, anchor="w", padx=4).grid(row=0, column=i, sticky="w")
+        table.pack(fill="both", expand=True, padx=8)
+        col_names = [self.t("code"), self.t("item"), self.t("customer"), self.t("quote"), self.t("status"), self.t("due_date"), self.t("notes"), "", ""]
+        col_wt = [2, 3, 2, 1, 1, 1, 2, 0, 0]
+        col_minsize = [110, 150, 100, 75, 75, 105, 90, 60, 50]
+        for i in range(9):
+            table.grid_columnconfigure(i, weight=col_wt[i], minsize=col_minsize[i])
+        for i, name in enumerate(col_names):
+            if name:
+                tk.Label(table, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w", padx=4).grid(row=0, column=i, sticky="w", pady=(8, 4))
         sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
-        for j in jobs:
-            r = tk.Frame(table, bg=C["card"], bd=1, relief="solid", pady=10, padx=8)
-            r.pack(fill="x", pady=2)
-            tk.Label(r, text=self.truncate(j["job_code"], 15), bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), width=16, anchor="w", padx=4).grid(row=0, column=0, sticky="w")
-            tk.Label(r, text=self.truncate(j["item"], 21), bg=C["card"], fg=C["txt"], font=("Segoe UI", 9), width=22, anchor="w", padx=4).grid(row=0, column=1, sticky="w")
-            tk.Label(r, text=self.truncate(j["customer_name"] or "-", 17), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), width=18, anchor="w", padx=4).grid(row=0, column=2, sticky="w")
-            tk.Label(r, text=f"RM {j['quote']:.0f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 9, "bold"), width=10, anchor="w", padx=4).grid(row=0, column=3, sticky="w")
-            tk.Label(r, text=j["status"].upper(), bg=sc.get(j["status"],"#999"), fg=C["white"], font=("Segoe UI", 8, "bold"), width=12, anchor="center", padx=4).grid(row=0, column=4, sticky="w")
-            tk.Label(r, text=self.fmt_date(j["due_date"]), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), width=14, anchor="w", padx=4).grid(row=0, column=5, sticky="w")
-            btn = tk.Frame(r, bg=C["card"])
-            btn.grid(row=0, column=6, sticky="e")
-            tk.Button(btn, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=C["card"], fg=C["pri"], font=("Segoe UI", 8, "bold"), bd=1, relief="solid", padx=6, cursor="hand2").pack(side="right", padx=2)
+        for ri, j in enumerate(jobs):
+            row_bg = C["card"] if ri % 2 == 0 else C["bg"]
+            row = ri + 1
+            table.rowconfigure(row, pad=12)
+            self.cell(table, j["job_code"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"], tooltip_text=j["job_code"]).grid(row=row, column=0, sticky="ew", padx=2)
+            self.cell(table, j["item"], font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=j["item"]).grid(row=row, column=1, sticky="ew", padx=2)
+            self.cell(table, j["customer_name"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=j["customer_name"] or "").grid(row=row, column=2, sticky="ew", padx=2)
+            self.cell(table, f"RM {float(j['quote'] or 0):.0f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=3, sticky="ew", padx=2)
+            tk.Label(table, text=j["status"].upper(), bg=sc.get(j["status"], "#999"), fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=4, sticky="ew", padx=2)
+            self.cell(table, self.fmt_date(j["due_date"]), font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"]).grid(row=row, column=5, sticky="ew", padx=2)
+            self.cell(table, j["notes"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=j["notes"] or "").grid(row=row, column=6, sticky="ew", padx=2)
             if j["status"] != "done":
-                tk.Button(btn, text=self.t("done"), command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 8, "bold"), bd=0, padx=8, pady=1, cursor="hand2").pack(side="right", padx=2)
+                tk.Button(table, text=self.t("done"), command=lambda j=j: self.mark_done(j), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=7, sticky="e", padx=1)
             if j["status"] == "done":
                 invs = self.db.get_invoices()
                 has_inv = any(i["job_id"] == j["id"] for i in invs)
                 if not has_inv:
-                    tk.Button(btn, text=self.t("pdf"), command=lambda j=j: self.download_job_pdf(j), bg="#2563EB", fg=C["white"], font=("Segoe UI", 8, "bold"), bd=0, padx=6, pady=1, cursor="hand2").pack(side="right", padx=2)
+                    tk.Button(table, text=self.t("pdf"), command=lambda j=j: self.download_job_pdf(j), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=7, sticky="e", padx=1)
+            tk.Button(table, text=self.t("edit"), command=lambda j=j: self.edit_job(j), bg=row_bg, fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=8, sticky="e", padx=1)
 
     def download_job_pdf(self, job):
         invs = self.db.get_invoices()
@@ -1551,8 +1656,9 @@ class App:
         tk.Label(ef, text=self.t("email"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         self.je["Email"] = tk.Entry(ef, font=("Segoe UI", 12), bd=1, relief="solid")
         self.je["Email"].pack(side="left", fill="x", expand=True, ipady=6)
-        for l in ["Item", "Problem", "Notes"]:
+        for l in ["Item", "Problem"]:
             self.je[l] = self.field(f, self.t(l.lower()))
+        self.je["Notes"] = self.text_area_field(f, self.t("notes"))
         self.je["Quote (RM)"] = self.number_field(f, self.t("quote"))
         self.je["Due Date"] = self.date_field(f, self.t("due_date"))
         bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
@@ -1614,7 +1720,7 @@ class App:
         for v, lbl in [("pending","Pending"),("in-progress","In-Progress"),("done","Done")]:
             tk.Radiobutton(status_frame, text=lbl, variable=status_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=8)
         due_var = self.date_field(f, self.t("due_date"), j["due_date"])
-        notes_e = self.field(f, self.t("notes"), j["notes"] or "")
+        notes_e = self.text_area_field(f, self.t("notes"), j["notes"] or "")
         bf = tk.Frame(f, bg=C["bg"], pady=15)
         bf.pack(fill="x")
         def save():
@@ -1678,14 +1784,21 @@ class App:
                 if job['problem']:
                     msg += f"Service: {job['problem']}\n"
                 msg += f"Ready since: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\n\n"
+                if job.get("due_date"):
+                    msg += f"Due Date: {self.fmt_date(job['due_date'])}\n"
+                payment_terms = self.db.get_setting("payment_terms", "")
+                if payment_terms:
+                    msg += f"{payment_terms}\n"
                 msg += f"Please pick up at your convenience.\n\n"
                 msg += f"Invoice: {inv_code}\n"
                 msg += f"Amount: RM {job['quote']:.2f}\n\n"
                 google_review = self.db.get_setting("google_review", "")
                 if google_review:
-                    review_link = google_review.rstrip("/") + "/write-review"
-                    msg += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
-                msg += f"Thank you for your business!\n{self.db.get_setting('business_name', 'Shop')}"
+                    review_link = self.get_review_link(google_review)
+                    if review_link:
+                        msg += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
+                thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+                msg += f"{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
                 url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                 try:
                     webbrowser.open(url)
@@ -1713,12 +1826,19 @@ class App:
                     pdf_path = self.generate_invoice_pdf(inv_code, job, cust)
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
                     body += f"Please find attached invoice {inv_code}.\n\n"
+                    if job.get("due_date"):
+                        body += f"Due Date: {self.fmt_date(job['due_date'])}\n"
+                    payment_terms = self.db.get_setting("payment_terms", "")
+                    if payment_terms:
+                        body += f"{payment_terms}\n"
                     body += f"Amount: RM {job['quote']:.2f}\n\n"
                     google_review = self.db.get_setting("google_review", "")
                     if google_review:
-                        review_link = google_review.rstrip("/") + "/write-review"
-                        body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
-                    body += f"Thank you!\n{biz_name}"
+                        review_link = self.get_review_link(google_review)
+                        if review_link:
+                            body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
+                    thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+                    body += f"{thank_you}\n{biz_name}"
                     mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                     try:
                         webbrowser.open(mailto)
@@ -1728,13 +1848,20 @@ class App:
                     messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_opened')} {email}\n{self.t('pdf_saved')} {pdf_path}")
                 else:
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
-                    body += f"Thank you for your business!\n\n"
+                    thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+                    body += f"{thank_you}\n\n"
                     body += f"Invoice: {inv_code}\nDate: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\nItem: {job['item']}\nService: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
+                    if job.get("due_date"):
+                        body += f"Due Date: {self.fmt_date(job['due_date'])}\n"
+                    payment_terms = self.db.get_setting("payment_terms", "")
+                    if payment_terms:
+                        body += f"{payment_terms}\n"
                     google_review = self.db.get_setting("google_review", "")
                     if google_review:
-                        review_link = google_review.rstrip("/") + "/write-review"
-                        body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
-                    body += f"Thank you!\n{biz_name}"
+                        review_link = self.get_review_link(google_review)
+                        if review_link:
+                            body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
+                    body += f"{thank_you}\n{biz_name}"
                     mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                     try:
                         webbrowser.open(mailto)
@@ -2084,12 +2211,19 @@ class App:
             if job_for_inv['problem']:
                 msg += f"Service: {job_for_inv['problem']}\n"
         msg += f"Amount: RM {inv['amount']:.2f}\n\n"
+        if job_for_inv and job_for_inv.get("due_date"):
+            msg += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
+        payment_terms = self.db.get_setting("payment_terms", "")
+        if payment_terms:
+            msg += f"{payment_terms}\n"
         msg += f"Please make payment at your convenience.\n\n"
         google_review = self.db.get_setting("google_review", "")
         if google_review:
-            review_link = google_review.rstrip("/") + "/write-review"
-            msg += f"\nWe'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
-        msg += f"Thank you!\n{self.db.get_setting('business_name', 'Shop')}"
+            review_link = self.get_review_link(google_review)
+            if review_link:
+                msg += f"\nWe'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
+        thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+        msg += f"{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
         url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
         try:
             webbrowser.open(url)
@@ -2128,12 +2262,19 @@ class App:
         if use_pdf and pdf_path:
             body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
             body += f"Please find attached invoice {inv['invoice_code']}.\n\n"
+            if job_for_inv and job_for_inv.get("due_date"):
+                body += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
+            payment_terms = self.db.get_setting("payment_terms", "")
+            if payment_terms:
+                body += f"{payment_terms}\n"
             body += f"Amount: RM {inv['amount']:.2f}\n\n"
             google_review = self.db.get_setting("google_review", "")
             if google_review:
-                review_link = google_review.rstrip("/") + "/write-review"
-                body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
-            body += f"Thank you!\n{biz_name}"
+                review_link = self.get_review_link(google_review)
+                if review_link:
+                    body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
+            thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+            body += f"{thank_you}\n{biz_name}"
             mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
             try:
                 webbrowser.open(mailto)
@@ -2143,20 +2284,27 @@ class App:
             messagebox.showinfo(self.t("done"), self.t("email_opened") + f" {email}\n{self.t('pdf_saved')} {pdf_path}")
         else:
             body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
-            body += f"Thank you for your business!\n\n"
+            thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+            body += f"{thank_you}\n\n"
             body += f"Invoice: {inv['invoice_code']}\n"
             body += f"Date: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\n"
             if job_for_inv:
                 body += f"Item: {job_for_inv['item']}\n"
                 body += f"Service: {job_for_inv['problem'] or 'N/A'}\n"
             body += f"Amount: RM {inv['amount']:.2f}\n"
+            if job_for_inv and job_for_inv.get("due_date"):
+                body += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
+            payment_terms = self.db.get_setting("payment_terms", "")
+            if payment_terms:
+                body += f"{payment_terms}\n"
             body += f"Status: UNPAID\n\n"
             body += f"Please make payment at your earliest convenience.\n\n"
             google_review = self.db.get_setting("google_review", "")
             if google_review:
-                review_link = google_review.rstrip("/") + "/write-review"
-                body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
-            body += f"Thank you!\n{biz_name}"
+                review_link = self.get_review_link(google_review)
+                if review_link:
+                    body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
+            body += f"{thank_you}\n{biz_name}"
             mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
             try:
                 webbrowser.open(mailto)
@@ -2176,6 +2324,8 @@ class App:
             pdf.set_font("Helvetica", "", 10)
             pdf.cell(0, 6, f"Invoice: {inv_code}", new_x="LMARGIN", new_y="NEXT", align="R")
             pdf.cell(0, 6, f"Date: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}", new_x="LMARGIN", new_y="NEXT", align="R")
+            if job and job.get("due_date"):
+                pdf.cell(0, 6, f"Due Date: {self.fmt_date(job['due_date'])}", new_x="LMARGIN", new_y="NEXT", align="R")
             pdf.cell(0, 6, f"Status: UNPAID", new_x="LMARGIN", new_y="NEXT", align="R")
             pdf.ln(8)
             biz_name = self.db.get_setting("business_name", "Shop")
@@ -2255,10 +2405,27 @@ class App:
             filename = f"{inv_code}.pdf"
             filepath = os.path.join(invoice_dir, filename)
             pdf.output(filepath)
+            self.cleanup_old_pdfs(invoice_dir)
             return filepath
         except Exception as e:
             messagebox.showerror("PDF Error", f"Failed to generate PDF:\n{str(e)}")
             return None
+
+    def cleanup_old_pdfs(self, invoice_dir):
+        try:
+            now = time.time()
+            cutoff = now - (7 * 24 * 60 * 60)
+            deleted = 0
+            for f in os.listdir(invoice_dir):
+                if f.endswith(".pdf"):
+                    fp = os.path.join(invoice_dir, f)
+                    if os.path.getmtime(fp) < cutoff:
+                        os.remove(fp)
+                        deleted += 1
+            if deleted > 0:
+                messagebox.showinfo(self.t("done"), f"Cleaned up {deleted} old invoice PDF(s) older than 7 days.")
+        except Exception:
+            pass
 
     def mark_paid(self, iid):
         win = tk.Toplevel(self.root)
@@ -2528,22 +2695,28 @@ class App:
         s5 = self.row(f)
         tk.Label(s5, text=self.t("startup"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         tk.Label(s5, text=self.t("open_on_startup"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        startup_folder = os.path.join(os.environ["APPDATA"], "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
+        shortcut_path = os.path.join(startup_folder, "Kerja Mudah.bat")
+        is_enabled = os.path.exists(shortcut_path)
+        status_text = "ON - App will start with Windows" if is_enabled else "OFF - App will not start with Windows"
+        status_color = C["ok"] if is_enabled else C["txt2"]
+        tk.Label(s5, text=f"Status: {status_text}", bg=C["card"], fg=status_color, font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=2)
         self.btn(s5, self.t("toggle_startup"), self.toggle_startup, bg=C["warn"]).pack(anchor="w", pady=5)
         s6 = self.row(f)
         tk.Label(s6, text=self.t("invoice_parameters"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         tk.Label(s6, text=self.t("customize_invoice"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         params = [
-            ("Invoice Title", "invoice_title", "INVOICE"),
-            ("Payment Terms", "payment_terms", "Payment due upon receipt"),
-            ("Thank You Note", "thank_you_note", "Thank you for your business!"),
-            ("Footer Text", "footer_text", ""),
+            (self.t("invoice_title"), "invoice_title", "INVOICE", 50),
+            (self.t("payment_terms"), "payment_terms", "Payment due upon receipt", 150),
+            (self.t("thank_you_note"), "thank_you_note", "Thank you for your business!", 150),
+            (self.t("footer_text"), "footer_text", "", 200),
         ]
-        for label_text, key, default_val in params:
+        for label_text, key, default_val, max_len in params:
             pf = tk.Frame(s6, bg=C["card"])
             pf.pack(fill="x", pady=3)
             val = self.db.get_setting(key, default_val)
             tk.Label(pf, text=f"{label_text}: {val if val else '(empty)'}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(side="left")
-            tk.Button(pf, text="Edit", command=lambda k=key, l=label_text: self._edit_invoice_param(k, l), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+            tk.Button(pf, text="Edit", command=lambda k=key, l=label_text, m=max_len: self._edit_invoice_param(k, l, m), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
 
     def toggle_startup(self):
         startup_folder = os.path.join(os.environ["APPDATA"], "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
@@ -2650,6 +2823,8 @@ class App:
         win.configure(bg=C["bg"])
         win.grab_set()
         tk.Label(win, text=f"{self.t('new_prefix')} {label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
+        if field == "google_review":
+            tk.Label(win, text="Paste your Google Maps business link:", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(padx=25, anchor="w")
         e = tk.Entry(win, font=("Segoe UI", 14), bd=1, relief="solid", width=25)
         e.insert(0, self.db.get_setting(field, ""))
         e.pack(pady=5)
@@ -2658,6 +2833,13 @@ class App:
             val = e.get().strip()
             if not val:
                 return messagebox.showerror(self.t("error"), self.t("cannot_empty"))
+            if field == "google_review":
+                valid = False
+                lower = val.lower()
+                if "g.page" in lower or "google.com/maps" in lower or "search.google.com/local" in lower or "maps.app.goo.gl" in lower:
+                    valid = True
+                if not valid:
+                    return messagebox.showerror(self.t("error"), "Invalid Google review link.\n\nPlease copy the link from Google Maps:\n1. Search your business on Google Maps\n2. Click 'Share' or 'Write a review'\n3. Copy the link and paste here")
             self.db.set_setting(field, val)
             win.destroy()
             messagebox.showinfo(self.t("done"), f"{label} {self.t('label_updated')}")
@@ -2665,7 +2847,7 @@ class App:
         e.bind("<Return>", lambda e: save())
         self.btn(win, self.t("save"), save, bg=C["ok"]).pack(pady=10)
 
-    def _edit_invoice_param(self, key, label):
+    def _edit_invoice_param(self, key, label, max_len=200):
         win = tk.Toplevel(self.root)
         win.title(f"Edit {label}")
         win.geometry("400x180")
