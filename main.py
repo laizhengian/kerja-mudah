@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-import os, sys, hashlib, webbrowser, urllib.parse, platform, uuid, time
+import os, sys, hashlib, webbrowser, urllib.parse, platform, uuid, time, subprocess
 from datetime import datetime, timedelta
 from fpdf import FPDF
 
@@ -1888,8 +1888,8 @@ class App:
                     thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
                     msg += f"\n{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
                     try:
-                        os.startfile(pdf_path)
-                    except (OSError, AttributeError):
+                        subprocess.run(["explorer", "/select,", pdf_path], check=False)
+                    except (OSError, FileNotFoundError):
                         try:
                             os.startfile(os.path.dirname(pdf_path))
                         except (OSError, AttributeError):
@@ -2306,8 +2306,8 @@ class App:
         if pdf_path:
             messagebox.showinfo(self.t("done"), self.t("pdf_saved") + f"\n{pdf_path}")
             try:
-                os.startfile(pdf_path)
-            except (OSError, AttributeError):
+                subprocess.run(["explorer", "/select,", pdf_path], check=False)
+            except (OSError, FileNotFoundError):
                 try:
                     os.startfile(os.path.dirname(pdf_path))
                 except (OSError, AttributeError):
@@ -2343,8 +2343,8 @@ class App:
             thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
             msg += f"\n{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
             try:
-                os.startfile(pdf_path)
-            except (OSError, AttributeError):
+                subprocess.run(["explorer", "/select,", pdf_path], check=False)
+            except (OSError, FileNotFoundError):
                 try:
                     os.startfile(os.path.dirname(pdf_path))
                 except (OSError, AttributeError):
