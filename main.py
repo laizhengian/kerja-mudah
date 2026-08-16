@@ -67,6 +67,7 @@ T = {
         "no_jobs": "No jobs yet", "no_customers": "No customers yet",
         "no_appointments": "No appointments today", "no_invoices": "No invoices yet",
         "no_results": "No results for", "type_search": "Type and press Search",
+        "showing_of": "Showing {shown} of {total} jobs",
         "results_for": "result(s) for", "export_csv": "Export to CSV",
         "business_info": "Business Info", "name": "Name", "security": "Security",
         "pin_active": "PIN: Active", "pin_not_set": "PIN: Not Set",
@@ -161,6 +162,7 @@ T = {
         "restore_complete": "Data restored! App will refresh.",
         "nothing_export": "Nothing to export",
         "exported": "Exported to",
+        "view_all": "View all {count} pickups",
         "full_backup": "Full Backup (Recommended)",
         "backup_desc": "Saves all data: customers, jobs, invoices, appointments, settings",
         "backup_now": "Backup Now",
@@ -351,6 +353,7 @@ T = {
         "no_jobs": "Tiada kerja lagi", "no_customers": "Tiada pelanggan lagi",
         "no_appointments": "Tiada temujanji hari ini", "no_invoices": "Tiada invois lagi",
         "no_results": "Tiada hasil untuk", "type_search": "Taip dan tekan Cari",
+        "showing_of": "Menunjukkan {shown} dari {total} kerja",
         "results_for": "hasil untuk", "export_csv": "Eksport ke CSV",
         "business_info": "Maklumat Perniagaan", "name": "Nama", "security": "Keselamatan",
         "pin_active": "PIN: Aktif", "pin_not_set": "PIN: Belum ditetapkan",
@@ -445,6 +448,7 @@ T = {
         "restore_complete": "Data dipulihkan! App akan segar semula.",
         "nothing_export": "Tiada data untuk dieksport",
         "exported": "Dieksport ke",
+        "view_all": "Lihat semua {count} pengambilan",
         "full_backup": "Sandaran Penuh (Disyorkan)",
         "backup_desc": "Simpan semua data: pelanggan, kerja, invois, temujanji, tetapan",
         "backup_now": "Sandar Sekarang",
@@ -635,6 +639,7 @@ T = {
         "no_jobs": "暂无工作", "no_customers": "暂无客户",
         "no_appointments": "今天没有预约", "no_invoices": "暂无发票",
         "no_results": "未找到", "type_search": "输入后点击搜索",
+        "showing_of": "显示 {shown} / {total} 个工作",
         "results_for": "个结果", "export_csv": "导出CSV",
         "business_info": "商家信息", "name": "姓名", "security": "安全",
         "pin_active": "PIN: 已启用", "pin_not_set": "PIN: 未设置",
@@ -729,6 +734,7 @@ T = {
         "restore_complete": "数据已恢复！应用将刷新。",
         "nothing_export": "没有可导出的数据",
         "exported": "已导出到",
+        "view_all": "查看全部 {count} 个待取件",
         "full_backup": "完整备份（推荐）",
         "backup_desc": "保存所有数据：客户、工作、发票、预约、设置",
         "backup_now": "立即备份",
@@ -1645,6 +1651,10 @@ class App:
                         pass
                     messagebox.showinfo(self.t("done"), self.t("whatsapp_opened") + f" +{phone}")
                 tk.Button(row, text=self.t("send_reminder"), command=send_pickup_reminder, bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
+            if len(uncollected) > 5:
+                view_all = tk.Frame(uf, bg=C["bg"])
+                view_all.pack(fill="x", pady=(8, 0))
+                tk.Button(view_all, text=self.t("view_all").format(count=len(uncollected)), command=lambda: [self.pg_jobs(), self.jobs_search_var.set("done")], bg=C["bg"], fg=C["pri"], font=("Segoe UI", 11, "bold"), bd=0, cursor="hand2").pack(anchor="w")
         self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def pg_jobs(self):
@@ -1656,6 +1666,15 @@ class App:
         sf.pack(fill="x", pady=(0, 10))
         self.jobs_search_var = tk.StringVar()
         self.search_field(sf, self.t("search_jobs"), self.jobs_search_var)
+        ff = tk.Frame(f, bg=C["bg"])
+        ff.pack(fill="x", pady=(0, 5))
+        tk.Label(ff, text=self.t("status") + ":", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 10)).pack(side="left", padx=(0, 5))
+        self.jobs_status_var = tk.StringVar(value="all")
+        status_options = ["all", "pending", "in-progress", "done"]
+        status_menu = tk.OptionMenu(ff, self.jobs_status_var, *status_options, command=lambda *a: self._filter_jobs())
+        status_menu.configure(bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), bd=1, relief="solid")
+        status_menu["menu"].configure(bg=C["card"], fg=C["txt"])
+        status_menu.pack(side="left")
         self.jobs_list_frame = tk.Frame(f, bg=C["bg"])
         self.jobs_list_frame.pack(fill="both", expand=True)
         self.jobs_search_var.trace("w", lambda *a: self._filter_jobs())
@@ -1665,13 +1684,24 @@ class App:
     def _filter_jobs(self):
         for w in self.jobs_list_frame.winfo_children():
             w.destroy()
-        jobs = self.db.get_jobs()
+        status_filter = getattr(self, 'jobs_status_var', None)
+        sval = status_filter.get() if status_filter else "all"
+        if sval and sval != "all":
+            jobs = self.db.get_jobs(status=sval)
+        else:
+            jobs = self.db.get_jobs()
         q = self.jobs_search_var.get().strip().lower()
         if q and q != self.t("search_jobs").lower():
             jobs = [j for j in jobs if q in (j["job_code"]+j["item"]+(j["problem"] or "")+(j["customer_name"] or "")+(j["notes"] or "")).lower()]
+        total = len(jobs)
+        display_jobs = jobs[:100]
         if not jobs:
             tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
             return
+        if total > 100:
+            info = tk.Frame(self.jobs_list_frame, bg=C["bg"])
+            info.pack(fill="x", padx=8, pady=(0, 5))
+            tk.Label(info, text=self.t("showing_of").format(shown=100, total=total), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(anchor="w")
         table = tk.Frame(self.jobs_list_frame, bg=C["bg"])
         table.pack(fill="both", expand=True, padx=8)
         col_names = [self.t("code"), self.t("customer"), self.t("item"), self.t("quote"), self.t("status"), self.t("due_date"), self.t("notes"), "", self.t("action")]
@@ -1683,7 +1713,7 @@ class App:
             if name:
                 tk.Label(table, text=name, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w", padx=4).grid(row=0, column=i, sticky="w", pady=(8, 4))
         sc = {"pending": C["warn"], "in-progress": "#2563EB", "done": C["ok"]}
-        for ri, j in enumerate(jobs):
+        for ri, j in enumerate(display_jobs):
             row_bg = C["card"] if ri % 2 == 0 else C["bg"]
             row = ri + 1
             table.rowconfigure(row, pad=12)
@@ -2767,7 +2797,8 @@ class App:
             messagebox.showerror(self.t("error"), self.t("restore_failed"))
 
     def do_export(self, fn, g):
-        from tkinter import filedialog, csv
+        import csv
+        from tkinter import filedialog
         data = g()
         if not data:
             return messagebox.showinfo(self.t("done"), self.t("nothing_export"))
