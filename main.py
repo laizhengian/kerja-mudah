@@ -2576,16 +2576,16 @@ class App:
             sf.columnconfigure(i, weight=1)
         st = tk.Frame(self.content, bg=C["bg"], padx=20, pady=15)
         st.pack(fill="both", expand=True)
-        tk.Label(st, text="Summary", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(anchor="w", pady=10)
+        tk.Label(st, text=self.t("summary"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(anchor="w", pady=10)
         summary = [
-            ("Total Earned (All Time)", fmt_rm(total_earned), C["ok"]),
-            ("Outstanding (Unpaid)", fmt_rm(outstanding), C["err"] if outstanding > 0 else C["ok"]),
-            ("Total Jobs", str(len(jobs)), C["txt"]),
-            ("Completed Jobs", str(len([j for j in jobs if j["status"]=="done"])), C["ok"]),
-            ("Active Jobs", str(len([j for j in jobs if j["status"]!="done"])), C["warn"]),
-            ("Total Customers", str(len(self.db.get_customers())), C["txt"]),
-            ("Paid Invoices", str(len(paid)), C["ok"]),
-            ("Unpaid Invoices", str(len(unpaid)), C["err"] if unpaid else C["ok"]),
+            (self.t("total_earned"), fmt_rm(total_earned), C["ok"]),
+            (self.t("outstanding_unpaid"), fmt_rm(outstanding), C["err"] if outstanding > 0 else C["ok"]),
+            (self.t("total_jobs"), str(len(jobs)), C["txt"]),
+            (self.t("completed_jobs"), str(len([j for j in jobs if j["status"]=="done"])), C["ok"]),
+            (self.t("active_jobs_count"), str(len([j for j in jobs if j["status"]!="done"])), C["warn"]),
+            (self.t("total_customers"), str(len(self.db.get_customers())), C["txt"]),
+            (self.t("paid_invoices_count"), str(len(paid)), C["ok"]),
+            (self.t("unpaid_invoices_count"), str(len(unpaid)), C["err"] if unpaid else C["ok"]),
         ]
         for label, value, color in summary:
             r = self.row(st)
@@ -2803,6 +2803,7 @@ class App:
             val = self.db.get_setting(key, default_val)
             tk.Label(pf, text=f"{label_text}: {val if val else self.t('empty_placeholder')}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(side="left")
             tk.Button(pf, text=self.t("edit"), command=lambda k=key, l=label_text, m=max_len: self._edit_invoice_param(k, l, m), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+        self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def toggle_startup(self):
         startup_folder = os.path.join(os.environ["APPDATA"], "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
