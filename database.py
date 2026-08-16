@@ -6,8 +6,10 @@ class Database:
     def __init__(self, db_path="data/data.db"):
         self.db_path = db_path
         os.makedirs(os.path.dirname(db_path), exist_ok=True)
-        self.conn = sqlite3.connect(self.db_path)
+        self.conn = sqlite3.connect(db_path, timeout=10)
         self.conn.row_factory = sqlite3.Row
+        self.conn.execute("PRAGMA journal_mode=WAL")
+        self.conn.execute("PRAGMA busy_timeout=5000")
         self.create_tables()
         
     def create_tables(self):
@@ -89,6 +91,15 @@ class Database:
         
         self.conn.commit()
         
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_jobs_customer_id ON jobs(customer_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_jobs_due_date ON jobs(due_date)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_invoices_job_id ON invoices(job_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_invoices_paid ON invoices(paid)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(date)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_appointments_customer_id ON appointments(customer_id)")
+        self.conn.commit()
+        
     def set_setting(self, key, value):
         self.conn.execute(
             "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
@@ -102,6 +113,10 @@ class Database:
         )
         row = cursor.fetchone()
         return row["value"] if row else default
+        
+    def remove_setting(self, key):
+        self.conn.execute("DELETE FROM settings WHERE key = ?", (key,))
+        self.conn.commit()
         
     def add_customer(self, name, phone=None, email=None, address=None, notes=None):
         cursor = self.conn.execute(
@@ -125,14 +140,19 @@ class Database:
         ).fetchone()
         
     def add_job(self, customer_id, item, problem, quote, due_date, notes=None):
-        job_code = f"JOB-{datetime.now().strftime('%Y%m%d')}-{self._next_job_number()}"
-        cursor = self.conn.execute(
-            """INSERT INTO jobs (customer_id, job_code, item, problem, quote, due_date, notes)
-               VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            (customer_id, job_code, item, problem, quote, due_date, notes)
-        )
-        self.conn.commit()
-        return cursor.lastrowid
+        for attempt in range(10):
+            job_code = f"JOB-{datetime.now().strftime('%Y%m%d')}-{self._next_job_number()}"
+            try:
+                cursor = self.conn.execute(
+                    """INSERT INTO jobs (customer_id, job_code, item, problem, quote, due_date, notes)
+                       VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                    (customer_id, job_code, item, problem, quote, due_date, notes)
+                )
+                self.conn.commit()
+                return cursor.lastrowid
+            except sqlite3.IntegrityError:
+                continue
+        raise Exception("Failed to generate unique job code after 10 attempts")
         
     def _next_job_number(self):
         today = datetime.now().strftime('%Y%m%d')
@@ -198,13 +218,18 @@ class Database:
         ).fetchall()
         
     def add_invoice(self, job_id, amount, payment_method=None):
-        invoice_code = f"INV-{datetime.now().strftime('%Y%m%d')}-{self._next_invoice_number()}"
-        cursor = self.conn.execute(
-            "INSERT INTO invoices (job_id, invoice_code, amount, payment_method) VALUES (?, ?, ?, ?)",
-            (job_id, invoice_code, amount, payment_method)
-        )
-        self.conn.commit()
-        return cursor.lastrowid
+        for attempt in range(10):
+            invoice_code = f"INV-{datetime.now().strftime('%Y%m%d')}-{self._next_invoice_number()}"
+            try:
+                cursor = self.conn.execute(
+                    "INSERT INTO invoices (job_id, invoice_code, amount, payment_method) VALUES (?, ?, ?, ?)",
+                    (job_id, invoice_code, amount, payment_method)
+                )
+                self.conn.commit()
+                return cursor.lastrowid
+            except sqlite3.IntegrityError:
+                continue
+        raise Exception("Failed to generate unique invoice code after 10 attempts")
         
     def _next_invoice_number(self):
         today = datetime.now().strftime('%Y%m%d')

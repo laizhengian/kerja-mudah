@@ -324,6 +324,7 @@ T = {
         "maps_link_paste": "Paste your Google Maps business link:",
         "invalid_google_link": "Invalid Google review link.\n\nPlease copy the link from Google Maps:\n1. Search your business on Google Maps\n2. Click 'Share' or 'Write a review'\n3. Copy the link and paste here",
         "item_label": "Item", "service_problem": "Service / Problem",
+        "wa": "WA",
     },
     "ms": {
         "app_title": "Kerja Mudah",
@@ -605,6 +606,7 @@ T = {
         "maps_link_paste": "Tampal pautan Google Maps perniagaan anda:",
         "invalid_google_link": "Pautan Google review tidak sah.\n\nSila salin pautan dari Google Maps:\n1. Cari perniagaan anda di Google Maps\n2. Klik 'Share' atau 'Write a review'\n3. Salin pautan dan tampal di sini",
         "item_label": "Barang", "service_problem": "Perkhidmatan / Masalah",
+        "wa": "WA",
     },
     "zh": {
         "app_title": "Kerja Mudah",
@@ -886,6 +888,7 @@ T = {
         "maps_link_paste": "粘贴您的Google Maps商家链接：",
         "invalid_google_link": "无效的Google评价链接。\n\n请从Google Maps复制链接：\n1. 在Google Maps搜索您的商家\n2. 点击'分享'或'撰写评价'\n3. 复制链接并粘贴到此处",
         "item_label": "物品", "service_problem": "服务/问题",
+        "wa": "WA",
     },
 }
 
@@ -1131,6 +1134,15 @@ class App:
             if len(content) > max_len:
                 text.delete("1.0", f"1.{max_len}")
         text.bind("<KeyRelease>", validate_text)
+        def filter_text(event=None):
+            content = text.get("1.0", "end-1c")
+            filtered = content.replace("<", "").replace(">", "").replace("{", "").replace("}", "").replace("[", "").replace("]", "").replace("|", "").replace("\\", "")
+            if filtered != content:
+                pos = text.index("insert")
+                text.delete("1.0", "end-1c")
+                text.insert("1.0", filtered)
+                text.mark_set("insert", pos)
+        text.bind("<KeyRelease>", filter_text)
         def get_text():
             return text.get("1.0", "end-1c")
         text.get = get_text
@@ -1593,10 +1605,10 @@ class App:
                 tk.Label(left, text=self.t("waiting_fmt").format(count=j["days_waiting"]), bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10)).pack(fill="x")
                 def send_pickup_reminder(job=j):
                     phone = (job["customer_phone"] or "").replace("+","").replace("-","").replace(" ","")
-                    if not phone.startswith("60"):
-                        phone = "60" + phone
                     if not phone:
                         return messagebox.showwarning(self.t("no_phone_short"), self.t("no_phone"))
+                    if not phone.startswith("60"):
+                        phone = "60" + phone
                     biz_name = self.db.get_setting("business_name", "Shop")
                     msg = f"Hi {job['customer_name'] or self.t('customer_fallback')},\n\n"
                     msg += f"Your {job['item']} service is ready for collection!\n\n"
@@ -1613,6 +1625,7 @@ class App:
                         pass
                     messagebox.showinfo(self.t("done"), self.t("whatsapp_opened") + f" +{phone}")
                 tk.Button(row, text=self.t("send_reminder"), command=send_pickup_reminder, bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=8, pady=2, cursor="hand2").pack(side="right")
+        self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def pg_jobs(self):
         self.clr()
@@ -1627,13 +1640,14 @@ class App:
         self.jobs_list_frame.pack(fill="both", expand=True)
         self.jobs_search_var.trace("w", lambda *a: self._filter_jobs())
         self._filter_jobs()
+        self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def _filter_jobs(self):
         for w in self.jobs_list_frame.winfo_children():
             w.destroy()
         jobs = self.db.get_jobs()
         q = self.jobs_search_var.get().strip().lower()
-        if q and q != "search jobs...":
+        if q and q != self.t("search_jobs").lower():
             jobs = [j for j in jobs if q in (j["job_code"]+j["item"]+(j["problem"] or "")+(j["customer_name"] or "")+(j["notes"] or "")).lower()]
         if not jobs:
             tk.Label(self.jobs_list_frame, text=self.t("no_jobs") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
@@ -1657,7 +1671,7 @@ class App:
             self.cell(table, j["customer_name"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=j["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
             self.cell(table, j["item"], font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=j["item"]).grid(row=row, column=2, sticky="ew", padx=2)
             self.cell(table, f"RM {float(j['quote'] or 0):.0f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=3, sticky="ew", padx=2)
-            tk.Label(table, text=j["status"].upper(), bg=sc.get(j["status"], "#999"), fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=4, sticky="ew", padx=2)
+            tk.Label(table, text=self.t(j["status"].replace("-","_")), bg=sc.get(j["status"], "#999"), fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=4, sticky="ew", padx=2)
             self.cell(table, self.fmt_date(j["due_date"]), font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"]).grid(row=row, column=5, sticky="ew", padx=2)
             self.cell(table, j["notes"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=j["notes"] or "").grid(row=row, column=6, sticky="ew", padx=2)
             if j["status"] != "done":
@@ -1726,13 +1740,15 @@ class App:
         self.je["Phone"] = tk.Entry(pf, font=("Segoe UI", 12), bd=1, relief="solid")
         self.je["Phone"].insert(0, "+60")
         self.je["Phone"].pack(side="left", fill="x", expand=True, ipady=6)
-        phone_validate = (self.root.register(lambda p: all(c.isdigit() or c in "+- " for c in p)), "%P")
+        phone_validate = (self.root.register(lambda p: all(c.isdigit() or c in "+- " for c in p) and len(p) <= 20), "%P")
         self.je["Phone"].configure(validate="key", validatecommand=phone_validate)
         ef = tk.Frame(f, bg=C["bg"])
         ef.pack(fill="x", pady=8)
         tk.Label(ef, text=self.t("email"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         self.je["Email"] = tk.Entry(ef, font=("Segoe UI", 12), bd=1, relief="solid")
         self.je["Email"].pack(side="left", fill="x", expand=True, ipady=6)
+        email_validate = (self.root.register(lambda p: all(c not in "<>(){}[]|\\" for c in p) and len(p) <= 80), "%P")
+        self.je["Email"].configure(validate="key", validatecommand=email_validate)
         for l in ["Item", "Problem"]:
             self.je[l] = self.field(f, self.t(l.lower()))
         self.je["Notes"] = self.text_area_field(f, self.t("notes"))
@@ -1971,13 +1987,14 @@ class App:
         self.cust_list_frame.pack(fill="both", expand=True)
         self.cust_search_var.trace("w", lambda *a: self._filter_custs())
         self._filter_custs()
+        self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def _filter_custs(self):
         for w in self.cust_list_frame.winfo_children():
             w.destroy()
         cs = self.db.get_customers()
         q = self.cust_search_var.get().strip().lower()
-        if q and q != "search customers...":
+        if q and q != self.t("search_customers").lower():
             cs = [c for c in cs if q in (c["name"]+(c["phone"] or "")+(c["email"] or "")).lower()]
         if not cs:
             tk.Label(self.cust_list_frame, text=self.t("no_customers") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
@@ -2062,12 +2079,13 @@ class App:
         self.appt_list_frame.pack(fill="both", expand=True)
         self.appt_search_var.trace("w", lambda *a: self._filter_appts())
         self._filter_appts()
+        self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def _filter_appts(self):
         for w in self.appt_list_frame.winfo_children():
             w.destroy()
         q = self.appt_search_var.get().strip().lower()
-        if q and q != "search appointments...":
+        if q and q != self.t("search_appointments").lower():
             appts = self.db.search_appointments(q)
             if not appts:
                 tk.Label(self.appt_list_frame, text=self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
@@ -2190,14 +2208,14 @@ class App:
         self.inv_list_frame.pack(fill="both", expand=True)
         self.inv_search_var.trace("w", lambda *a: self._filter_invs())
         self._filter_invs()
-        self._filter_invs()
+        self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def _filter_invs(self):
         for w in self.inv_list_frame.winfo_children():
             w.destroy()
         invs = self.db.get_invoices()
         q = self.inv_search_var.get().strip().lower()
-        if q and q != "search invoices...":
+        if q and q != self.t("search_invoices").lower():
             invs = [i for i in invs if q in (i["invoice_code"]+(i["customer_name"] or "")).lower()]
         if not invs:
             tk.Label(self.inv_list_frame, text=self.t("no_invoices") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
@@ -2225,7 +2243,7 @@ class App:
                 self.cell(table, inv["customer_name"] or self.t("unknown"), font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=inv["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
                 self.cell(table, f"RM {inv['amount']:.2f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["err"]).grid(row=row, column=2, sticky="ew", padx=2)
                 tk.Button(table, text=self.t("email"), command=lambda i=inv: self.send_email(i), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=3, sticky="e", padx=1)
-                tk.Button(table, text="WA", command=lambda i=inv: self.send_whatsapp(i), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=4, sticky="e", padx=1)
+                tk.Button(table, text=self.t("wa"), command=lambda i=inv: self.send_whatsapp(i), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=4, sticky="e", padx=1)
                 tk.Button(table, text=self.t("pdf"), command=lambda i=inv: self.download_inv_pdf(i), bg="#7C3AED", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=5, sticky="e", padx=1)
                 tk.Button(table, text=self.t("mark_paid"), command=lambda iid=inv["id"]: self.mark_paid(iid), bg=C["warn"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=6, sticky="e", padx=1)
         if paid:
@@ -2248,7 +2266,8 @@ class App:
                 self.cell(table2, f"RM {inv['amount']:.2f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=2, sticky="ew", padx=2)
                 method = inv["payment_method"] or "-"
                 method_bg = {"Cash": C["ok"], "E-Wallet": "#2563EB", "Card": "#7C3AED", "Transfer": C["warn"]}.get(method, C["txt3"])
-                tk.Label(table2, text=method, bg=method_bg, fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=3, sticky="ew", padx=2)
+                method_display = self.t(method.lower().replace("-","_")) if method and method != "-" else method
+                tk.Label(table2, text=method_display, bg=method_bg, fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=3, sticky="ew", padx=2)
                 tk.Label(table2, text=self.t("paid_status"), bg=C["ok"], fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=4, sticky="ew", padx=2)
 
     def download_inv_pdf(self, inv):
@@ -2261,11 +2280,14 @@ class App:
         if job and job["customer_id"]:
             cust = self.db.get_customer(job["customer_id"])
         pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job, cust)
-        messagebox.showinfo(self.t("done"), self.t("pdf_saved") + f"\n{pdf_path}")
-        try:
-            os.startfile(os.path.dirname(pdf_path))
-        except (OSError, AttributeError):
-            pass
+        if pdf_path:
+            messagebox.showinfo(self.t("done"), self.t("pdf_saved") + f"\n{pdf_path}")
+            try:
+                os.startfile(os.path.dirname(pdf_path))
+            except (OSError, AttributeError):
+                pass
+        else:
+            messagebox.showerror(self.t("error"), self.t("pdf_failed"))
 
     def send_whatsapp(self, inv):
         job = self.db.get_jobs()
@@ -2493,7 +2515,7 @@ class App:
             self.cleanup_old_pdfs(invoice_dir)
             return filepath
         except Exception as e:
-            messagebox.showerror("PDF Error", f"Failed to generate PDF:\n{str(e)}")
+            messagebox.showerror(self.t("pdf_error"), self.t("pdf_failed"))
             return None
 
     def cleanup_old_pdfs(self, invoice_dir):
@@ -2508,7 +2530,7 @@ class App:
                         os.remove(fp)
                         deleted += 1
             if deleted > 0:
-                messagebox.showinfo(self.t("done"), f"Cleaned up {deleted} old invoice PDF(s) older than 7 days.")
+                messagebox.showinfo(self.t("done"), f"{self.t('cleanup')} {deleted} {self.t('cleanup_msg')}")
         except Exception:
             pass
 
@@ -2627,7 +2649,7 @@ class App:
             for j in fj:
                 r = self.row(self.srch_r)
                 tk.Label(r, text=f"{j['job_code']} - {j['item']}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
-                tk.Label(r, text=j["status"].upper(), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), padx=10).pack(side="left")
+                tk.Label(r, text=self.t(j["status"].replace("-","_")), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), padx=10).pack(side="left")
                 tk.Label(r, text=f"{self.t('id_label')} {j['id']}", bg=C["card"], fg=C["txt3"], font=("Segoe UI", 9), padx=10).pack(side="left")
         if fc:
             tk.Label(self.srch_r, text=f"{self.t('customers_header')} ({len(fc)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
@@ -2681,7 +2703,7 @@ class App:
             shutil.copy2(db_path, fp)
             messagebox.showinfo(self.t("backup_complete"), self.t("backup_complete") + f":\n{fp}")
         except Exception as e:
-            messagebox.showerror(self.t("error"), self.t("backup_failed") + f": {e}")
+            messagebox.showerror(self.t("error"), self.t("backup_failed"))
 
     def do_restore(self):
         from tkinter import filedialog
@@ -2699,7 +2721,7 @@ class App:
             messagebox.showinfo(self.t("done"), self.t("restore_complete"))
             self.layout()
         except Exception as e:
-            messagebox.showerror(self.t("error"), self.t("restore_failed") + f": {e}")
+            messagebox.showerror(self.t("error"), self.t("restore_failed"))
 
     def do_export(self, fn, g):
         from tkinter import filedialog, csv
@@ -2718,7 +2740,7 @@ class App:
                     w.writerow([row[k] for k in keys])
             messagebox.showinfo(self.t("done"), self.t("exported") + f" {fp}")
         except Exception as e:
-            messagebox.showerror(self.t("error"), str(e))
+            messagebox.showerror(self.t("error"), self.t("nothing_export"))
 
     def pg_set(self):
         self.clr()
@@ -2822,7 +2844,7 @@ class App:
                     f.write(bat_content)
                 messagebox.showinfo(self.t("done"), self.t("startup_updated"))
         except Exception as e:
-            messagebox.showerror(self.t("error"), self.t("startup_error") + f": {e}")
+            messagebox.showerror(self.t("error"), self.t("startup_error"))
 
     def preview_invoice(self):
         win = tk.Toplevel(self.root)
@@ -2921,7 +2943,7 @@ class App:
 
     def _show_biz_edit_dialog(self, field, label):
         win = tk.Toplevel(self.root)
-        win.title(f"Edit {label}")
+        win.title(f"{self.t('edit')} {label}")
         win.geometry("350x180")
         win.configure(bg=C["bg"])
         win.grab_set()
@@ -2952,7 +2974,7 @@ class App:
 
     def _edit_invoice_param(self, key, label, max_len=200):
         win = tk.Toplevel(self.root)
-        win.title(f"Edit {label}")
+        win.title(f"{self.t('edit')} {label}")
         win.geometry("400x180")
         win.configure(bg=C["bg"])
         win.grab_set()
@@ -3019,8 +3041,7 @@ class App:
 
     def rm_pin(self):
         if messagebox.askyesno(self.t("confirm"), self.t("remove_pin_confirm")):
-            self.db.conn.execute("DELETE FROM settings WHERE key = 'pin_hash'")
-            self.db.conn.commit()
+            self.db.remove_setting("pin_hash")
             messagebox.showinfo(self.t("done"), self.t("pin_removed"))
             self.pg_set()
 
