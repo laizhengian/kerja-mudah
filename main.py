@@ -1861,7 +1861,7 @@ class App:
                 if job['problem']:
                     msg += f"Service: {job['problem']}\n"
                 msg += f"Ready since: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\n\n"
-                if job.get("due_date"):
+                if job["due_date"]:
                     msg += f"Due Date: {self.fmt_date(job['due_date'])}\n"
                 payment_terms = self.db.get_setting("payment_terms", "")
                 if payment_terms:
@@ -1903,7 +1903,7 @@ class App:
                     pdf_path = self.generate_invoice_pdf(inv_code, job, cust)
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
                     body += f"Please find attached invoice {inv_code}.\n\n"
-                    if job.get("due_date"):
+                    if job["due_date"]:
                         body += f"Due Date: {self.fmt_date(job['due_date'])}\n"
                     payment_terms = self.db.get_setting("payment_terms", "")
                     if payment_terms:
@@ -1928,7 +1928,7 @@ class App:
                     thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
                     body += f"{thank_you}\n\n"
                     body += f"Invoice: {inv_code}\nDate: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\nItem: {job['item']}\nService: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
-                    if job.get("due_date"):
+                    if job["due_date"]:
                         body += f"Due Date: {self.fmt_date(job['due_date'])}\n"
                     payment_terms = self.db.get_setting("payment_terms", "")
                     if payment_terms:
@@ -2296,7 +2296,7 @@ class App:
             if job_for_inv['problem']:
                 msg += f"Service: {job_for_inv['problem']}\n"
         msg += f"Amount: RM {inv['amount']:.2f}\n\n"
-        if job_for_inv and job_for_inv.get("due_date"):
+        if job_for_inv and job_for_inv["due_date"]:
             msg += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
         payment_terms = self.db.get_setting("payment_terms", "")
         if payment_terms:
@@ -2347,7 +2347,7 @@ class App:
         if use_pdf and pdf_path:
             body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
             body += f"Please find attached invoice {inv['invoice_code']}.\n\n"
-            if job_for_inv and job_for_inv.get("due_date"):
+            if job_for_inv and job_for_inv["due_date"]:
                 body += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
             payment_terms = self.db.get_setting("payment_terms", "")
             if payment_terms:
@@ -2377,7 +2377,7 @@ class App:
                 body += f"Item: {job_for_inv['item']}\n"
                 body += f"Service: {job_for_inv['problem'] or 'N/A'}\n"
             body += f"Amount: RM {inv['amount']:.2f}\n"
-            if job_for_inv and job_for_inv.get("due_date"):
+            if job_for_inv and job_for_inv["due_date"]:
                 body += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
             payment_terms = self.db.get_setting("payment_terms", "")
             if payment_terms:
@@ -2409,7 +2409,7 @@ class App:
             pdf.set_font("Helvetica", "", 10)
             pdf.cell(0, 6, f"Invoice: {inv_code}", new_x="LMARGIN", new_y="NEXT", align="R")
             pdf.cell(0, 6, f"Date: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}", new_x="LMARGIN", new_y="NEXT", align="R")
-            if job and job.get("due_date"):
+            if job and job["due_date"]:
                 pdf.cell(0, 6, f"Due Date: {self.fmt_date(job['due_date'])}", new_x="LMARGIN", new_y="NEXT", align="R")
             pdf.cell(0, 6, f"Status: UNPAID", new_x="LMARGIN", new_y="NEXT", align="R")
             pdf.ln(8)
