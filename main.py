@@ -156,6 +156,7 @@ T = {
         "remove_pin_confirm": "Remove PIN?",
         "cleanup": "Cleanup",
         "cleanup_msg": "old paid invoice(s) older than 7 days.",
+        "cleanup_apts_msg": "past appointment(s) automatically removed.",
         "backup_complete": "Backup Complete",
         "restore_complete": "Data restored! App will refresh.",
         "nothing_export": "Nothing to export",
@@ -439,6 +440,7 @@ T = {
         "remove_pin_confirm": "Buang PIN?",
         "cleanup": "Pembersihan",
         "cleanup_msg": "invois lama yang telah dibayar lebih 7 hari.",
+        "cleanup_apts_msg": "temujanji lepas telah dipadam secara automatik.",
         "backup_complete": "Sandaran Selesai",
         "restore_complete": "Data dipulihkan! App akan segar semula.",
         "nothing_export": "Tiada data untuk dieksport",
@@ -722,6 +724,7 @@ T = {
         "remove_pin_confirm": "删除PIN？",
         "cleanup": "清理",
         "cleanup_msg": "超过7天的已付款旧发票。",
+        "cleanup_apts_msg": "已过期的预约已自动删除。",
         "backup_complete": "备份完成",
         "restore_complete": "数据已恢复！应用将刷新。",
         "nothing_export": "没有可导出的数据",
@@ -914,6 +917,9 @@ class App:
         deleted = self.db.cleanup_old_invoices()
         if deleted > 0:
             self.root.after(100, lambda: messagebox.showinfo(self.t("cleanup"), f"{deleted} {self.t('cleanup_msg')}"))
+        deleted_apts = self.db.cleanup_old_appointments()
+        if deleted_apts > 0:
+            self.root.after(200, lambda: messagebox.showinfo(self.t("cleanup"), f"{deleted_apts} {self.t('cleanup_apts_msg')}"))
         if check_license(self.db):
             if not self.db.get_setting("setup_complete"):
                 self.wizard()

@@ -337,5 +337,12 @@ class Database:
         self.conn.commit()
         return cursor.rowcount
 
+    def cleanup_old_appointments(self):
+        """Delete appointments whose date+time has passed. Returns count deleted."""
+        now = datetime.now().strftime("%Y-%m-%d %H:%M")
+        cursor = self.conn.execute("DELETE FROM appointments WHERE date || ' ' || time < ?", (now,))
+        self.conn.commit()
+        return cursor.rowcount
+
     def close(self):
         self.conn.close()
