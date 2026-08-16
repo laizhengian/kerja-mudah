@@ -300,6 +300,30 @@ T = {
         "collected_month": "Collected this month",
         "owed_desc": "Still owed",
         "method": "Method",
+        "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu", "fri": "Fri", "sat": "Sat", "sun": "Sun",
+        "pick_date": "Pick Date", "today_btn": "Today", "pick_btn": "Pick",
+        "show": "Show", "hide": "Hide",
+        "demo_bar": "DEMO MODE - {days} days remaining | Activate with license key",
+        "waiting_fmt": "Waiting {count} day(s)",
+        "walk_in": "Walk-in", "customer_fallback": "Customer",
+        "service_label": "Service:", "ready_since": "Ready since:",
+        "due_date_label": "Due Date:", "amount_label": "Amount:",
+        "please_pickup": "Please pick up at your convenience.",
+        "invoice_label": "Invoice:", "amount_col": "Amount",
+        "payment_title": "Payment",
+        "not_set": "Not set",
+        "on_startup": "ON - App will start with Windows",
+        "off_startup": "OFF - App will not start with Windows",
+        "empty_placeholder": "(empty)",
+        "format_label": "Format:", "phone_label": "Phone:", "email_label": "Email:",
+        "walk_in_customer": "Walk-in Customer",
+        "leave_review_label": "Leave us a Google review:",
+        "google_review_link": "Google Review Link:",
+        "no_method": "No method",
+        "updated_suffix": "updated!",
+        "maps_link_paste": "Paste your Google Maps business link:",
+        "invalid_google_link": "Invalid Google review link.\n\nPlease copy the link from Google Maps:\n1. Search your business on Google Maps\n2. Click 'Share' or 'Write a review'\n3. Copy the link and paste here",
+        "item_label": "Item", "service_problem": "Service / Problem",
     },
     "ms": {
         "app_title": "Kerja Mudah",
@@ -557,6 +581,30 @@ T = {
         "collected_month": "Dikumpul bulan ini",
         "owed_desc": "Masih berhutang",
         "method": "Kaedah",
+        "mon": "Isn", "tue": "Sel", "wed": "Rab", "thu": "Kha", "fri": "Jum", "sat": "Sab", "sun": "Ahd",
+        "pick_date": "Pilih Tarikh", "today_btn": "Hari Ini", "pick_btn": "Pilih",
+        "show": "Tunjuk", "hide": "Sembunyi",
+        "demo_bar": "MOD DEMO - {days} hari lagi | Aktifkan dengan kunci lesen",
+        "waiting_fmt": "Menunggu {count} hari",
+        "walk_in": "Walk-in", "customer_fallback": "Pelanggan",
+        "service_label": "Perkhidmatan:", "ready_since": "Sedia sejak:",
+        "due_date_label": "Tarikh Akhir:", "amount_label": "Jumlah:",
+        "please_pickup": "Sila ambil pada bila-bila masa yang sesuai.",
+        "invoice_label": "Invois:", "amount_col": "Jumlah",
+        "payment_title": "Pembayaran",
+        "not_set": "Belum ditetapkan",
+        "on_startup": "ON - App akan mula bersama Windows",
+        "off_startup": "OFF - App tidak akan mula bersama Windows",
+        "empty_placeholder": "(kosong)",
+        "format_label": "Format:", "phone_label": "Telefon:", "email_label": "Emel:",
+        "walk_in_customer": "Pelanggan Walk-in",
+        "leave_review_label": "Tinggalkan Google review untuk kami:",
+        "google_review_link": "Pautan Google Review:",
+        "no_method": "Tiada kaedah",
+        "updated_suffix": "berjaya dikemaskini!",
+        "maps_link_paste": "Tampal pautan Google Maps perniagaan anda:",
+        "invalid_google_link": "Pautan Google review tidak sah.\n\nSila salin pautan dari Google Maps:\n1. Cari perniagaan anda di Google Maps\n2. Klik 'Share' atau 'Write a review'\n3. Salin pautan dan tampal di sini",
+        "item_label": "Barang", "service_problem": "Perkhidmatan / Masalah",
     },
     "zh": {
         "app_title": "Kerja Mudah",
@@ -814,6 +862,30 @@ T = {
         "collected_month": "本月收款",
         "owed_desc": "待收款",
         "method": "支付方式",
+        "mon": "周一", "tue": "周二", "wed": "周三", "thu": "周四", "fri": "周五", "sat": "周六", "sun": "周日",
+        "pick_date": "选择日期", "today_btn": "今天", "pick_btn": "选择",
+        "show": "显示", "hide": "隐藏",
+        "demo_bar": "演示模式 - 剩余{days}天 | 使用许可证密钥激活",
+        "waiting_fmt": "等待{count}天",
+        "walk_in": "散客", "customer_fallback": "客户",
+        "service_label": "服务:", "ready_since": "准备好时间:",
+        "due_date_label": "截止日期:", "amount_label": "金额:",
+        "please_pickup": "请方便时前来领取。",
+        "invoice_label": "发票:", "amount_col": "金额",
+        "payment_title": "付款",
+        "not_set": "未设置",
+        "on_startup": "开启 - 应用将在Windows启动时自动打开",
+        "off_startup": "关闭 - 应用将不在Windows启动时自动打开",
+        "empty_placeholder": "(空)",
+        "format_label": "格式:", "phone_label": "电话:", "email_label": "电邮:",
+        "walk_in_customer": "散客",
+        "leave_review_label": "请给我们留个Google评价：",
+        "google_review_link": "Google评价链接:",
+        "no_method": "无付款方式",
+        "updated_suffix": "已更新！",
+        "maps_link_paste": "粘贴您的Google Maps商家链接：",
+        "invalid_google_link": "无效的Google评价链接。\n\n请从Google Maps复制链接：\n1. 在Google Maps搜索您的商家\n2. 点击'分享'或'撰写评价'\n3. 复制链接并粘贴到此处",
+        "item_label": "物品", "service_problem": "服务/问题",
     },
 }
 
@@ -1137,11 +1209,11 @@ class App:
         def toggle_show():
             if e.cget("show") == "*":
                 e.configure(show="")
-                show_btn.configure(text="Hide")
+                show_btn.configure(text=self.t("hide"))
             else:
                 e.configure(show="*")
-                show_btn.configure(text="Show")
-        show_btn = tk.Button(f, text="Show", command=toggle_show, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), bd=1, relief="solid", padx=6, cursor="hand2")
+                show_btn.configure(text=self.t("show"))
+        show_btn = tk.Button(f, text=self.t("show"), command=toggle_show, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), bd=1, relief="solid", padx=6, cursor="hand2")
         show_btn.pack(side="left", padx=4)
         return e
 
@@ -1198,7 +1270,7 @@ class App:
         var = DateStr(year_var, month_var, day_var)
         def show_cal():
             win = tk.Toplevel(self.root)
-            win.title("Pick Date")
+            win.title(self.t("pick_date"))
             win.geometry("280x320")
             win.configure(bg=C["bg"])
             win.grab_set()
@@ -1223,7 +1295,7 @@ class App:
                 tk.Button(hdr, text=">", command=lambda: change_month(1), bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold"), bd=0, padx=8, cursor="hand2").pack(side="right")
                 days_frame = tk.Frame(cal_frame, bg=C["bg"])
                 days_frame.pack(fill="x")
-                for d in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]:
+                for d in [self.t("mon"), self.t("tue"), self.t("wed"), self.t("thu"), self.t("fri"), self.t("sat"), self.t("sun")]:
                     tk.Label(days_frame, text=d, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9, "bold"), width=4).pack(side="left")
                 cal = calendar.monthcalendar(current.year, current.month)
                 for week in cal:
@@ -1240,11 +1312,11 @@ class App:
                             fg = C["white"] if is_selected else C["txt"]
                             b = tk.Button(week_frame, text=str(day), bg=bg, fg=fg, font=("Segoe UI", 10, "bold" if is_today else ""), bd=0, width=4, cursor="hand2", command=lambda d=day_str, w=win: [var.set(d), w.destroy()])
                             b.pack(side="left")
-                tk.Button(cal_frame, text="Today", command=lambda: [var.set(datetime.now().strftime("%Y-%m-%d")), win.destroy()], bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), bd=1, relief="solid", padx=15, pady=5, cursor="hand2").pack(pady=10)
+                tk.Button(cal_frame, text=self.t("today_btn"), command=lambda: [var.set(datetime.now().strftime("%Y-%m-%d")), win.destroy()], bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), bd=1, relief="solid", padx=15, pady=5, cursor="hand2").pack(pady=10)
             cal_frame = tk.Frame(win, bg=C["bg"])
             cal_frame.pack(fill="both", expand=True, padx=10, pady=10)
             draw_calendar()
-        tk.Button(frame, text="Pick", command=show_cal, bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="left", padx=5)
+        tk.Button(frame, text=self.t("pick_btn"), command=show_cal, bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="left", padx=5)
         return var
 
     def time_field(self, parent, label, default=None):
@@ -1327,11 +1399,11 @@ class App:
         def toggle_pin():
             if self.pin_e.cget("show") == "*":
                 self.pin_e.configure(show="")
-                pin_btn.configure(text="Hide")
+                pin_btn.configure(text=self.t("hide"))
             else:
                 self.pin_e.configure(show="*")
-                pin_btn.configure(text="Show")
-        pin_btn = tk.Button(pf, text="Show", command=toggle_pin, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), bd=1, relief="solid", padx=8, cursor="hand2")
+                pin_btn.configure(text=self.t("show"))
+        pin_btn = tk.Button(pf, text=self.t("show"), command=toggle_pin, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10), bd=1, relief="solid", padx=8, cursor="hand2")
         pin_btn.pack(side="left", padx=8)
         self.pin_e.focus()
         self.pin_e.bind("<Return>", lambda e: self.chk_pin())
@@ -1350,11 +1422,11 @@ class App:
         c = tk.Frame(self.root, bg=C["bg"])
         c.pack(expand=True, fill="both")
         hwid = get_hwid()
-        tk.Label(c, text="License Activation Required", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 24, "bold")).pack(pady=8)
-        tk.Label(c, text="Enter your license key to activate", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(pady=5)
+        tk.Label(c, text=self.t("license_activation"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 24, "bold")).pack(pady=8)
+        tk.Label(c, text=self.t("enter_license_key"), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(pady=5)
         hwid_frame = tk.Frame(c, bg=C["card"], bd=1, relief="solid", padx=15, pady=10)
         hwid_frame.pack(pady=15, padx=40, fill="x")
-        tk.Label(hwid_frame, text="Your Hardware ID (send this to get a key):", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w")
+        tk.Label(hwid_frame, text=self.t("your_hwid"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w")
         hwid_row = tk.Frame(hwid_frame, bg=C["card"])
         hwid_row.pack(fill="x", pady=5)
         tk.Label(hwid_row, text=hwid, bg=C["card"], fg=C["pri"], font=("Consolas", 16, "bold")).pack(side="left")
@@ -1362,7 +1434,7 @@ class App:
             self.root.clipboard_clear()
             self.root.clipboard_append(hwid)
             messagebox.showinfo(self.t("done"), self.t("hwid_copied"))
-        copy_btn = tk.Button(hwid_row, text="Copy", command=copy_hwid, bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=12, pady=4, cursor="hand2")
+        copy_btn = tk.Button(hwid_row, text=self.t("copy"), command=copy_hwid, bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=12, pady=4, cursor="hand2")
         copy_btn.pack(side="right")
         copy_btn.bind("<Enter>", lambda e: copy_btn.configure(bg=C["pri_h"]))
         copy_btn.bind("<Leave>", lambda e: copy_btn.configure(bg=C["pri"]))
@@ -1384,10 +1456,10 @@ class App:
                 else:
                     self.layout()
             else:
-                messagebox.showerror("Invalid Key", "This license key is not valid.")
+                messagebox.showerror(self.t("error"), self.t("invalid_key"))
         def try_demo():
             if not is_demo(self.db):
-                messagebox.showerror("Demo Expired", "Your 7-day demo has expired.\nPlease activate with a license key to continue.")
+                messagebox.showerror(self.t("error"), self.t("demo_expired"))
                 return
             for w in self.root.winfo_children():
                 w.destroy()
@@ -1395,14 +1467,14 @@ class App:
                 self.wizard()
             else:
                 self.layout()
-        b = tk.Button(bf, text="Activate", command=activate, bg=C["pri"], fg=C["white"], font=("Segoe UI", 12, "bold"), bd=0, padx=30, pady=10, cursor="hand2")
+        b = tk.Button(bf, text=self.t("activate"), command=activate, bg=C["pri"], fg=C["white"], font=("Segoe UI", 12, "bold"), bd=0, padx=30, pady=10, cursor="hand2")
         b.pack(side="left", padx=5)
         b.bind("<Enter>", lambda e: b.configure(bg=C["pri_h"]))
         b.bind("<Leave>", lambda e: b.configure(bg=C["pri"]))
-        b2 = tk.Button(bf, text="Try Demo (7 days)", command=try_demo, bg=C["card"], fg=C["txt"], font=("Segoe UI", 12), bd=1, relief="solid", padx=20, pady=10, cursor="hand2")
+        b2 = tk.Button(bf, text=self.t("try_demo"), command=try_demo, bg=C["card"], fg=C["txt"], font=("Segoe UI", 12), bd=1, relief="solid", padx=20, pady=10, cursor="hand2")
         b2.pack(side="left", padx=5)
-        tk.Label(c, text="Demo mode: limited to 10 jobs, 7 day trial", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(pady=10)
-        tk.Label(c, text="Contact seller to get your license key", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack()
+        tk.Label(c, text=self.t("demo_mode"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(pady=10)
+        tk.Label(c, text=self.t("contact_seller"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack()
 
     def layout(self):
         for w in self.root.winfo_children():
@@ -1425,7 +1497,7 @@ class App:
             demo_bar = tk.Frame(main_frame, bg="#FEF3C7", height=30)
             demo_bar.pack(fill="x", side="top")
             demo_bar.pack_propagate(False)
-            tk.Label(demo_bar, text=f"DEMO MODE - {days_left} days remaining | Activate with license key", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10, "bold")).pack(expand=True)
+            tk.Label(demo_bar, text=self.t("demo_bar").format(days=days_left), bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10, "bold")).pack(expand=True)
         self.content_canvas = tk.Canvas(main_frame, bg=C["bg"], highlightthickness=0, bd=0)
         self.content_scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=self.content_canvas.yview)
         self.content = tk.Frame(self.content_canvas, bg=C["bg"])
@@ -1491,9 +1563,9 @@ class App:
         rems = []
         for j in jobs:
             if j["status"] == "in-progress" and j["due_date"] and j["due_date"] <= today:
-                rems.append(f"{j['job_code']}: {j['item']} - Ready")
+                rems.append(f"{j['job_code']}: {j['item']} - {self.t('ready')}")
         for a in self.db.get_appointments(today):
-            rems.append(f"{a['time']} - {a['customer_name'] or 'Walk-in'}")
+            rems.append(f"{a['time']} - {a['customer_name'] or self.t('walk_in')}")
         if rems:
             tk.Label(rf, text=self.t("reminders"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=8)
             for r in rems[:5]:
@@ -1517,8 +1589,8 @@ class App:
                 row.pack(fill="x", pady=3)
                 left = tk.Frame(row, bg="#FEF3C7")
                 left.pack(side="left", fill="x", expand=True)
-                tk.Label(left, text=f"{j['customer_name'] or 'Unknown'} - {j['item']}", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 11), anchor="w").pack(fill="x")
-                tk.Label(left, text=f"Waiting {j['days_waiting']} day(s)", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10)).pack(fill="x")
+                tk.Label(left, text=f"{j['customer_name'] or self.t('unknown')} - {j['item']}", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 11), anchor="w").pack(fill="x")
+                tk.Label(left, text=self.t("waiting_fmt").format(count=j["days_waiting"]), bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10)).pack(fill="x")
                 def send_pickup_reminder(job=j):
                     phone = (job["customer_phone"] or "").replace("+","").replace("-","").replace(" ","")
                     if not phone.startswith("60"):
@@ -1526,7 +1598,7 @@ class App:
                     if not phone:
                         return messagebox.showwarning(self.t("no_phone_short"), self.t("no_phone"))
                     biz_name = self.db.get_setting("business_name", "Shop")
-                    msg = f"Hi {job['customer_name'] or 'Customer'},\n\n"
+                    msg = f"Hi {job['customer_name'] or self.t('customer_fallback')},\n\n"
                     msg += f"Your {job['item']} service is ready for collection!\n\n"
                     msg += f"Please pick up at your convenience.\n\n"
                     google_review = self.db.get_setting("google_review", "")
@@ -1550,7 +1622,7 @@ class App:
         sf = tk.Frame(f, bg=C["bg"])
         sf.pack(fill="x", pady=(0, 10))
         self.jobs_search_var = tk.StringVar()
-        self.search_field(sf, "Search jobs...", self.jobs_search_var)
+        self.search_field(sf, self.t("search_jobs"), self.jobs_search_var)
         self.jobs_list_frame = tk.Frame(f, bg=C["bg"])
         self.jobs_list_frame.pack(fill="both", expand=True)
         self.jobs_search_var.trace("w", lambda *a: self._filter_jobs())
@@ -1722,7 +1794,7 @@ class App:
         status_frame.pack(fill="x", pady=8)
         tk.Label(status_frame, text=self.t("status"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         status_var = tk.StringVar(value=j["status"])
-        for v, lbl in [("pending","Pending"),("in-progress","In-Progress"),("done","Done")]:
+        for v, lbl in [("pending",self.t("pending")),("in-progress",self.t("in_progress")),("done",self.t("done"))]:
             tk.Radiobutton(status_frame, text=lbl, variable=status_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=8)
         due_var = self.date_field(f, self.t("due_date"), j["due_date"])
         notes_e = self.text_area_field(f, self.t("notes"), j["notes"] or "")
@@ -1894,7 +1966,7 @@ class App:
         sf = tk.Frame(f, bg=C["bg"])
         sf.pack(fill="x", pady=(0,10))
         self.cust_search_var = tk.StringVar()
-        self.search_field(sf, "Search customers...", self.cust_search_var)
+        self.search_field(sf, self.t("search_customers"), self.cust_search_var)
         self.cust_list_frame = tk.Frame(f, bg=C["bg"])
         self.cust_list_frame.pack(fill="both", expand=True)
         self.cust_search_var.trace("w", lambda *a: self._filter_custs())
@@ -1985,7 +2057,7 @@ class App:
         sf = tk.Frame(f, bg=C["bg"])
         sf.pack(fill="x", pady=(0,10))
         self.appt_search_var = tk.StringVar()
-        self.search_field(sf, "Search appointments...", self.appt_search_var)
+        self.search_field(sf, self.t("search_appointments"), self.appt_search_var)
         self.appt_list_frame = tk.Frame(f, bg=C["bg"])
         self.appt_list_frame.pack(fill="both", expand=True)
         self.appt_search_var.trace("w", lambda *a: self._filter_appts())
@@ -2113,7 +2185,7 @@ class App:
         sf = tk.Frame(f, bg=C["bg"])
         sf.pack(fill="x", pady=(0,10))
         self.inv_search_var = tk.StringVar()
-        self.search_field(sf, "Search invoices...", self.inv_search_var)
+        self.search_field(sf, self.t("search_invoices"), self.inv_search_var)
         self.inv_list_frame = tk.Frame(f, bg=C["bg"])
         self.inv_list_frame.pack(fill="both", expand=True)
         self.inv_search_var.trace("w", lambda *a: self._filter_invs())
@@ -2150,7 +2222,7 @@ class App:
                 row = ri + 1
                 table.rowconfigure(row, pad=12)
                 self.cell(table, inv["invoice_code"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=0, sticky="ew", padx=2)
-                self.cell(table, inv["customer_name"] or "Unknown", font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=inv["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
+                self.cell(table, inv["customer_name"] or self.t("unknown"), font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=inv["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
                 self.cell(table, f"RM {inv['amount']:.2f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["err"]).grid(row=row, column=2, sticky="ew", padx=2)
                 tk.Button(table, text=self.t("email"), command=lambda i=inv: self.send_email(i), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=3, sticky="e", padx=1)
                 tk.Button(table, text="WA", command=lambda i=inv: self.send_whatsapp(i), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=4, sticky="e", padx=1)
@@ -2172,12 +2244,12 @@ class App:
                 row = ri + 1
                 table2.rowconfigure(row, pad=12)
                 self.cell(table2, inv["invoice_code"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=0, sticky="ew", padx=2)
-                self.cell(table2, inv["customer_name"] or "Unknown", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=inv["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
+                self.cell(table2, inv["customer_name"] or self.t("unknown"), font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=inv["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
                 self.cell(table2, f"RM {inv['amount']:.2f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=2, sticky="ew", padx=2)
                 method = inv["payment_method"] or "-"
                 method_bg = {"Cash": C["ok"], "E-Wallet": "#2563EB", "Card": "#7C3AED", "Transfer": C["warn"]}.get(method, C["txt3"])
                 tk.Label(table2, text=method, bg=method_bg, fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=3, sticky="ew", padx=2)
-                tk.Label(table2, text="PAID", bg=C["ok"], fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=4, sticky="ew", padx=2)
+                tk.Label(table2, text=self.t("paid_status"), bg=C["ok"], fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=4, sticky="ew", padx=2)
 
     def download_inv_pdf(self, inv):
         job = None
@@ -2442,7 +2514,7 @@ class App:
 
     def mark_paid(self, iid):
         win = tk.Toplevel(self.root)
-        win.title("Payment")
+        win.title(self.t("payment_title"))
         win.geometry("280x220")
         win.configure(bg=C["bg"])
         tk.Label(win, text=self.t("how_paid"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
@@ -2662,21 +2734,21 @@ class App:
             tk.Button(r, text=self.t("edit"), command=cmd, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
         s_gr = self.row(f)
         tk.Label(s_gr, text=self.t("google_review"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
-        tk.Label(s_gr, text="Add your Google Maps link to invoices", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
+        tk.Label(s_gr, text=self.t("add_google_maps"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         gr_val = self.db.get_setting("google_review", "")
         gr_frame = tk.Frame(s_gr, bg=C["card"])
         gr_frame.pack(fill="x", pady=5)
-        gr_display = gr_val if gr_val else "Not set"
-        tk.Label(gr_frame, text=f"Maps Link: {gr_display}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
+        gr_display = gr_val if gr_val else self.t("not_set")
+        tk.Label(gr_frame, text=f"{self.t('maps_link_label')} {gr_display}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11)).pack(side="left")
         tk.Button(gr_frame, text=self.t("edit"), command=self.edit_google_review, bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
-        tk.Label(s_gr, text="How to get your Google Maps link:", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(10,2))
-        tk.Label(s_gr, text="1. Open Google Maps (google.com/maps)", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="2. Search for your business name", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="3. Click on your business", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="4. Click the 'Share' button (under photos)", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
-        tk.Label(s_gr, text="5. Click 'Copy link' and paste it in Edit above", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text=self.t("google_maps_instructions"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(10,2))
+        tk.Label(s_gr, text=self.t("google_maps_step1"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text=self.t("google_maps_step2"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text=self.t("google_maps_step3"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text=self.t("google_maps_step4"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
+        tk.Label(s_gr, text=self.t("google_maps_step5"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 9), anchor="w").pack(fill="x")
         tk.Label(s_gr, text="", bg=C["card"], font=("Segoe UI", 6)).pack()
-        tk.Label(s_gr, text="Example link format:", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(5,2))
+        tk.Label(s_gr, text=self.t("example_link"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(5,2))
         tk.Label(s_gr, text="https://maps.google.com/?cid=123456789", bg=C["card"], fg="#2563EB", font=("Segoe UI", 9), anchor="w").pack(fill="x")
         s2 = self.row(f)
         tk.Label(s2, text=self.t("security"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
@@ -2705,16 +2777,16 @@ class App:
         tk.Radiobutton(ifr, text=self.t("text_plain"), variable=self.inv_fmt_var, value="text", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
         tk.Radiobutton(ifr, text=self.t("pdf_professional"), variable=self.inv_fmt_var, value="pdf", bg=C["card"], font=("Segoe UI", 11)).pack(side="left", padx=10)
         self.btn(s_inv, self.t("save"), self.save_inv_fmt, bg=C["ok"]).pack(anchor="w", pady=5)
-        self.btn(s_inv, "Preview Invoice", self.preview_invoice, bg="#2563EB").pack(anchor="w", pady=5)
+        self.btn(s_inv, self.t("preview_invoice"), self.preview_invoice, bg="#2563EB").pack(anchor="w", pady=5)
         s5 = self.row(f)
         tk.Label(s5, text=self.t("startup"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         tk.Label(s5, text=self.t("open_on_startup"), bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         startup_folder = os.path.join(os.environ["APPDATA"], "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
         shortcut_path = os.path.join(startup_folder, "Kerja Mudah.bat")
         is_enabled = os.path.exists(shortcut_path)
-        status_text = "ON - App will start with Windows" if is_enabled else "OFF - App will not start with Windows"
+        status_text = self.t("on_startup") if is_enabled else self.t("off_startup")
         status_color = C["ok"] if is_enabled else C["txt2"]
-        tk.Label(s5, text=f"Status: {status_text}", bg=C["card"], fg=status_color, font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=2)
+        tk.Label(s5, text=f"{self.t('status')}: {status_text}", bg=C["card"], fg=status_color, font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=2)
         self.btn(s5, self.t("toggle_startup"), self.toggle_startup, bg=C["warn"]).pack(anchor="w", pady=5)
         s6 = self.row(f)
         tk.Label(s6, text=self.t("invoice_parameters"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
@@ -2729,8 +2801,8 @@ class App:
             pf = tk.Frame(s6, bg=C["card"])
             pf.pack(fill="x", pady=3)
             val = self.db.get_setting(key, default_val)
-            tk.Label(pf, text=f"{label_text}: {val if val else '(empty)'}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(side="left")
-            tk.Button(pf, text="Edit", command=lambda k=key, l=label_text, m=max_len: self._edit_invoice_param(k, l, m), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+            tk.Label(pf, text=f"{label_text}: {val if val else self.t('empty_placeholder')}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(side="left")
+            tk.Button(pf, text=self.t("edit"), command=lambda k=key, l=label_text, m=max_len: self._edit_invoice_param(k, l, m), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
 
     def toggle_startup(self):
         startup_folder = os.path.join(os.environ["APPDATA"], "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
@@ -2828,11 +2900,11 @@ class App:
 
     def _verify_pin_for_edit(self):
         win = tk.Toplevel(self.root)
-        win.title("Verify PIN")
+        win.title(self.t("verify"))
         win.geometry("300x180")
         win.configure(bg=C["bg"])
         win.grab_set()
-        tk.Label(win, text="Enter PIN to edit", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
+        tk.Label(win, text=self.t("enter_pin_to_edit"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
         pin_e = tk.Entry(win, font=("Segoe UI", 14), bd=1, relief="solid", width=10, justify="center", show="*")
         pin_e.pack(pady=5)
         pin_e.focus()
@@ -2854,7 +2926,7 @@ class App:
         win.grab_set()
         tk.Label(win, text=f"{self.t('new_prefix')} {label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
         if field == "google_review":
-            tk.Label(win, text="Paste your Google Maps business link:", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(padx=25, anchor="w")
+            tk.Label(win, text=self.t("maps_link_paste"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(padx=25, anchor="w")
         e = tk.Entry(win, font=("Segoe UI", 14), bd=1, relief="solid", width=25)
         e.insert(0, self.db.get_setting(field, ""))
         e.pack(pady=5)
@@ -2869,7 +2941,7 @@ class App:
                 if "g.page" in lower or "google.com/maps" in lower or "search.google.com/local" in lower or "maps.app.goo.gl" in lower:
                     valid = True
                 if not valid:
-                    return messagebox.showerror(self.t("error"), "Invalid Google review link.\n\nPlease copy the link from Google Maps:\n1. Search your business on Google Maps\n2. Click 'Share' or 'Write a review'\n3. Copy the link and paste here")
+                    return messagebox.showerror(self.t("error"), self.t("invalid_google_link"))
             self.db.set_setting(field, val)
             win.destroy()
             messagebox.showinfo(self.t("done"), f"{label} {self.t('label_updated')}")
@@ -2891,7 +2963,7 @@ class App:
         def save():
             self.db.set_setting(key, e.get().strip())
             win.destroy()
-            messagebox.showinfo(self.t("done"), f"{label} updated")
+            messagebox.showinfo(self.t("done"), f"{label} {self.t('updated_suffix')}")
             self.pg_set()
         e.bind("<Return>", lambda e: save())
         self.btn(win, self.t("save"), save, bg=C["ok"]).pack(pady=10)
