@@ -2825,7 +2825,8 @@ class App:
             val = self.db.get_setting(key, default_val)
             tk.Label(pf, text=f"{label_text}: {val if val else self.t('empty_placeholder')}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(side="left")
             tk.Button(pf, text=self.t("edit"), command=lambda k=key, l=label_text, m=max_len: self._edit_invoice_param(k, l, m), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
-        self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
+        self.content.update_idletasks()
+        self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all"))
 
     def toggle_startup(self):
         startup_folder = os.path.join(os.environ["APPDATA"], "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
@@ -3050,7 +3051,6 @@ class App:
         self.db.set_setting("invoice_format", fmt)
         messagebox.showinfo(self.t("done"), self.t("invoice_format_set") + f" {fmt.upper()}")
         self.pg_set()
-        self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def change_lang(self):
         if getattr(self, '_changing_lang', False):
