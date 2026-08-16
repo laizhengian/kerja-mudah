@@ -1129,22 +1129,20 @@ class App:
         text.pack(side="left", fill="x", expand=True, ipady=4)
         if default:
             text.insert("1.0", default)
-        def validate_text(event=None):
-            content = text.get("1.0", "end-1c")
-            if len(content) > max_len:
-                text.delete("1.0", f"1.{max_len}")
-        text.bind("<KeyRelease>", validate_text)
-        def filter_text(event=None):
-            content = text.get("1.0", "end-1c")
+        _orig_get = text.get
+        def get_text():
+            return _orig_get("1.0", "end-1c")
+        def on_key_release(event=None):
+            content = get_text()
             filtered = content.replace("<", "").replace(">", "").replace("{", "").replace("}", "").replace("[", "").replace("]", "").replace("|", "").replace("\\", "")
             if filtered != content:
                 pos = text.index("insert")
                 text.delete("1.0", "end-1c")
                 text.insert("1.0", filtered)
                 text.mark_set("insert", pos)
-        text.bind("<KeyRelease>", filter_text)
-        def get_text():
-            return text.get("1.0", "end-1c")
+            if len(get_text()) > max_len:
+                text.delete("1.0", f"1.{max_len}")
+        text.bind("<KeyRelease>", on_key_release)
         text.get = get_text
         return text
 
