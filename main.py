@@ -177,6 +177,7 @@ T = {
         "opening_whatsapp": "Opening WhatsApp for",
         "invoice_created": "Invoice created!",
         "pdf_saved": "Invoice PDF saved to:",
+        "pdf_opened": "PDF invoice opened. Drag it into WhatsApp to send.",
         "job_saved": "Job saved",
         "job_updated": "Job updated",
         "customer_updated": "Customer updated",
@@ -459,6 +460,7 @@ T = {
         "opening_whatsapp": "Membuka WhatsApp untuk",
         "invoice_created": "Invois dicipta!",
         "pdf_saved": "PDF invois disimpan ke:",
+        "pdf_opened": "PDF invois dibuka. Seret ke WhatsApp untuk hantar.",
         "job_saved": "Kerja disimpan",
         "job_updated": "Kerja dikemaskini",
         "customer_updated": "Pelanggan dikemaskini",
@@ -741,6 +743,7 @@ T = {
         "opening_whatsapp": "正在打开WhatsApp",
         "invoice_created": "发票已创建！",
         "pdf_saved": "发票PDF已保存到：",
+        "pdf_opened": "PDF发票已打开。拖入WhatsApp发送。",
         "job_saved": "工作已保存",
         "job_updated": "工作已更新",
         "customer_updated": "客户已更新",
@@ -1870,33 +1873,46 @@ class App:
             if use_pdf:
                 pdf_path = self.generate_invoice_pdf(inv_code, job, cust)
             if phone:
-                msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
-                msg += f"Your {job['item']} service is ready for collection!\n\n"
-                if job['problem']:
-                    msg += f"Service: {job['problem']}\n"
-                msg += f"Ready since: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\n\n"
-                if job["due_date"]:
-                    msg += f"Due Date: {self.fmt_date(job['due_date'])}\n"
-                payment_terms = self.db.get_setting("payment_terms", "")
-                if payment_terms:
-                    msg += f"{payment_terms}\n"
-                msg += f"Please pick up at your convenience.\n\n"
-                msg += f"Invoice: {inv_code}\n"
-                msg += f"Amount: RM {job['quote']:.2f}\n\n"
-                google_review = self.db.get_setting("google_review", "")
-                if google_review:
-                    review_link = self.get_review_link(google_review)
-                    if review_link:
-                        msg += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
-                thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
-                msg += f"{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
+                if use_pdf and pdf_path:
+                    msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
+                    msg += f"Your {job['item']} service is ready for collection!\n\n"
+                    msg += f"Invoice: {inv_code}\n"
+                    msg += f"Amount: RM {job['quote']:.2f}\n"
+                    msg += f"Please find the attached PDF invoice.\n"
+                    thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+                    msg += f"\n{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
+                    try:
+                        os.startfile(pdf_path)
+                    except (OSError, AttributeError):
+                        pass
+                else:
+                    msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
+                    msg += f"Your {job['item']} service is ready for collection!\n\n"
+                    if job['problem']:
+                        msg += f"Service: {job['problem']}\n"
+                    msg += f"Ready since: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\n\n"
+                    if job["due_date"]:
+                        msg += f"Due Date: {self.fmt_date(job['due_date'])}\n"
+                    payment_terms = self.db.get_setting("payment_terms", "")
+                    if payment_terms:
+                        msg += f"{payment_terms}\n"
+                    msg += f"Please pick up at your convenience.\n\n"
+                    msg += f"Invoice: {inv_code}\n"
+                    msg += f"Amount: RM {job['quote']:.2f}\n\n"
+                    google_review = self.db.get_setting("google_review", "")
+                    if google_review:
+                        review_link = self.get_review_link(google_review)
+                        if review_link:
+                            msg += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
+                    thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+                    msg += f"{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
                 url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
                 try:
                     webbrowser.open(url)
                 except (webbrowser.Error, OSError):
                     pass
-                if use_pdf:
-                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('opening_whatsapp')} +{phone}\n{self.t('pdf_saved')} {pdf_path}")
+                if use_pdf and pdf_path:
+                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('opening_whatsapp')} +{phone}\n{self.t('pdf_opened')}")
                 else:
                     messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('opening_whatsapp')} +{phone}")
             else:
@@ -2308,38 +2324,45 @@ class App:
         pdf_path = None
         if use_pdf:
             pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job_for_inv, cust)
-        msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
-        msg += f"This is a friendly reminder for your unpaid invoice.\n\n"
-        msg += f"Invoice: {inv['invoice_code']}\n"
-        if job_for_inv:
-            msg += f"Item: {job_for_inv['item']}\n"
-            if job_for_inv['problem']:
-                msg += f"Service: {job_for_inv['problem']}\n"
-        msg += f"Amount: RM {inv['amount']:.2f}\n\n"
-        if job_for_inv and job_for_inv["due_date"]:
-            msg += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
-        payment_terms = self.db.get_setting("payment_terms", "")
-        if payment_terms:
-            msg += f"{payment_terms}\n"
-        msg += f"Please make payment at your convenience.\n\n"
-        google_review = self.db.get_setting("google_review", "")
-        if google_review:
-            review_link = self.get_review_link(google_review)
-            if review_link:
-                msg += f"\nWe'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
-        thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
-        msg += f"{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
+        if use_pdf and pdf_path:
+            msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
+            msg += f"Invoice {inv['invoice_code']} - RM {inv['amount']:.2f}\n"
+            msg += f"Please find the attached PDF invoice.\n"
+            thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+            msg += f"\n{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
+            try:
+                os.startfile(pdf_path)
+            except (OSError, AttributeError):
+                pass
+        else:
+            msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
+            msg += f"This is a friendly reminder for your unpaid invoice.\n\n"
+            msg += f"Invoice: {inv['invoice_code']}\n"
+            if job_for_inv:
+                msg += f"Item: {job_for_inv['item']}\n"
+                if job_for_inv['problem']:
+                    msg += f"Service: {job_for_inv['problem']}\n"
+            msg += f"Amount: RM {inv['amount']:.2f}\n\n"
+            if job_for_inv and job_for_inv["due_date"]:
+                msg += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
+            payment_terms = self.db.get_setting("payment_terms", "")
+            if payment_terms:
+                msg += f"{payment_terms}\n"
+            msg += f"Please make payment at your convenience.\n\n"
+            google_review = self.db.get_setting("google_review", "")
+            if google_review:
+                review_link = self.get_review_link(google_review)
+                if review_link:
+                    msg += f"\nWe'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
+            thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
+            msg += f"{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
         url = f"https://wa.me/{phone}?text={urllib.parse.quote(msg)}"
         try:
             webbrowser.open(url)
         except (webbrowser.Error, OSError):
             pass
         if use_pdf and pdf_path:
-            try:
-                os.startfile(os.path.dirname(pdf_path))
-            except (OSError, AttributeError):
-                pass
-            messagebox.showinfo(self.t("done"), self.t("opening_whatsapp") + f" +{phone}\n{self.t('pdf_saved')} {pdf_path}")
+            messagebox.showinfo(self.t("done"), self.t("opening_whatsapp") + f" +{phone}\n{self.t('pdf_opened')}")
         else:
             messagebox.showinfo(self.t("done"), self.t("opening_whatsapp") + f" +{phone}")
 
