@@ -2866,9 +2866,9 @@ class App:
             tk.Label(scroll_frame, text=payment_terms, bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10), anchor="w").pack(fill="x", padx=40, pady=(5,0))
         tk.Frame(scroll_frame, bg=C["bdr"], height=2).pack(fill="x", padx=30, pady=15)
         if biz_phone:
-            tk.Label(scroll_frame, text=f"Phone: {biz_phone}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
+            tk.Label(scroll_frame, text=f"{self.t('phone_label')} {biz_phone}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
         if biz_email:
-            tk.Label(scroll_frame, text=f"Email: {biz_email}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
+            tk.Label(scroll_frame, text=f"{self.t('email_label')} {biz_email}", bg=C["white"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", padx=40)
         if google_review:
             tk.Label(scroll_frame, text=self.t("rate_us"), bg=C["white"], fg=C["txt3"], font=("Segoe UI", 9)).pack(anchor="w", padx=40, pady=(10,2))
         if thank_you:
@@ -2880,16 +2880,16 @@ class App:
         tk.Button(scroll_frame, text=self.t("close"), command=win.destroy, bg=C["card"], fg=C["txt"], font=("Segoe UI", 10), bd=1, relief="solid", padx=15, cursor="hand2").pack(pady=15)
 
     def edit_biz_name(self):
-        self._edit_biz_field("business_name", "Business Name")
+        self._edit_biz_field("business_name", self.t("business_name"))
 
     def edit_biz_phone(self):
-        self._edit_biz_field("business_phone", "Phone Number")
+        self._edit_biz_field("business_phone", self.t("phone"))
 
     def edit_biz_email(self):
-        self._edit_biz_field("business_email", "Email")
+        self._edit_biz_field("business_email", self.t("email"))
 
     def edit_google_review(self):
-        self._edit_biz_field("google_review", "Google Review Link")
+        self._edit_biz_field("google_review", self.t("google_review"))
 
     def _edit_biz_field(self, field, label):
         if self.db.get_setting("pin_hash"):
