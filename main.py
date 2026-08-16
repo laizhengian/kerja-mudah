@@ -1890,7 +1890,10 @@ class App:
                     try:
                         os.startfile(pdf_path)
                     except (OSError, AttributeError):
-                        pass
+                        try:
+                            os.startfile(os.path.dirname(pdf_path))
+                        except (OSError, AttributeError):
+                            pass
                 else:
                     msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
                     msg += f"Your {job['item']} service is ready for collection!\n\n"
@@ -2303,9 +2306,12 @@ class App:
         if pdf_path:
             messagebox.showinfo(self.t("done"), self.t("pdf_saved") + f"\n{pdf_path}")
             try:
-                os.startfile(os.path.dirname(pdf_path))
+                os.startfile(pdf_path)
             except (OSError, AttributeError):
-                pass
+                try:
+                    os.startfile(os.path.dirname(pdf_path))
+                except (OSError, AttributeError):
+                    pass
         else:
             messagebox.showerror(self.t("error"), self.t("pdf_failed"))
 
@@ -2339,7 +2345,10 @@ class App:
             try:
                 os.startfile(pdf_path)
             except (OSError, AttributeError):
-                pass
+                try:
+                    os.startfile(os.path.dirname(pdf_path))
+                except (OSError, AttributeError):
+                    pass
         else:
             msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
             msg += f"This is a friendly reminder for your unpaid invoice.\n\n"
