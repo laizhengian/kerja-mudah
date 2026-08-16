@@ -88,6 +88,7 @@ T = {
         "pending": "Pending", "in_progress": "In Progress", "status": "Status",
         "edit": "Edit", "pdf": "PDF", "send_reminder": "Send Reminder",
         "activate": "Activate", "try_demo": "Try Demo (7 days)", "copy": "Copy",
+        "activation": "License / Activation", "not_activated": "Not activated", "days_left": "days remaining",
         "license_activation": "License Activation Required",
         "enter_license_key": "Enter your license key to activate",
         "your_hwid": "Your Hardware ID (send this to get a key):",
@@ -374,6 +375,7 @@ T = {
         "pending": "Menunggu", "in_progress": "Sedang Dijalankan", "status": "Status",
         "edit": "Sunting", "pdf": "PDF", "send_reminder": "Hantar Peringatan",
         "activate": "Aktifkan", "try_demo": "Cuba Demo (7 hari)", "copy": "Salin",
+        "activation": "Lesen / Pengaktifan", "not_activated": "Belum diaktifkan", "days_left": "hari tinggal",
         "license_activation": "Pengaktifan Lesen Diperlukan",
         "enter_license_key": "Masukkan kunci lesen untuk mengaktifkan",
         "your_hwid": "ID Perkakasan Anda (hantar ini untuk dapat kunci):",
@@ -660,6 +662,7 @@ T = {
         "pending": "待处理", "in_progress": "进行中", "status": "状态",
         "edit": "编辑", "pdf": "PDF", "send_reminder": "发送提醒",
         "activate": "激活", "try_demo": "试用演示 (7天)", "copy": "复制",
+        "activation": "许可证 / 激活", "not_activated": "未激活", "days_left": "天剩余",
         "license_activation": "需要激活许可证",
         "enter_license_key": "输入许可证密钥以激活",
         "your_hwid": "您的硬件ID（发送此码获取密钥）：",
@@ -2903,6 +2906,36 @@ class App:
             val = self.db.get_setting(key, default_val)
             tk.Label(pf, text=f"{label_text}: {val if val else self.t('empty_placeholder')}", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(side="left")
             tk.Button(pf, text=self.t("edit"), command=lambda k=key, l=label_text, m=max_len: self._edit_invoice_param(k, l, m), bg=C["card"], fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=1, relief="solid", padx=8, cursor="hand2").pack(side="right")
+        s_act = self.row(f)
+        tk.Label(s_act, text=self.t("activation"), bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
+        hwid = get_hwid()
+        licensed = self.db.get_setting("licensed_hwid")
+        if licensed and licensed == hwid:
+            act_status = self.t("activated")
+            act_color = C["ok"]
+        elif self.is_demo():
+            days_left = 7
+            try:
+                install_date = self.db.get_setting("install_date")
+                if install_date:
+                    days_left = max(0, 7 - (datetime.now() - datetime.fromisoformat(install_date)).days)
+            except (ValueError, TypeError):
+                pass
+            act_status = f"{self.t('demo_mode')} - {days_left} {self.t('days_left')}"
+            act_color = C["warn"]
+        else:
+            act_status = self.t("not_activated")
+            act_color = C["err"]
+        tk.Label(s_act, text=f"{self.t('status')}: {act_status}", bg=C["card"], fg=act_color, font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=2)
+        hwid_frame = tk.Frame(s_act, bg=C["card"])
+        hwid_frame.pack(fill="x", pady=5)
+        tk.Label(hwid_frame, text=f"{self.t('your_hwid')} {hwid}", bg=C["card"], fg=C["txt2"], font=("Consolas", 10)).pack(side="left")
+        def copy_hwid_from_settings():
+            self.root.clipboard_clear()
+            self.root.clipboard_append(hwid)
+            messagebox.showinfo(self.t("done"), self.t("hwid_copied"))
+        tk.Button(hwid_frame, text=self.t("copy"), command=copy_hwid_from_settings, bg=C["pri"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=10, pady=2, cursor="hand2").pack(side="right")
+        self.btn(s_act, self.t("activate"), self.activate_screen, bg=C["pri"]).pack(anchor="w", pady=5)
         self.content.update_idletasks()
         self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all"))
 
