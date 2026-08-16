@@ -943,6 +943,13 @@ class App:
             except (ValueError, TypeError):
                 return date_str
 
+    def fmt_amount(self, val):
+        if val >= 1000000:
+            return f"RM {val/1000000:.1f}M"
+        if val >= 10000:
+            return f"RM {val/1000:.1f}K"
+        return f"RM {val:.2f}"
+
     def truncate(self, text, max_len):
         if not text:
             return ""
@@ -1565,7 +1572,7 @@ class App:
         tf = tk.Frame(self.content, bg=C["bg"], padx=20)
         tf.pack(fill="x")
         done_count = len([j for j in jobs if j["status"] == "done" and (j["completed_at"] or "").startswith(datetime.now().strftime("%Y-%m"))])
-        for i, (l, v, cmd) in enumerate([(self.t("active_jobs"), str(active), self.pg_jobs), (self.t("appointments"), str(appts), self.pg_cal), (self.t("outstanding"), f"RM {owed:.0f}", self.pg_invs), (self.t("jobs_done"), str(done_count), self.pg_jobs)]):
+        for i, (l, v, cmd) in enumerate([(self.t("active_jobs"), str(active), self.pg_jobs), (self.t("appointments"), str(appts), self.pg_cal), (self.t("outstanding"), self.fmt_amount(owed), self.pg_invs), (self.t("jobs_done"), str(done_count), self.pg_jobs)]):
             c = tk.Frame(tf, bg=C["card"], bd=1, relief="solid", cursor="hand2")
             c.grid(row=0, column=i, padx=6, pady=6, sticky="nsew")
             c.bind("<Button-1>", lambda e, c=cmd: c())
@@ -1677,7 +1684,7 @@ class App:
             self.cell(table, j["job_code"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"], tooltip_text=j["job_code"]).grid(row=row, column=0, sticky="ew", padx=2)
             self.cell(table, j["customer_name"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=j["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
             self.cell(table, j["item"], font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=j["item"]).grid(row=row, column=2, sticky="ew", padx=2)
-            self.cell(table, f"RM {float(j['quote'] or 0):.0f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=3, sticky="ew", padx=2)
+            self.cell(table, self.fmt_amount(float(j['quote'] or 0)), font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=3, sticky="ew", padx=2)
             tk.Label(table, text=self.t(j["status"].replace("-","_")), bg=sc.get(j["status"], "#999"), fg=C["white"], font=("Segoe UI", 10, "bold"), anchor="center", padx=4).grid(row=row, column=4, sticky="ew", padx=2)
             self.cell(table, self.fmt_date(j["due_date"]), font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"]).grid(row=row, column=5, sticky="ew", padx=2)
             self.cell(table, j["notes"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=j["notes"] or "").grid(row=row, column=6, sticky="ew", padx=2)
@@ -1860,7 +1867,7 @@ class App:
         win.grab_set()
         tk.Label(win, text=self.t("job_complete_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=8)
         tk.Label(win, text=job["item"], bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack()
-        tk.Label(win, text=f"RM {job['quote']:.2f}", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(pady=5)
+        tk.Label(win, text=self.fmt_amount(job['quote']), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(pady=5)
         cust = self.db.get_customer(job["customer_id"]) if job["customer_id"] else None
         has_inv = self._job_has_invoice(job["id"])
         if has_inv:
@@ -1883,7 +1890,7 @@ class App:
                     msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
                     msg += f"Your {job['item']} service is ready for collection!\n\n"
                     msg += f"Invoice: {inv_code}\n"
-                    msg += f"Amount: RM {job['quote']:.2f}\n"
+                    msg += f"Amount: {self.fmt_amount(job['quote'])}\n"
                     msg += f"Please find the attached PDF invoice.\n"
                     thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
                     msg += f"\n{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
@@ -1907,7 +1914,7 @@ class App:
                         msg += f"{payment_terms}\n"
                     msg += f"Please pick up at your convenience.\n\n"
                     msg += f"Invoice: {inv_code}\n"
-                    msg += f"Amount: RM {job['quote']:.2f}\n\n"
+                    msg += f"Amount: {self.fmt_amount(job['quote'])}\n\n"
                     google_review = self.db.get_setting("google_review", "")
                     if google_review:
                         review_link = self.get_review_link(google_review)
@@ -1947,7 +1954,7 @@ class App:
                     payment_terms = self.db.get_setting("payment_terms", "")
                     if payment_terms:
                         body += f"{payment_terms}\n"
-                    body += f"Amount: RM {job['quote']:.2f}\n\n"
+                    body += f"Amount: {self.fmt_amount(job['quote'])}\n\n"
                     google_review = self.db.get_setting("google_review", "")
                     if google_review:
                         review_link = self.get_review_link(google_review)
@@ -1966,7 +1973,7 @@ class App:
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
                     thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
                     body += f"{thank_you}\n\n"
-                    body += f"Invoice: {inv_code}\nDate: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\nItem: {job['item']}\nService: {job['problem'] or 'N/A'}\nAmount: RM {job['quote']:.2f}\n\n"
+                    body += f"Invoice: {inv_code}\nDate: {self.fmt_date(datetime.now().strftime('%Y-%m-%d'))}\nItem: {job['item']}\nService: {job['problem'] or 'N/A'}\nAmount: {self.fmt_amount(job['quote'])}\n\n"
                     if job["due_date"]:
                         body += f"Due Date: {self.fmt_date(job['due_date'])}\n"
                     payment_terms = self.db.get_setting("payment_terms", "")
@@ -2247,7 +2254,7 @@ class App:
         paid = [i for i in invs if i["paid"]]
         if unpaid:
             total_owed = sum(i["amount"] for i in unpaid)
-            tk.Label(self.inv_list_frame, text=f"{self.t('unpaid')} ({len(unpaid)}, RM {total_owed:.2f})", bg=C["bg"], fg=C["err"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=(8, 4), padx=8)
+            tk.Label(self.inv_list_frame, text=f"{self.t('unpaid')} ({len(unpaid)}, {self.fmt_amount(total_owed)})", bg=C["bg"], fg=C["err"], font=("Segoe UI", 13, "bold")).pack(anchor="w", pady=(8, 4), padx=8)
             table = tk.Frame(self.inv_list_frame, bg=C["bg"])
             table.pack(fill="both", expand=True, padx=8)
             col_names = [self.t("code"), self.t("customer"), self.t("amount"), "", "", "", ""]
@@ -2264,7 +2271,7 @@ class App:
                 table.rowconfigure(row, pad=12)
                 self.cell(table, inv["invoice_code"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=0, sticky="ew", padx=2)
                 self.cell(table, inv["customer_name"] or self.t("unknown"), font=("Segoe UI", 11), bg=row_bg, fg=C["txt"], tooltip_text=inv["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
-                self.cell(table, f"RM {inv['amount']:.2f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["err"]).grid(row=row, column=2, sticky="ew", padx=2)
+                self.cell(table, self.fmt_amount(inv['amount']), font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["err"]).grid(row=row, column=2, sticky="ew", padx=2)
                 tk.Button(table, text=self.t("email"), command=lambda i=inv: self.send_email(i), bg="#2563EB", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=3, sticky="e", padx=1)
                 tk.Button(table, text=self.t("wa"), command=lambda i=inv: self.send_whatsapp(i), bg=C["ok"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=4, sticky="e", padx=1)
                 tk.Button(table, text=self.t("pdf"), command=lambda i=inv: self.download_inv_pdf(i), bg="#7C3AED", fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=5, sticky="e", padx=1)
@@ -2286,7 +2293,7 @@ class App:
                 table2.rowconfigure(row, pad=12)
                 self.cell(table2, inv["invoice_code"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=0, sticky="ew", padx=2)
                 self.cell(table2, inv["customer_name"] or self.t("unknown"), font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=inv["customer_name"] or "").grid(row=row, column=1, sticky="ew", padx=2)
-                self.cell(table2, f"RM {inv['amount']:.2f}", font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=2, sticky="ew", padx=2)
+                self.cell(table2, self.fmt_amount(inv['amount']), font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"]).grid(row=row, column=2, sticky="ew", padx=2)
                 method = inv["payment_method"] or "-"
                 method_bg = {"Cash": C["ok"], "E-Wallet": "#2563EB", "Card": "#7C3AED", "Transfer": C["warn"]}.get(method, C["txt3"])
                 method_display = self.t(method.lower().replace("-","_")) if method and method != "-" else method
@@ -2338,7 +2345,7 @@ class App:
             pdf_path = self.generate_invoice_pdf(inv["invoice_code"], job_for_inv, cust)
         if use_pdf and pdf_path:
             msg = f"Hi {cust['name'] if cust else 'Customer'},\n\n"
-            msg += f"Invoice {inv['invoice_code']} - RM {inv['amount']:.2f}\n"
+            msg += f"Invoice {inv['invoice_code']} - {self.fmt_amount(inv['amount'])}\n"
             msg += f"Please find the attached PDF invoice.\n"
             thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
             msg += f"\n{thank_you}\n{self.db.get_setting('business_name', 'Shop')}"
@@ -2357,7 +2364,7 @@ class App:
                 msg += f"Item: {job_for_inv['item']}\n"
                 if job_for_inv['problem']:
                     msg += f"Service: {job_for_inv['problem']}\n"
-            msg += f"Amount: RM {inv['amount']:.2f}\n\n"
+            msg += f"Amount: {self.fmt_amount(inv['amount'])}\n\n"
             if job_for_inv and job_for_inv["due_date"]:
                 msg += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
             payment_terms = self.db.get_setting("payment_terms", "")
@@ -2410,7 +2417,7 @@ class App:
             payment_terms = self.db.get_setting("payment_terms", "")
             if payment_terms:
                 body += f"{payment_terms}\n"
-            body += f"Amount: RM {inv['amount']:.2f}\n\n"
+            body += f"Amount: {self.fmt_amount(inv['amount'])}\n\n"
             google_review = self.db.get_setting("google_review", "")
             if google_review:
                 review_link = self.get_review_link(google_review)
@@ -2434,7 +2441,7 @@ class App:
             if job_for_inv:
                 body += f"Item: {job_for_inv['item']}\n"
                 body += f"Service: {job_for_inv['problem'] or 'N/A'}\n"
-            body += f"Amount: RM {inv['amount']:.2f}\n"
+            body += f"Amount: {self.fmt_amount(inv['amount'])}\n"
             if job_for_inv and job_for_inv["due_date"]:
                 body += f"Due Date: {self.fmt_date(job_for_inv['due_date'])}\n"
             payment_terms = self.db.get_setting("payment_terms", "")
@@ -2514,12 +2521,12 @@ class App:
             pdf.set_xy(x_start + 60, y_start)
             pdf.multi_cell(75, row_h, f"  {problem}", border=1)
             pdf.set_xy(x_start + 135, y_start)
-            amount_text = f"  RM {job['quote']:.2f}" if job else "  RM 0.00"
+            amount_text = f"  {self.fmt_amount(job['quote'])}" if job else "  RM 0.00"
             pdf.cell(35, row_h, amount_text, border=1, new_x="LMARGIN", new_y="NEXT")
             pdf.ln(5)
             pdf.set_font("Helvetica", "B", 12)
             pdf.cell(135, 10, "Total:", border=1)
-            pdf.cell(35, 10, f"RM {job['quote']:.2f}" if job else "RM 0.00", border=1, new_x="LMARGIN", new_y="NEXT")
+            pdf.cell(35, 10, self.fmt_amount(job['quote']) if job else "RM 0.00", border=1, new_x="LMARGIN", new_y="NEXT")
             payment_terms = self.db.get_setting("payment_terms", "")
             if payment_terms:
                 pdf.ln(5)
@@ -2592,7 +2599,7 @@ class App:
         for j in jobs:
             r = self.row(f)
             tk.Label(r, text=f"{j['job_code']} - {j['item']}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
-            tk.Label(r, text=f"RM {j['quote']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=15).pack(side="left")
+            tk.Label(r, text=self.fmt_amount(j['quote']), bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=15).pack(side="left")
             tk.Button(r, text=self.t("create"), command=lambda j=j: [self.db.add_invoice(j["id"], j["quote"]), messagebox.showinfo(self.t("done"), self.t("invoice_created")), self.pg_invs()], bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=15, pady=5, cursor="hand2").pack(side="right")
 
     def pg_rpt(self):
@@ -2610,19 +2617,13 @@ class App:
         month_rev = sum(i["amount"] for i in paid if i["created_at"][:10] >= month)
         outstanding = sum(i["amount"] for i in unpaid)
         total_earned = sum(i["amount"] for i in paid)
-        def fmt_rm(val):
-            if val >= 1000000:
-                return f"RM {val/1000000:.1f}M"
-            elif val >= 1000:
-                return f"RM {val/1000:.1f}K"
-            return f"RM {val:.2f}"
         sf = tk.Frame(self.content, bg=C["bg"], padx=20)
         sf.pack(fill="x")
         cards = [
-            (self.t("today"), fmt_rm(today_rev), self.t("collected_today"), C["ok"]),
-            (self.t("this_week"), fmt_rm(week_rev), self.t("collected_week"), C["ok"]),
-            (self.t("this_month"), fmt_rm(month_rev), self.t("collected_month"), C["ok"]),
-            (self.t("owed"), fmt_rm(outstanding), self.t("owed_desc"), C["err"] if outstanding > 0 else C["ok"]),
+            (self.t("today"), self.fmt_amount(today_rev), self.t("collected_today"), C["ok"]),
+            (self.t("this_week"), self.fmt_amount(week_rev), self.t("collected_week"), C["ok"]),
+            (self.t("this_month"), self.fmt_amount(month_rev), self.t("collected_month"), C["ok"]),
+            (self.t("owed"), self.fmt_amount(outstanding), self.t("owed_desc"), C["err"] if outstanding > 0 else C["ok"]),
         ]
         for i, (title, value, desc, color) in enumerate(cards):
             c = tk.Frame(sf, bg=C["card"], bd=1, relief="solid", pady=10, padx=12)
@@ -2636,8 +2637,8 @@ class App:
         st.pack(fill="both", expand=True)
         tk.Label(st, text=self.t("summary"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 14, "bold")).pack(anchor="w", pady=10)
         summary = [
-            (self.t("total_earned"), fmt_rm(total_earned), C["ok"]),
-            (self.t("outstanding_unpaid"), fmt_rm(outstanding), C["err"] if outstanding > 0 else C["ok"]),
+            (self.t("total_earned"), self.fmt_amount(total_earned), C["ok"]),
+            (self.t("outstanding_unpaid"), self.fmt_amount(outstanding), C["err"] if outstanding > 0 else C["ok"]),
             (self.t("total_jobs"), str(len(jobs)), C["txt"]),
             (self.t("completed_jobs"), str(len([j for j in jobs if j["status"]=="done"])), C["ok"]),
             (self.t("active_jobs_count"), str(len([j for j in jobs if j["status"]!="done"])), C["warn"]),
@@ -2700,7 +2701,7 @@ class App:
             tk.Label(self.srch_r, text=f"{self.t('invoices_header')} ({len(fi)})", bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=8)
             for i in fi:
                 r = self.row(self.srch_r)
-                tk.Label(r, text=f"{i['invoice_code']} - RM {i['amount']:.2f}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
+                tk.Label(r, text=f"{i['invoice_code']} - {self.fmt_amount(i['amount'])}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 10, "bold")).pack(side="left")
                 s = self.t("paid_status") if i["paid"] else self.t("unpaid_status")
                 co = C["ok"] if i["paid"] else C["err"]
                 tk.Label(r, text=s, bg=co, fg=C["white"], font=("Segoe UI", 9, "bold"), padx=8, pady=2).pack(side="right")
