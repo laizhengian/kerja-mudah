@@ -1654,7 +1654,11 @@ class App:
             if len(uncollected) > 5:
                 view_all = tk.Frame(uf, bg=C["bg"])
                 view_all.pack(fill="x", pady=(8, 0))
-                tk.Button(view_all, text=self.t("view_all").format(count=len(uncollected)), command=lambda: [self.pg_jobs(), self.jobs_search_var.set("done")], bg=C["bg"], fg=C["pri"], font=("Segoe UI", 11, "bold"), bd=0, cursor="hand2").pack(anchor="w")
+                def open_done_jobs():
+                    self.pg_jobs()
+                    self.jobs_status_var.set("done")
+                    self._filter_jobs()
+                tk.Button(view_all, text=self.t("view_all").format(count=len(uncollected)), command=open_done_jobs, bg=C["bg"], fg=C["pri"], font=("Segoe UI", 11, "bold"), bd=0, cursor="hand2").pack(anchor="w")
         self.root.after(50, lambda: self.content_canvas.configure(scrollregion=self.content_canvas.bbox("all")))
 
     def pg_jobs(self):
