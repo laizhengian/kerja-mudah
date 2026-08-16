@@ -944,6 +944,12 @@ class App:
                 return date_str
 
     def fmt_amount(self, val):
+        try:
+            val = float(val)
+        except (ValueError, TypeError):
+            return f"RM {val}"
+        if val >= 1000000000:
+            return f"RM {val/1000000000:.1f}B"
         if val >= 1000000:
             return f"RM {val/1000000:.1f}M"
         if val >= 10000:
