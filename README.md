@@ -1,8 +1,12 @@
-# Kerja Mudah
+<p align="center">
+  <img src="logo.svg" alt="Kerja Mudah" width="400">
+</p>
 
-**Work smarter, not harder.**
+<h3 align="center"><em>Work smarter, not harder.</em></h3>
 
-Kerja Mudah is a desktop business management app built for small repair and service shops in Malaysia. It runs offline on Windows as a single file — no internet, no monthly fees, no complicated setup.
+<p align="center">
+  Kerja Mudah is a desktop business management app built for small repair and service shops in Malaysia. It runs offline on Windows as a single file — no internet, no monthly fees, no complicated setup.
+</p>
 
 ---
 
