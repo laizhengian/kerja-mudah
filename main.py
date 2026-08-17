@@ -923,13 +923,6 @@ class App:
             self.root.iconbitmap(default=os.path.join(APP_DIR, "icon.ico"))
         except (tk.TclError, OSError):
             pass
-        self._logo_img = None
-        logo_path = os.path.join(APP_DIR, "logo.png")
-        if os.path.exists(logo_path):
-            try:
-                self._logo_img = tk.PhotoImage(file=logo_path)
-            except (tk.TclError, OSError):
-                pass
         deleted = self.db.cleanup_old_invoices()
         if deleted > 0:
             self.root.after(100, lambda: messagebox.showinfo(self.t("cleanup"), f"{deleted} {self.t('cleanup_msg')}"))
@@ -1461,8 +1454,6 @@ class App:
         self.clr()
         self.root.configure(bg=C["bg"])
         c = tk.Frame(self.root, bg=C["bg"]); c.pack(expand=True, fill="both")
-        if self._logo_img:
-            tk.Label(c, image=self._logo_img, bg=C["bg"]).pack(pady=(20, 5))
         n = self.db.get_setting("business_name", "Shop")
         tk.Label(c, text=n, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 26, "bold")).pack(pady=8)
         tk.Label(c, text=self.t("enter_pin"), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(pady=8)
@@ -1495,8 +1486,6 @@ class App:
         self.root.configure(bg=C["bg"])
         c = tk.Frame(self.root, bg=C["bg"])
         c.pack(expand=True, fill="both")
-        if self._logo_img:
-            tk.Label(c, image=self._logo_img, bg=C["bg"]).pack(pady=(20, 5))
         hwid = get_hwid()
         tk.Label(c, text=self.t("license_activation"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 24, "bold")).pack(pady=8)
         tk.Label(c, text=self.t("enter_license_key"), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(pady=5)
@@ -1598,8 +1587,6 @@ class App:
         self.content_canvas.bind("<Enter>", _bind_mousewheel)
         self.content_canvas.bind("<Leave>", _unbind_mousewheel)
         n = self.db.get_setting("business_name", "Shop")
-        if self._logo_img:
-            tk.Label(self.side, image=self._logo_img, bg=C["side"]).pack(pady=(15, 5))
         name_label = tk.Label(self.side, text=n, bg=C["side"], fg=C["white"], font=("Segoe UI", 13, "bold"), pady=15, wraplength=170, justify="center")
         name_label.pack(fill="x", padx=10)
         tk.Frame(self.side, bg="#2A2A2A", height=1).pack(fill="x", padx=15)
@@ -1615,10 +1602,6 @@ class App:
     def pg_home(self):
         self.clr()
         self.hdr(self.t("dashboard"))
-        if self._logo_img:
-            logo_bar = tk.Frame(self.content, bg=C["bg"], padx=28)
-            logo_bar.pack(fill="x")
-            tk.Label(logo_bar, image=self._logo_img, bg=C["bg"]).pack(anchor="w")
         today = datetime.now().strftime("%Y-%m-%d")
         jobs = self.db.get_jobs()
         active = len([j for j in jobs if j["status"] != "done"])
@@ -2966,8 +2949,6 @@ class App:
         tk.Button(hwid_frame, text=self.t("copy"), command=copy_hwid_from_settings, bg=C["pri"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=10, pady=2, cursor="hand2").pack(side="right")
         self.btn(s_act, self.t("activate"), self.activate_screen, bg=C["pri"]).pack(anchor="w", pady=5)
         s_about = self.row(f)
-        if self._logo_img:
-            tk.Label(s_about, image=self._logo_img, bg=C["card"]).pack(pady=(10, 5))
         tk.Label(s_about, text="Kerja Mudah v1.0", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         tk.Label(s_about, text="Repair Made Easy", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
         tk.Label(s_about, text="github.com/laizhengian/kerja-mudah", bg=C["card"], fg="#2563EB", font=("Segoe UI", 9), cursor="hand2").pack(anchor="w", pady=2)
