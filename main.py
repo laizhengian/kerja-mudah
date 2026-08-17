@@ -968,15 +968,20 @@ class App:
         enc_to = urllib.parse.quote(to)
         enc_sub = urllib.parse.quote(subject)
         enc_body = urllib.parse.quote(body)
-        mailto = f"mailto:{to}?subject={enc_sub}&body={enc_body}"
         gmail = f"https://mail.google.com/mail/?view=cm&fs=1&to={enc_to}&su={enc_sub}&body={enc_body}"
         outlook = f"https://outlook.live.com/mail/0/deeplink/compose?to={enc_to}&subject={enc_sub}&body={enc_body}"
-        for url in [mailto, gmail, outlook]:
-            try:
-                webbrowser.open(url)
-                return True
-            except (webbrowser.Error, OSError):
-                continue
+        try:
+            webbrowser.open(gmail)
+            return True
+        except (webbrowser.Error, OSError):
+            pass
+        try:
+            webbrowser.open(outlook)
+            return True
+        except (webbrowser.Error, OSError):
+            pass
+        self.root.clipboard_clear()
+        self.root.clipboard_append(f"To: {to}\nSubject: {subject}\n\n{body}")
         return False
 
     def popup_win(self, title, w, h, min_w=None, min_h=None):
