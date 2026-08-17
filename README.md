@@ -77,8 +77,8 @@ One-click backup saves everything. Restore from backup in minutes. Export data t
 
 | | Kerja Mudah | Competitors |
 |---|------------|-------------|
-| Cost | RM200 one-time | RM80-220/month |
-| First year | RM200 | RM960-2,640 |
+| Cost | RM400 one-time | RM80-220/month |
+| First year | RM400 | RM960-2,640 |
 | Internet | Not required | Required |
 | Data | Stays on your computer | Stored on their servers |
 | Fees | None | Monthly/annual subscriptions |

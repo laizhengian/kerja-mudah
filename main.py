@@ -965,6 +965,30 @@ class App:
             return f"RM {val/1000:.1f}K"
         return f"RM {val:.2f}"
 
+    def popup_win(self, title, w, h, min_w=None, min_h=None):
+        win = tk.Toplevel(self.root)
+        win.title(title)
+        win.geometry(f"{w}x{h}")
+        win.minsize(min_w or min(w, 350), min_h or min(h, 300))
+        win.configure(bg=C["bg"])
+        win.grab_set()
+        canvas = tk.Canvas(win, bg=C["bg"], highlightthickness=0, bd=0)
+        scrollbar = tk.Scrollbar(win, orient="vertical", command=canvas.yview)
+        inner = tk.Frame(canvas, bg=C["bg"])
+        inner.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0), window=inner, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
+        canvas.pack(side="left", fill="both", expand=True)
+        def _on_mousewheel(event):
+            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+        def _on_close():
+            canvas.unbind_all("<MouseWheel>")
+            win.destroy()
+        win.protocol("WM_DELETE_WINDOW", _on_close)
+        return win, inner
+
     def truncate(self, text, max_len):
         if not text:
             return ""
@@ -1852,26 +1876,22 @@ class App:
         self.pg_jobs()
 
     def edit_job(self, j):
-        win = tk.Toplevel(self.root)
-        win.title(self.t("edit_job_title"))
-        win.geometry("620x580")
-        win.configure(bg=C["bg"])
-        win.grab_set()
-        tk.Label(win, text=self.t("edit_job_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
-        f = tk.Frame(win, bg=C["bg"], padx=30)
-        f.pack(fill="both", expand=True)
-        item_e = self.field(f, self.t("item"), j["item"])
-        problem_e = self.field(f, self.t("problem"), j["problem"] or "")
-        quote_e = self.number_field(f, self.t("quote"), str(j["quote"]))
-        status_frame = tk.Frame(f, bg=C["bg"])
+        win, f = self.popup_win(self.t("edit_job_title"), 620, 580, 450, 400)
+        tk.Label(f, text=self.t("edit_job_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
+        f_inner = tk.Frame(f, bg=C["bg"], padx=30)
+        f_inner.pack(fill="both", expand=True)
+        item_e = self.field(f_inner, self.t("item"), j["item"])
+        problem_e = self.field(f_inner, self.t("problem"), j["problem"] or "")
+        quote_e = self.number_field(f_inner, self.t("quote"), str(j["quote"]))
+        status_frame = tk.Frame(f_inner, bg=C["bg"])
         status_frame.pack(fill="x", pady=8)
         tk.Label(status_frame, text=self.t("status"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         status_var = tk.StringVar(value=j["status"])
         for v, lbl in [("pending",self.t("pending")),("in-progress",self.t("in_progress")),("done",self.t("done"))]:
             tk.Radiobutton(status_frame, text=lbl, variable=status_var, value=v, bg=C["bg"], font=("Segoe UI", 11)).pack(side="left", padx=8)
-        due_var = self.date_field(f, self.t("due_date"), j["due_date"])
-        notes_e = self.text_area_field(f, self.t("notes"), j["notes"] or "")
-        bf = tk.Frame(f, bg=C["bg"], pady=15)
+        due_var = self.date_field(f_inner, self.t("due_date"), j["due_date"])
+        notes_e = self.text_area_field(f_inner, self.t("notes"), j["notes"] or "")
+        bf = tk.Frame(f_inner, bg=C["bg"], pady=15)
         bf.pack(fill="x")
         def save():
             try:
@@ -2092,19 +2112,15 @@ class App:
             tk.Button(table, text=self.t("edit"), command=lambda c=c: self.edit_cust(c), bg=row_bg, fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=3, sticky="e", padx=1)
 
     def edit_cust(self, c):
-        win = tk.Toplevel(self.root)
-        win.title(self.t("edit_customer_title"))
-        win.geometry("450x350")
-        win.configure(bg=C["bg"])
-        win.grab_set()
-        tk.Label(win, text=self.t("edit_customer_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
-        f = tk.Frame(win, bg=C["bg"], padx=25)
-        f.pack(fill="both", expand=True)
-        name_e = self.field(f, self.t("name"), c["name"])
-        phone_e = self.phone_field(f, self.t("phone"), c["phone"] or "+60")
-        email_e = self.email_field(f, self.t("email"), c["email"] or "")
-        notes_e = self.field(f, self.t("notes"), c["notes"] or "")
-        bf = tk.Frame(f, bg=C["bg"], pady=15)
+        win, f = self.popup_win(self.t("edit_customer_title"), 450, 350, 380, 300)
+        tk.Label(f, text=self.t("edit_customer_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
+        f_inner = tk.Frame(f, bg=C["bg"], padx=25)
+        f_inner.pack(fill="both", expand=True)
+        name_e = self.field(f_inner, self.t("name"), c["name"])
+        phone_e = self.phone_field(f_inner, self.t("phone"), c["phone"] or "+60")
+        email_e = self.email_field(f_inner, self.t("email"), c["email"] or "")
+        notes_e = self.field(f_inner, self.t("notes"), c["notes"] or "")
+        bf = tk.Frame(f_inner, bg=C["bg"], pady=15)
         bf.pack(fill="x")
         def save():
             n = name_e.get().strip()
@@ -2191,17 +2207,13 @@ class App:
             tk.Button(table, text=self.t("edit"), command=lambda a=a: self.edit_appt(a), bg=row_bg, fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=4, sticky="e", padx=1)
 
     def edit_appt(self, a):
-        win = tk.Toplevel(self.root)
-        win.title(self.t("edit_appointment_title"))
-        win.geometry("500x450")
-        win.configure(bg=C["bg"])
-        win.grab_set()
-        tk.Label(win, text=self.t("edit_appointment_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
-        f = tk.Frame(win, bg=C["bg"], padx=25)
-        f.pack(fill="both", expand=True)
-        cust_name_e = self.field(f, self.t("customer"), a["customer_name"] or "")
+        win, f = self.popup_win(self.t("edit_appointment_title"), 500, 450, 400, 350)
+        tk.Label(f, text=self.t("edit_appointment_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
+        f_inner = tk.Frame(f, bg=C["bg"], padx=25)
+        f_inner.pack(fill="both", expand=True)
+        cust_name_e = self.field(f_inner, self.t("customer"), a["customer_name"] or "")
         date_var = tk.StringVar(value=a["date"])
-        date_frame = tk.Frame(f, bg=C["bg"])
+        date_frame = tk.Frame(f_inner, bg=C["bg"])
         date_frame.pack(fill="x", pady=8)
         tk.Label(date_frame, text=self.t("date"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         date_entry = tk.Entry(date_frame, textvariable=date_var, font=("Segoe UI", 12), bd=1, relief="solid", width=12)
@@ -2209,7 +2221,7 @@ class App:
         time_parts = a["time"].split(":") if a["time"] else ["09", "00"]
         hour_var = tk.StringVar(value=time_parts[0])
         min_var = tk.StringVar(value=time_parts[1] if len(time_parts) > 1 else "00")
-        time_frame = tk.Frame(f, bg=C["bg"])
+        time_frame = tk.Frame(f_inner, bg=C["bg"])
         time_frame.pack(fill="x", pady=8)
         tk.Label(time_frame, text=self.t("time"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
         hours = [str(i).zfill(2) for i in range(24)]
@@ -2221,9 +2233,9 @@ class App:
         m_menu = tk.OptionMenu(time_frame, min_var, *mins)
         m_menu.configure(font=("Segoe UI", 11), width=3, bg=C["white"])
         m_menu.pack(side="left")
-        purpose_e = self.field(f, self.t("purpose"), a["purpose"] or "")
-        notes_e = self.field(f, self.t("notes"), a["notes"] or "")
-        bf = tk.Frame(f, bg=C["bg"], pady=15)
+        purpose_e = self.field(f_inner, self.t("purpose"), a["purpose"] or "")
+        notes_e = self.field(f_inner, self.t("notes"), a["notes"] or "")
+        bf = tk.Frame(f_inner, bg=C["bg"], pady=15)
         bf.pack(fill="x")
         def save():
             d = date_var.get().strip()
@@ -3054,15 +3066,11 @@ class App:
         self.btn(win, self.t("verify"), verify).pack(pady=10)
 
     def _show_biz_edit_dialog(self, field, label):
-        win = tk.Toplevel(self.root)
-        win.title(f"{self.t('edit')} {label}")
-        win.geometry("350x180")
-        win.configure(bg=C["bg"])
-        win.grab_set()
-        tk.Label(win, text=f"{self.t('new_prefix')} {label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
+        win, f = self.popup_win(f"{self.t('edit')} {label}", 350, 180, 300, 160)
+        tk.Label(f, text=f"{self.t('new_prefix')} {label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
         if field == "google_review":
-            tk.Label(win, text=self.t("maps_link_paste"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(padx=25, anchor="w")
-        e = tk.Entry(win, font=("Segoe UI", 14), bd=1, relief="solid", width=25)
+            tk.Label(f, text=self.t("maps_link_paste"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 9)).pack(padx=25, anchor="w")
+        e = tk.Entry(f, font=("Segoe UI", 14), bd=1, relief="solid", width=25)
         e.insert(0, self.db.get_setting(field, ""))
         e.pack(pady=5)
         e.focus()
@@ -3082,16 +3090,12 @@ class App:
             messagebox.showinfo(self.t("done"), f"{label} {self.t('label_updated')}")
             self.pg_set()
         e.bind("<Return>", lambda e: save())
-        self.btn(win, self.t("save"), save, bg=C["ok"]).pack(pady=10)
+        self.btn(f, self.t("save"), save, bg=C["ok"]).pack(pady=10)
 
     def _edit_invoice_param(self, key, label, max_len=200):
-        win = tk.Toplevel(self.root)
-        win.title(f"{self.t('edit')} {label}")
-        win.geometry("400x180")
-        win.configure(bg=C["bg"])
-        win.grab_set()
-        tk.Label(win, text=f"{label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
-        e = tk.Entry(win, font=("Segoe UI", 12), bd=1, relief="solid", width=30)
+        win, f = self.popup_win(f"{self.t('edit')} {label}", 400, 180, 350, 160)
+        tk.Label(f, text=f"{label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
+        e = tk.Entry(f, font=("Segoe UI", 12), bd=1, relief="solid", width=30)
         e.insert(0, self.db.get_setting(key, ""))
         e.pack(pady=5)
         e.focus()
@@ -3101,7 +3105,7 @@ class App:
             messagebox.showinfo(self.t("done"), f"{label} {self.t('updated_suffix')}")
             self.pg_set()
         e.bind("<Return>", lambda e: save())
-        self.btn(win, self.t("save"), save, bg=C["ok"]).pack(pady=10)
+        self.btn(f, self.t("save"), save, bg=C["ok"]).pack(pady=10)
 
     def pg_set_pin(self):
         self.clr()
