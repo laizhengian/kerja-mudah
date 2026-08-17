@@ -919,10 +919,6 @@ class App:
         self.root.geometry("1100x750")
         self.root.minsize(900, 650)
         self.root.configure(bg=C["bg"])
-        try:
-            self.root.iconbitmap(default=os.path.join(APP_DIR, "icon.ico"))
-        except (tk.TclError, OSError):
-            pass
         deleted = self.db.cleanup_old_invoices()
         if deleted > 0:
             self.root.after(100, lambda: messagebox.showinfo(self.t("cleanup"), f"{deleted} {self.t('cleanup_msg')}"))
@@ -1615,10 +1611,16 @@ class App:
             c = tk.Frame(tf, bg=C["card"], bd=1, relief="solid", cursor="hand2")
             c.grid(row=0, column=i, padx=6, pady=6, sticky="nsew")
             c.bind("<Button-1>", lambda e, c=cmd: c())
-            tk.Label(c, text=l, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15, pady=8).pack(fill="x")
-            tk.Label(c, text=v, bg=C["card"], fg=C["txt"], font=("Segoe UI", 22, "bold"), anchor="w", padx=15, pady=8).pack(fill="x")
+            lbl1 = tk.Label(c, text=l, bg=C["card"], fg=C["txt2"], font=("Segoe UI", 11), anchor="w", padx=15, pady=8)
+            lbl1.pack(fill="x")
+            lbl1.bind("<Button-1>", lambda e, c=cmd: c())
+            lbl2 = tk.Label(c, text=v, bg=C["card"], fg=C["txt"], font=("Segoe UI", 22, "bold"), anchor="w", padx=15, pady=8)
+            lbl2.pack(fill="x")
+            lbl2.bind("<Button-1>", lambda e, c=cmd: c())
             if l == self.t("outstanding") and owed > 0:
-                tk.Label(c, text=f"{len(unpaid)} {self.t('unpaid_invoices')}", bg=C["card"], fg=C["err"], font=("Segoe UI", 9), anchor="w", padx=15, pady=6).pack(fill="x")
+                lbl3 = tk.Label(c, text=f"{len(unpaid)} {self.t('unpaid_invoices')}", bg=C["card"], fg=C["err"], font=("Segoe UI", 9), anchor="w", padx=15, pady=6)
+                lbl3.pack(fill="x")
+                lbl3.bind("<Button-1>", lambda e, c=cmd: c())
             c.bind("<Enter>", lambda e, c=c: c.configure(bg=C["card_h"]))
             c.bind("<Leave>", lambda e, c=c: c.configure(bg=C["card"]))
         for i in range(4):
