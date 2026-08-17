@@ -2029,10 +2029,19 @@ class App:
                     body += f"{thank_you}\n{biz_name}"
                     mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                     try:
-                        webbrowser.open(mailto)
-                        os.startfile(pdf_path)
-                    except (webbrowser.Error, OSError):
-                        pass
+                        os.startfile(mailto)
+                    except (OSError, AttributeError):
+                        try:
+                            webbrowser.open(mailto)
+                        except (webbrowser.Error, OSError):
+                            pass
+                    try:
+                        subprocess.run(["explorer", "/select,", pdf_path], check=False)
+                    except (OSError, FileNotFoundError):
+                        try:
+                            os.startfile(os.path.dirname(pdf_path))
+                        except (OSError, AttributeError):
+                            pass
                     messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_opened')} {email}\n{self.t('pdf_saved')} {pdf_path}")
                 else:
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
@@ -2052,9 +2061,12 @@ class App:
                     body += f"{thank_you}\n{biz_name}"
                     mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
                     try:
-                        webbrowser.open(mailto)
-                    except (webbrowser.Error, OSError):
-                        pass
+                        os.startfile(mailto)
+                    except (OSError, AttributeError):
+                        try:
+                            webbrowser.open(mailto)
+                        except (webbrowser.Error, OSError):
+                            pass
                     messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_opened')} {email}")
             else:
                 messagebox.showwarning(self.t("warning"), self.t("invoice_created") + "\n" + self.t("no_email"))
@@ -2484,10 +2496,20 @@ class App:
             body += f"{thank_you}\n{biz_name}"
             mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
             try:
-                webbrowser.open(mailto)
-                os.startfile(pdf_path)
-            except (webbrowser.Error, OSError):
-                pass
+                os.startfile(mailto)
+            except (OSError, AttributeError):
+                try:
+                    webbrowser.open(mailto)
+                except (webbrowser.Error, OSError):
+                    pass
+            if use_pdf and pdf_path:
+                try:
+                    subprocess.run(["explorer", "/select,", pdf_path], check=False)
+                except (OSError, FileNotFoundError):
+                    try:
+                        os.startfile(os.path.dirname(pdf_path))
+                    except (OSError, AttributeError):
+                        pass
             messagebox.showinfo(self.t("done"), self.t("email_opened") + f" {email}\n{self.t('pdf_saved')} {pdf_path}")
         else:
             body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
@@ -2514,9 +2536,12 @@ class App:
             body += f"{thank_you}\n{biz_name}"
             mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
             try:
-                webbrowser.open(mailto)
-            except (webbrowser.Error, OSError):
-                pass
+                os.startfile(mailto)
+            except (OSError, AttributeError):
+                try:
+                    webbrowser.open(mailto)
+                except (webbrowser.Error, OSError):
+                    pass
             messagebox.showinfo(self.t("done"), self.t("opening_email") + f" {email}")
 
     def generate_invoice_pdf(self, inv_code, job, cust):
