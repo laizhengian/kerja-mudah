@@ -177,6 +177,7 @@ T = {
         "pdf_failed": "Failed to generate PDF",
         "whatsapp_opened": "WhatsApp opened for",
         "email_opened": "Email opened for",
+        "email_copied": "Email content copied to clipboard. Paste into Gmail/Outlook/etc.",
         "opening_email": "Opening email client for",
         "opening_whatsapp": "Opening WhatsApp for",
         "invoice_created": "Invoice created!",
@@ -464,6 +465,7 @@ T = {
         "pdf_failed": "Gagal menjana PDF",
         "whatsapp_opened": "WhatsApp dibuka untuk",
         "email_opened": "Emel dibuka untuk",
+        "email_copied": "Kandungan emel disalin ke papan klip. Tampal ke Gmail/Outlook/dll.",
         "opening_email": "Membuka klien emel untuk",
         "opening_whatsapp": "Membuka WhatsApp untuk",
         "invoice_created": "Invois dicipta!",
@@ -751,6 +753,7 @@ T = {
         "pdf_failed": "生成PDF失败",
         "whatsapp_opened": "WhatsApp已打开",
         "email_opened": "邮件已打开",
+        "email_copied": "邮件内容已复制到剪贴板。粘贴到Gmail/Outlook等。",
         "opening_email": "正在打开邮件客户端",
         "opening_whatsapp": "正在打开WhatsApp",
         "invoice_created": "发票已创建！",
@@ -2027,14 +2030,8 @@ class App:
                             body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
                     thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
                     body += f"{thank_you}\n{biz_name}"
-                    mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
-                    try:
-                        os.startfile(mailto)
-                    except (OSError, AttributeError):
-                        try:
-                            webbrowser.open(mailto)
-                        except (webbrowser.Error, OSError):
-                            pass
+                    self.root.clipboard_clear()
+                    self.root.clipboard_append(f"To: {email}\nSubject: {subject}\n\n{body}")
                     try:
                         subprocess.run(["explorer", "/select,", pdf_path], check=False)
                     except (OSError, FileNotFoundError):
@@ -2042,7 +2039,7 @@ class App:
                             os.startfile(os.path.dirname(pdf_path))
                         except (OSError, AttributeError):
                             pass
-                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_opened')} {email}\n{self.t('pdf_saved')} {pdf_path}")
+                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_copied')}\n{self.t('pdf_saved')} {pdf_path}")
                 else:
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
                     thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
@@ -2059,15 +2056,9 @@ class App:
                         if review_link:
                             body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
                     body += f"{thank_you}\n{biz_name}"
-                    mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
-                    try:
-                        os.startfile(mailto)
-                    except (OSError, AttributeError):
-                        try:
-                            webbrowser.open(mailto)
-                        except (webbrowser.Error, OSError):
-                            pass
-                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_opened')} {email}")
+                    self.root.clipboard_clear()
+                    self.root.clipboard_append(f"To: {email}\nSubject: {subject}\n\n{body}")
+                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_copied')}")
             else:
                 messagebox.showwarning(self.t("warning"), self.t("invoice_created") + "\n" + self.t("no_email"))
             self.pg_jobs()
@@ -2494,14 +2485,8 @@ class App:
                     body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
             thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
             body += f"{thank_you}\n{biz_name}"
-            mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
-            try:
-                os.startfile(mailto)
-            except (OSError, AttributeError):
-                try:
-                    webbrowser.open(mailto)
-                except (webbrowser.Error, OSError):
-                    pass
+            self.root.clipboard_clear()
+            self.root.clipboard_append(f"To: {email}\nSubject: {subject}\n\n{body}")
             if use_pdf and pdf_path:
                 try:
                     subprocess.run(["explorer", "/select,", pdf_path], check=False)
@@ -2510,7 +2495,7 @@ class App:
                         os.startfile(os.path.dirname(pdf_path))
                     except (OSError, AttributeError):
                         pass
-            messagebox.showinfo(self.t("done"), self.t("email_opened") + f" {email}\n{self.t('pdf_saved')} {pdf_path}")
+            messagebox.showinfo(self.t("done"), self.t("email_copied") + f"\n{self.t('pdf_saved')} {pdf_path}")
         else:
             body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
             thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
@@ -2534,15 +2519,9 @@ class App:
                 if review_link:
                     body += f"We'd love your feedback! Leave us a Google review:\n{review_link}\n\n"
             body += f"{thank_you}\n{biz_name}"
-            mailto = f"mailto:{email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
-            try:
-                os.startfile(mailto)
-            except (OSError, AttributeError):
-                try:
-                    webbrowser.open(mailto)
-                except (webbrowser.Error, OSError):
-                    pass
-            messagebox.showinfo(self.t("done"), self.t("opening_email") + f" {email}")
+            self.root.clipboard_clear()
+            self.root.clipboard_append(f"To: {email}\nSubject: {subject}\n\n{body}")
+            messagebox.showinfo(self.t("done"), self.t("email_copied") + f" {email}")
 
     def generate_invoice_pdf(self, inv_code, job, cust):
         try:
