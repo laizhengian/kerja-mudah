@@ -92,7 +92,7 @@ T = {
         "license_activation": "License Activation Required",
         "enter_license_key": "Enter your license key to activate",
         "your_hwid": "Your Hardware ID (send this to get a key):",
-        "demo_mode": "Demo mode: limited to 10 jobs, 7 day trial",
+        "demo_mode": "Demo mode: 7 day trial, unlimited jobs",
         "contact_seller": "Contact seller to get your license key",
         "demo_expired": "Your 7-day demo has expired. Please activate with a license key to continue.",
         "demo_limit": "Demo mode is limited to 10 jobs. Please activate with a license key.",
@@ -380,7 +380,7 @@ T = {
         "license_activation": "Pengaktifan Lesen Diperlukan",
         "enter_license_key": "Masukkan kunci lesen untuk mengaktifkan",
         "your_hwid": "ID Perkakasan Anda (hantar ini untuk dapat kunci):",
-        "demo_mode": "Mod demo: terhad kepada 10 kerja, percubaan 7 hari",
+        "demo_mode": "Mod demo: percubaan 7 hari, kerja tidak terhad",
         "contact_seller": "Hubungi penjual untuk dapat kunci lesen",
         "demo_expired": "Demo 7 hari anda telah tamat. Sila aktifkan dengan kunci lesen.",
         "demo_limit": "Mod demo terhad kepada 10 kerja. Sila aktifkan dengan kunci lesen.",
@@ -668,7 +668,7 @@ T = {
         "license_activation": "需要激活许可证",
         "enter_license_key": "输入许可证密钥以激活",
         "your_hwid": "您的硬件ID（发送此码获取密钥）：",
-        "demo_mode": "演示模式：限10个工作，7天试用",
+        "demo_mode": "演示模式：7天试用，工作不限",
         "contact_seller": "联系卖家获取许可证密钥",
         "demo_expired": "您的7天演示已过期。请使用许可证密钥激活。",
         "demo_limit": "演示模式限10个工作。请使用许可证密钥激活。",
@@ -1114,9 +1114,6 @@ class App:
         return is_demo(self.db)
 
     def check_demo_limit(self):
-        if self.is_demo() and len(self.db.get_jobs()) >= 10:
-            messagebox.showerror(self.t("error"), self.t("demo_limit"))
-            return True
         return False
 
     def is_licensed(self):
