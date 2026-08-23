@@ -86,7 +86,7 @@ T = {
         "leave_review": "We'd love your feedback!",
         "rate_us": "Leave us a Google review",
         "pending": "Pending", "in_progress": "In Progress", "status": "Status",
-        "edit": "Edit", "pdf": "PDF", "send_reminder": "Send Reminder",
+        "edit": "Edit", "view_jobs": "View Jobs", "pdf": "PDF", "send_reminder": "Send Reminder",
         "activate": "Activate", "try_demo": "Try Demo (7 days)", "copy": "Copy",
         "activation": "License / Activation", "not_activated": "Not activated", "days_left": "days remaining",
         "license_activation": "License Activation Required",
@@ -374,7 +374,7 @@ T = {
         "leave_review": "Kami menghargai maklum balas anda!",
         "rate_us": "Tinggalkan Google review untuk kami",
         "pending": "Menunggu", "in_progress": "Sedang Dijalankan", "status": "Status",
-        "edit": "Sunting", "pdf": "PDF", "send_reminder": "Hantar Peringatan",
+        "edit": "Sunting", "view_jobs": "Lihat Kerja", "pdf": "PDF", "send_reminder": "Hantar Peringatan",
         "activate": "Aktifkan", "try_demo": "Cuba Demo (7 hari)", "copy": "Salin",
         "activation": "Lesen / Pengaktifan", "not_activated": "Belum diaktifkan", "days_left": "hari tinggal",
         "license_activation": "Pengaktifan Lesen Diperlukan",
@@ -662,7 +662,7 @@ T = {
         "leave_review": "我们期待您的反馈！",
         "rate_us": "请给我们留个Google评价",
         "pending": "待处理", "in_progress": "进行中", "status": "状态",
-        "edit": "编辑", "pdf": "PDF", "send_reminder": "发送提醒",
+        "edit": "编辑", "view_jobs": "查看工作", "pdf": "PDF", "send_reminder": "发送提醒",
         "activate": "激活", "try_demo": "试用演示 (7天)", "copy": "复制",
         "activation": "许可证 / 激活", "not_activated": "未激活", "days_left": "天剩余",
         "license_activation": "需要激活许可证",
@@ -2129,7 +2129,10 @@ class App:
             self.cell(table, c["name"], font=("Segoe UI", 11, "bold"), bg=row_bg, fg=C["txt"], tooltip_text=c["name"]).grid(row=row, column=0, sticky="ew", padx=2)
             self.cell(table, c["phone"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"]).grid(row=row, column=1, sticky="ew", padx=2)
             self.cell(table, c["email"] or "-", font=("Segoe UI", 11), bg=row_bg, fg=C["txt2"], tooltip_text=c["email"] or "").grid(row=row, column=2, sticky="ew", padx=2)
-            tk.Button(table, text=self.t("edit"), command=lambda c=c: self.edit_cust(c), bg=row_bg, fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=3, sticky="e", padx=1)
+            btn_frame = tk.Frame(table, bg=row_bg)
+            btn_frame.grid(row=row, column=3, sticky="e", padx=1)
+            tk.Button(btn_frame, text=self.t("view_jobs"), command=lambda c=c: self.view_cust_jobs(c), bg=row_bg, fg="#2563EB", font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").pack(side="left")
+            tk.Button(btn_frame, text=self.t("edit"), command=lambda c=c: self.edit_cust(c), bg=row_bg, fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").pack(side="left")
 
     def edit_cust(self, c):
         win, f = self.popup_win(self.t("edit_customer_title"), 450, 350, 380, 300)
@@ -2152,6 +2155,32 @@ class App:
             self._filter_custs()
         self.btn(bf, self.t("save"), save, bg=C["ok"]).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=win.destroy, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
+
+    def view_cust_jobs(self, c):
+        win, f = self.popup_win(f"{c['name']} - {self.t('jobs')}", 600, 450, 450, 350)
+        tk.Label(f, text=c["name"], bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
+        if c["phone"]:
+            tk.Label(f, text=c["phone"], bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11)).pack()
+        if c["email"]:
+            tk.Label(f, text=c["email"], bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11)).pack()
+        jobs = [j for j in self.db.get_jobs() if j["customer_id"] == c["id"]]
+        if not jobs:
+            tk.Label(f, text=self.t("no_jobs"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 12)).pack(pady=30)
+            return
+        tf = tk.Frame(f, bg=C["bg"])
+        tf.pack(fill="both", expand=True, padx=15, pady=10)
+        headers = [self.t("job_code"), self.t("item"), self.t("status"), self.t("quote")]
+        for i, h in enumerate(headers):
+            tk.Label(tf, text=h, bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10, "bold"), anchor="w").grid(row=0, column=i, sticky="w", padx=4, pady=(0, 8))
+        for ri, j in enumerate(jobs):
+            row_bg = C["card"] if ri % 2 == 0 else C["bg"]
+            row = ri + 1
+            tk.Label(tf, text=j["job_code"], bg=row_bg, fg=C["txt"], font=("Segoe UI", 10), anchor="w").grid(row=row, column=0, sticky="w", padx=4, pady=4)
+            tk.Label(tf, text=j["item"], bg=row_bg, fg=C["txt"], font=("Segoe UI", 10), anchor="w").grid(row=row, column=1, sticky="w", padx=4, pady=4)
+            status_colors = {"pending": C["warn"], "in-progress": "#3B82F6", "done": C["ok"]}
+            tk.Label(tf, text=self.t(j["status"]), bg=row_bg, fg=status_colors.get(j["status"], C["txt2"]), font=("Segoe UI", 10, "bold"), anchor="w").grid(row=row, column=2, sticky="w", padx=4, pady=4)
+            tk.Label(tf, text=self.fmt_amount(j["quote"]), bg=row_bg, fg=C["txt"], font=("Segoe UI", 10), anchor="w").grid(row=row, column=3, sticky="w", padx=4, pady=4)
+        tk.Label(f, text=f"{len(jobs)} {self.t('jobs').lower()}", bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 10)).pack(pady=5)
 
     def pg_new_cust(self):
         self.clr()
