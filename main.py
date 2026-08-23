@@ -1497,6 +1497,11 @@ class App:
             messagebox.showerror(self.t("error"), self.t("wrong_pin"))
             self.pin_e.delete(0, tk.END)
 
+    def open_activate_screen(self):
+        for w in self.root.winfo_children():
+            w.destroy()
+        self.activate_screen()
+
     def activate_screen(self):
         self.clr()
         self.root.configure(bg=C["bg"])
@@ -2990,7 +2995,7 @@ class App:
             self.root.clipboard_append(hwid)
             messagebox.showinfo(self.t("done"), self.t("hwid_copied"))
         tk.Button(hwid_frame, text=self.t("copy"), command=copy_hwid_from_settings, bg=C["pri"], fg=C["white"], font=("Segoe UI", 9, "bold"), bd=0, padx=10, pady=2, cursor="hand2").pack(side="right")
-        self.btn(s_act, self.t("activate"), self.activate_screen, bg=C["pri"]).pack(anchor="w", pady=5)
+        self.btn(s_act, self.t("activate"), self.open_activate_screen, bg=C["pri"]).pack(anchor="w", pady=5)
         s_about = self.row(f)
         tk.Label(s_about, text="Kerja Mudah v1.0", bg=C["card"], fg=C["txt"], font=("Segoe UI", 13, "bold")).pack(anchor="w")
         tk.Label(s_about, text="Repair Made Easy", bg=C["card"], fg=C["txt2"], font=("Segoe UI", 10)).pack(anchor="w", pady=2)
