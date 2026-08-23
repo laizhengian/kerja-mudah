@@ -2225,16 +2225,11 @@ class App:
         q = self.appt_search_var.get().strip().lower()
         if q and q != self.t("search_appointments").lower():
             appts = self.db.search_appointments(q)
-            if not appts:
-                tk.Label(self.appt_list_frame, text=self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
-                return
         else:
-            today = datetime.now().strftime("%Y-%m-%d")
-            tk.Label(self.appt_list_frame, text=self.fmt_date(today), bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 12)).pack(anchor="w", pady=8)
-            appts = self.db.get_appointments(today)
-            if not appts:
-                tk.Label(self.appt_list_frame, text=self.t("no_appointments"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
-                return
+            appts = self.db.get_appointments()
+        if not appts:
+            tk.Label(self.appt_list_frame, text=self.t("no_appointments") if not q else self.t("no_results"), bg=C["bg"], fg=C["txt3"], font=("Segoe UI", 14)).pack(pady=50)
+            return
         table = tk.Frame(self.appt_list_frame, bg=C["bg"])
         table.pack(fill="both", expand=True, padx=8)
         col_names = [self.t("date"), self.t("time"), self.t("customer"), self.t("purpose"), ""]
