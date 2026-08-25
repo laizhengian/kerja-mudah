@@ -1001,9 +1001,11 @@ class App:
         canvas.pack(side="left", fill="both", expand=True)
         def _on_mousewheel(event):
             canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+        canvas.bind("<MouseWheel>", _on_mousewheel)
+        win.bind("<MouseWheel>", _on_mousewheel)
         def _on_close():
-            canvas.unbind_all("<MouseWheel>")
+            canvas.unbind("<MouseWheel>")
+            win.unbind("<MouseWheel>")
             win.destroy()
         win.protocol("WM_DELETE_WINDOW", _on_close)
         return win, inner
@@ -1303,7 +1305,13 @@ class App:
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
         tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
-        today = datetime.now() if not default else datetime.strptime(default, "%Y-%m-%d")
+        if default:
+            try:
+                today = datetime.strptime(default, "%Y-%m-%d")
+            except (ValueError, TypeError):
+                today = datetime.now()
+        else:
+            today = datetime.now()
         frame = tk.Frame(f, bg=C["bg"])
         frame.pack(side="left")
         year_var = tk.StringVar(value=str(today.year))
@@ -1404,7 +1412,13 @@ class App:
         f = tk.Frame(parent, bg=C["bg"])
         f.pack(fill="x", pady=8)
         tk.Label(f, text=label, bg=C["bg"], fg=C["txt"], font=("Segoe UI", 11, "bold"), width=20, anchor="w").pack(side="left")
-        now = datetime.now() if not default else datetime.strptime(default, "%H:%M")
+        if default:
+            try:
+                now = datetime.strptime(default, "%H:%M")
+            except (ValueError, TypeError):
+                now = datetime.now()
+        else:
+            now = datetime.now()
         hour_var = tk.StringVar(value=str(now.hour).zfill(2))
         min_var = tk.StringVar(value=str(now.minute // 15 * 15).zfill(2))
         frame = tk.Frame(f, bg=C["bg"])
@@ -1601,12 +1615,8 @@ class App:
             if event.delta > 0 and current[0] <= 0:
                 return
             self.content_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-        def _bind_mousewheel(event):
-            self.content_canvas.bind_all("<MouseWheel>", _on_mousewheel)
-        def _unbind_mousewheel(event):
-            self.content_canvas.unbind_all("<MouseWheel>")
-        self.content_canvas.bind("<Enter>", _bind_mousewheel)
-        self.content_canvas.bind("<Leave>", _unbind_mousewheel)
+        self.content_canvas.bind("<MouseWheel>", _on_mousewheel)
+        self.root.bind("<MouseWheel>", _on_mousewheel)
         n = self.db.get_setting("business_name", "Shop")
         name_label = tk.Label(self.side, text=n, bg=C["side"], fg=C["white"], font=("Segoe UI", 13, "bold"), pady=15, wraplength=170, justify="center")
         name_label.pack(fill="x", padx=10)
@@ -1944,8 +1954,11 @@ class App:
         for i in invs:
             if i["job_id"] == job["id"]:
                 return i
-        self.db.add_invoice(job["id"], job["quote"])
+        inv_id = self.db.add_invoice(job["id"], job["quote"])
         invs = self.db.get_invoices()
+        for i in invs:
+            if i["id"] == inv_id:
+                return i
         return invs[-1] if invs else None
 
     def mark_done(self, job):
@@ -2053,14 +2066,18 @@ class App:
                     thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
                     body += f"{thank_you}\n{biz_name}"
                     self.open_email(email, subject, body)
-                    try:
-                        subprocess.run(["explorer", "/select,", pdf_path], check=False)
-                    except (OSError, FileNotFoundError):
+                    if pdf_path:
                         try:
-                            os.startfile(os.path.dirname(pdf_path))
-                        except (OSError, AttributeError):
-                            pass
-                    messagebox.showinfo(self.t("done"), self.t("invoice_created") + f"\n{self.t('email_opened')} {email}\n{self.t('pdf_saved')} {pdf_path}")
+                            subprocess.run(["explorer", "/select,", pdf_path], check=False)
+                        except (OSError, FileNotFoundError):
+                            try:
+                                os.startfile(os.path.dirname(pdf_path))
+                            except (OSError, AttributeError):
+                                pass
+                    msg = self.t("invoice_created") + f"\n{self.t('email_opened')} {email}"
+                    if pdf_path:
+                        msg += f"\n{self.t('pdf_saved')} {pdf_path}"
+                    messagebox.showinfo(self.t("done"), msg)
                 else:
                     body = f"Dear {cust['name'] if cust else 'Customer'},\n\n"
                     thank_you = self.db.get_setting("thank_you_note", "Thank you for your business!")
@@ -2701,9 +2718,13 @@ class App:
             return
         for j in jobs:
             r = self.row(f)
+            has_inv = self._job_has_invoice(j["id"])
             tk.Label(r, text=f"{j['job_code']} - {j['item']}", bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w").pack(side="left")
             tk.Label(r, text=self.fmt_amount(j['quote']), bg=C["card"], fg=C["txt"], font=("Segoe UI", 11, "bold"), anchor="w", padx=15).pack(side="left")
-            tk.Button(r, text=self.t("create"), command=lambda j=j: [self.db.add_invoice(j["id"], j["quote"]), messagebox.showinfo(self.t("done"), self.t("invoice_created")), self.pg_invs()], bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=15, pady=5, cursor="hand2").pack(side="right")
+            if has_inv:
+                tk.Label(r, text=self.t("invoice_already_exists"), bg=C["card"], fg=C["warn"], font=("Segoe UI", 9), anchor="w").pack(side="right")
+            else:
+                tk.Button(r, text=self.t("create"), command=lambda j=j: [self.db.add_invoice(j["id"], j["quote"]), messagebox.showinfo(self.t("done"), self.t("invoice_created")), self.pg_invs()], bg=C["pri"], fg=C["white"], font=("Segoe UI", 10, "bold"), bd=0, padx=15, pady=5, cursor="hand2").pack(side="right")
 
     def pg_rpt(self):
         self.clr()
@@ -2715,9 +2736,9 @@ class App:
         invs = self.db.get_invoices()
         paid = [i for i in invs if i["paid"]]
         unpaid = [i for i in invs if not i["paid"]]
-        today_rev = sum(i["amount"] for i in paid if i["created_at"][:10] == today)
-        week_rev = sum(i["amount"] for i in paid if i["created_at"][:10] >= week)
-        month_rev = sum(i["amount"] for i in paid if i["created_at"][:10] >= month)
+        today_rev = sum(i["amount"] for i in paid if i["created_at"] and i["created_at"][:10] == today)
+        week_rev = sum(i["amount"] for i in paid if i["created_at"] and i["created_at"][:10] >= week)
+        month_rev = sum(i["amount"] for i in paid if i["created_at"] and i["created_at"][:10] >= month)
         outstanding = sum(i["amount"] for i in unpaid)
         total_earned = sum(i["amount"] for i in paid)
         sf = tk.Frame(self.content, bg=C["bg"], padx=20)
@@ -2881,7 +2902,7 @@ class App:
                     w.writerow([row[k] for k in keys])
             messagebox.showinfo(self.t("done"), self.t("exported") + f" {fp}")
         except Exception as e:
-            messagebox.showerror(self.t("error"), self.t("nothing_export"))
+            messagebox.showerror(self.t("error"), f"Export failed: {str(e)}")
 
     def pg_set(self):
         self.clr()
