@@ -52,10 +52,10 @@ Your data is stored in a standard SQLite database file. You may export your data
 The Software is licensed to a specific device. A license key is generated based on your device's hardware identifier (HWID). Each device requires its own license key.
 
 ### License Transfer
-If you更换 (replace) your device, you must contact us to deactivate the old license and activate a new one on your new device. A fee may apply.
+If you replace your device, you must contact us to deactivate the old license and activate a new one on your new device. A fee may apply.
 
 ### Demo Mode
-Without a valid license key, the Software operates in Demo mode with limited functionality (7-day trial, maximum 10 jobs). Demo mode limitations are subject to change without notice.
+Without a valid license key, the Software operates in Demo mode with limited functionality (7-day trial, unlimited jobs). Demo mode limitations are subject to change without notice.
 
 ## 6. Updates and Modifications
 

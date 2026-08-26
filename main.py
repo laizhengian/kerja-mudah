@@ -1159,6 +1159,8 @@ class App:
         e.pack(side="left", fill="x", expand=True, ipady=6, padx=(0,10))
         e.insert(0, placeholder)
         e.config(fg=C["txt3"])
+        validate_cmd = (self.root.register(lambda p: len(p) <= 80), "%P")
+        e.configure(validate="key", validatecommand=validate_cmd)
         def on_focus_in(event):
             if e.get() == placeholder:
                 e.delete(0, tk.END)
@@ -1691,7 +1693,7 @@ class App:
                 row.pack(fill="x", pady=3)
                 left = tk.Frame(row, bg="#FEF3C7")
                 left.pack(side="left", fill="x", expand=True)
-                tk.Label(left, text=f"{j['customer_name'] or self.t('unknown')} - {j['item']}", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 11), anchor="w").pack(fill="x")
+                tk.Label(left, text=f"{j['customer_name'] or self.t('unknown')} - {j['item']}", bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 11), anchor="w", wraplength=350).pack(fill="x")
                 tk.Label(left, text=self.t("waiting_fmt").format(count=j["days_waiting"]), bg="#FEF3C7", fg="#92400E", font=("Segoe UI", 10)).pack(fill="x")
                 def send_pickup_reminder(job=j):
                     phone = (job["customer_phone"] or "").replace("+","").replace("-","").replace(" ","")
@@ -2157,14 +2159,14 @@ class App:
             tk.Button(btn_frame, text=self.t("edit"), command=lambda c=c: self.edit_cust(c), bg=row_bg, fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").pack(side="left")
 
     def edit_cust(self, c):
-        win, f = self.popup_win(self.t("edit_customer_title"), 450, 350, 380, 300)
+        win, f = self.popup_win(self.t("edit_customer_title"), 500, 450, 400, 380)
         tk.Label(f, text=self.t("edit_customer_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
         f_inner = tk.Frame(f, bg=C["bg"], padx=25)
         f_inner.pack(fill="both", expand=True)
         name_e = self.field(f_inner, self.t("name"), c["name"])
         phone_e = self.phone_field(f_inner, self.t("phone"), c["phone"] or "+60")
         email_e = self.email_field(f_inner, self.t("email"), c["email"] or "")
-        notes_e = self.field(f_inner, self.t("notes"), c["notes"] or "")
+        notes_e = self.text_area_field(f_inner, self.t("notes"), c["notes"] or "", height=3, max_len=500)
         bf = tk.Frame(f_inner, bg=C["bg"], pady=15)
         bf.pack(fill="x")
         def save():
@@ -2213,7 +2215,7 @@ class App:
         self.ce["Name"] = self.field(f, self.t("name"), "")
         self.ce["Phone"] = self.phone_field(f, self.t("phone"), "+60")
         self.ce["Email"] = self.email_field(f, self.t("email"), "")
-        self.ce["Notes"] = self.field(f, self.t("notes"), "")
+        self.ce["Notes"] = self.text_area_field(f, self.t("notes"), "", height=3, max_len=500)
         bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
         self.btn(bf, self.t("save"), self.save_cust).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=self.pg_custs, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
@@ -2273,7 +2275,7 @@ class App:
             tk.Button(table, text=self.t("edit"), command=lambda a=a: self.edit_appt(a), bg=row_bg, fg=C["pri"], font=("Segoe UI", 9, "bold"), bd=0, padx=6, cursor="hand2").grid(row=row, column=4, sticky="e", padx=1)
 
     def edit_appt(self, a):
-        win, f = self.popup_win(self.t("edit_appointment_title"), 500, 450, 400, 350)
+        win, f = self.popup_win(self.t("edit_appointment_title"), 500, 500, 400, 400)
         tk.Label(f, text=self.t("edit_appointment_title"), bg=C["bg"], fg=C["txt"], font=("Segoe UI", 16, "bold")).pack(pady=10)
         f_inner = tk.Frame(f, bg=C["bg"], padx=25)
         f_inner.pack(fill="both", expand=True)
@@ -2300,7 +2302,7 @@ class App:
         m_menu.configure(font=("Segoe UI", 11), width=3, bg=C["white"])
         m_menu.pack(side="left")
         purpose_e = self.field(f_inner, self.t("purpose"), a["purpose"] or "")
-        notes_e = self.field(f_inner, self.t("notes"), a["notes"] or "")
+        notes_e = self.text_area_field(f_inner, self.t("notes"), a["notes"] or "", height=3, max_len=500)
         bf = tk.Frame(f_inner, bg=C["bg"], pady=15)
         bf.pack(fill="x")
         def save():
@@ -2325,7 +2327,7 @@ class App:
         self.ae["Date"] = self.date_field(f, self.t("date"))
         self.ae["Time"] = self.time_field(f, self.t("time"))
         self.ae["Purpose"] = self.field(f, self.t("purpose"))
-        self.ae["Notes"] = self.field(f, self.t("notes"))
+        self.ae["Notes"] = self.text_area_field(f, self.t("notes"), "", height=3, max_len=500)
         bf = tk.Frame(f, bg=C["bg"], pady=20); bf.pack(fill="x")
         self.btn(bf, self.t("save"), self.save_appt).pack(side="left")
         tk.Button(bf, text=self.t("cancel"), command=self.pg_cal, bg=C["bg"], fg=C["txt2"], font=("Segoe UI", 11), bd=1, relief="solid", padx=20, pady=10, cursor="hand2").pack(side="left", padx=10)
@@ -3169,6 +3171,8 @@ class App:
         win, f = self.popup_win(f"{self.t('edit')} {label}", 400, 180, 350, 160)
         tk.Label(f, text=f"{label}:", bg=C["bg"], fg=C["txt"], font=("Segoe UI", 12, "bold")).pack(pady=15)
         e = tk.Entry(f, font=("Segoe UI", 12), bd=1, relief="solid", width=30)
+        validate_cmd = (self.root.register(lambda p: len(p) <= max_len), "%P")
+        e.configure(validate="key", validatecommand=validate_cmd)
         e.insert(0, self.db.get_setting(key, ""))
         e.pack(pady=5)
         e.focus()

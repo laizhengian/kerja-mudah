@@ -1,12 +1,8 @@
-<p align="center">
-  <img src="logo.svg" alt="Kerja Mudah" width="400">
-</p>
+# Kerja Mudah
 
-<h3 align="center"><em>Work smarter, not harder.</em></h3>
+**Work smarter, not harder.**
 
-<p align="center">
-  Kerja Mudah is a desktop business management app built for small repair and service shops in Malaysia. It runs offline on Windows as a single file — no internet, no monthly fees, no complicated setup.
-</p>
+Kerja Mudah is a desktop business management app built for small repair and service shops in Malaysia. It runs offline on Windows as a single file — no internet, no monthly fees, no complicated setup.
 
 ---
 
@@ -28,7 +24,7 @@ Create jobs for every repair or service. Track status from pending to in-progres
 Store all your customers with name, phone, email, and notes. Link customers to jobs and appointments. Search anything instantly.
 
 ### Appointment Scheduling
-Schedule appointments with date, time, purpose, and notes. See today's appointments on the dashboard.
+Schedule appointments with date, time, purpose, and notes. See all appointments on the calendar page.
 
 ### Invoice System
 Generate invoices from completed jobs. Send them via WhatsApp or Email with one click. Track paid and unpaid invoices. Supports PDF generation with your business details.
